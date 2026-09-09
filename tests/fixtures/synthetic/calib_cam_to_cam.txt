@@ -1,0 +1,4 @@
+calib_time: synthetic
+S_rect_02: 8 6
+R_rect_00: 1 0 0 0 1 0 0 0 1
+P_rect_02: 2 0 4 1 0 2 3 0 0 0 1 0

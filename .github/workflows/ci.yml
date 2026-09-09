@@ -1,0 +1,73 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    name: ${{ matrix.compiler }} debug
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc, clang]
+        include:
+          - compiler: gcc
+            cc: gcc
+            cxx: g++
+          - compiler: clang
+            cc: clang
+            cxx: clang++
+    env:
+      CC: ${{ matrix.cc }}
+      CXX: ${{ matrix.cxx }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies and developer tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes \
+            clang-format \
+            clang-tidy \
+            libeigen3-dev \
+            libgtest-dev \
+            libopencv-dev \
+            nlohmann-json3-dev
+      - name: Configure
+        run: cmake --preset dev
+      - name: Build
+        run: cmake --build --preset dev --parallel 2
+      - name: Test
+        run: ctest --preset dev --output-on-failure
+      - name: Check formatting
+        run: cmake --build --preset dev --target format-check
+      - name: Run clang-tidy
+        if: matrix.compiler == 'clang'
+        run: cmake --build --preset dev --target clang-tidy
+
+  asan-ubsan:
+    name: ASan and UBSan
+    runs-on: ubuntu-latest
+    env:
+      CC: clang
+      CXX: clang++
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes \
+            libeigen3-dev \
+            libgtest-dev \
+            libopencv-dev \
+            nlohmann-json3-dev
+      - name: Configure
+        run: cmake --preset asan-ubsan
+      - name: Build
+        run: cmake --build --preset asan-ubsan --parallel 2
+      - name: Test
+        run: ctest --preset asan-ubsan --output-on-failure

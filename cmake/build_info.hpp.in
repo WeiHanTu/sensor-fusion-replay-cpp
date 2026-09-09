@@ -1,0 +1,30 @@
+#ifndef SFR_CORE_BUILD_INFO_HPP_
+#define SFR_CORE_BUILD_INFO_HPP_
+
+#include <string_view>
+
+namespace sfr::core {
+
+struct BuildInfo final {
+  std::string_view git_commit;
+  bool git_dirty;
+  std::string_view build_type;
+  std::string_view compiler;
+  std::string_view host_os;
+  std::string_view host_arch;
+  std::string_view host_cpu;
+};
+
+inline constexpr BuildInfo kBuildInfo{
+    "@SFR_GIT_COMMIT@",
+    @SFR_GIT_DIRTY@,
+    "@SFR_BUILD_TYPE@",
+    "@SFR_COMPILER@",
+    "@SFR_HOST_OS@",
+    "@SFR_HOST_ARCH@",
+    "@SFR_HOST_CPU@",
+};
+
+} // namespace sfr::core
+
+#endif // SFR_CORE_BUILD_INFO_HPP_

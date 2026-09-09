@@ -1,0 +1,43 @@
+# Build and tool output
+/build/
+/out/
+/cmake-build-*/
+/compile_commands.json
+.cache/
+.clangd/
+
+# Generated replay and benchmark output
+/artifacts/
+/output/
+/outputs/
+/reports/
+/benchmarks/results/
+
+# Private datasets and common KITTI material
+/data/
+/datasets/
+**/*_drive_*_sync/
+**/velodyne_points/
+**/image_00/data/
+**/image_01/data/
+**/image_02/data/
+**/image_03/data/
+**/calib_cam_to_cam.txt
+**/calib_velo_to_cam.txt
+**/calib_imu_to_velo.txt
+**/tracklet_labels.xml
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+
+# Explicitly permit authored, auditable synthetic fixtures.
+!tests/fixtures/synthetic/**
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo

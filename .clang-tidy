@@ -1,0 +1,10 @@
+Checks: >
+  -*,
+  bugprone-*,
+  performance-*,
+  portability-*,
+  modernize-use-override
+WarningsAsErrors: 'bugprone-*,performance-*,portability-*'
+HeaderFilterRegex: '(^|.*/)sensor-fusion-replay-cpp/(include|src|apps|tests)/.*'
+SystemHeaders: false
+FormatStyle: file
