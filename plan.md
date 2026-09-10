@@ -20,10 +20,11 @@ Planning baseline on 2026-09-09:
   Clang 18 ASan+UBSan tests. Hosted GitHub Actions has not run.
 - Synthetic projection and calibration-sensitivity outputs have been generated
   and inspected. The authored projection microbenchmark and its CLI/schema
-  regression tests are implemented; a clean-commit release report is still
-  pending. No private-data smoke run, push, tag, or release claim exists yet.
-  Authored synthetic output proves fixture contracts; it is not real-data or
-  publication-quality portfolio evidence.
+  regression tests are implemented. A clean-commit Apple M4 Pro release report
+  is retained under `docs/results/` and interpreted in
+  `docs/v0.1_verification.md`. No private-data smoke run, push, tag, or release
+  claim exists yet. Authored synthetic output proves fixture contracts; it is
+  not real-data or publication-quality portfolio evidence.
 
 Status vocabulary:
 
@@ -247,12 +248,13 @@ synthetic side passes; the private KITTI run remains open.
 
 - [x] Add projection microbenchmark with at least 100,000 deterministic points,
   warm-up, at least 100 measured iterations, and machine-readable output.
-- [~] Run only an optimized build; capture commit/dirty state/compiler/host/config.
-  The release harness enforces these rules; the clean-commit evidence report is
-  pending the implementation commit and fresh configure.
+- [x] Run only an optimized build; capture commit/dirty state/compiler/host/config.
+  The retained report references clean implementation commit `7432516` and an
+  Apple M4 Pro Release build.
 - [~] Complete README build/test/private-data/example/benchmark instructions.
-  Benchmark usage and scope are documented; the canonical clean report link is
-  pending.
+  Benchmark usage, scope, and the canonical clean report link are present.
+  Fresh-checkout execution and release-blocking license/private-data sections
+  remain open.
 - [ ] Publish synthetic overlay, sensitivity comparison, and frame tree only.
 - [x] Add a capability/evidence table: implemented and verified items only.
 - [ ] Run every `v0.1` acceptance item from `spec.md` on a release candidate.
@@ -276,6 +278,9 @@ visual inspection:
 benchmark report:
 known limitations:
 ```
+
+The current, explicitly incomplete record is
+[`docs/v0.1_verification.md`](docs/v0.1_verification.md).
 
 Exit gate: every `v0.1` item in Section 14 of `spec.md` passes. Otherwise do not
 tag and do not claim `v0.1` complete.

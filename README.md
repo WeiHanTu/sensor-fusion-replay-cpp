@@ -86,6 +86,15 @@ tree was dirty when CMake configured the build. See
 [`docs/benchmark_walkthrough.md`](docs/benchmark_walkthrough.md) for the fixture,
 percentile, accounting, and evidence rules.
 
+The retained Apple M4 Pro reference report for clean implementation commit
+`7432516` records geometry-only p50/p95/p99 latency of
+`0.583/0.629/0.670 ms` and aggregate throughput of
+`171.4 million points/s` for this exact authored workload. These are
+single-host measurements, not an end-to-end or real-time claim. Inspect the
+[`machine-readable report`](docs/results/projection_benchmark_apple_m4_pro.json)
+and the incomplete [`v0.1` verification record](docs/v0.1_verification.md)
+before quoting them.
+
 Project one frame from an authorized local KITTI Raw synced drive:
 
 ```bash

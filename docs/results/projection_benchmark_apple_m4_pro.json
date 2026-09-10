@@ -1,0 +1,116 @@
+{
+  "benchmark": "projection_pipeline",
+  "build": {
+    "build_type": "Release",
+    "compiler": "AppleClang 16.0.0.16000026",
+    "git_commit": "743251641dec3c21c6a5ba396f9f83c938f754f3",
+    "git_dirty": false
+  },
+  "config": {
+    "image_height_px": 376,
+    "image_width_px": 1240,
+    "measured_iterations": 100,
+    "points_per_sample": 100000,
+    "warmup_iterations": 10,
+    "z_min_m": 0.1
+  },
+  "counts": {
+    "behind_or_too_near": 15000,
+    "input_points": 100000,
+    "non_finite_input": 0,
+    "non_positive_homogeneous_depth": 0,
+    "outside_image": 15000,
+    "visible_points": 70000
+  },
+  "host": {
+    "arch": "arm64",
+    "cpu": "Apple M4 Pro",
+    "os": "Darwin 25.6.0"
+  },
+  "latency_ms": {
+    "count": 100,
+    "max": 0.677542,
+    "mean": 0.58341089,
+    "min": 0.525208,
+    "p50": 0.583333,
+    "p95": 0.629208,
+    "p99": 0.670042
+  },
+  "measurement": {
+    "clock": "std::chrono::steady_clock",
+    "excluded": [
+      "fixture_generation",
+      "image_decode",
+      "visualization",
+      "serialization",
+      "queue_wait",
+      "replay_pacing"
+    ],
+    "scope": "SE(3) point transform, rectified projection, classification, and output vector construction"
+  },
+  "percentile_method": "nearest_rank",
+  "schema_version": "1.2.0",
+  "synthetic_fixture": {
+    "P_image_camera_rect_00": [
+      [
+        700.0,
+        0.0,
+        620.0,
+        35.0
+      ],
+      [
+        0.0,
+        700.0,
+        188.0,
+        0.25
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ]
+    ],
+    "T_camera_rect_00_lidar": {
+      "rotation_row_major": [
+        [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "translation_m": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "behind_or_too_near_percent": 15,
+    "generator": "64-bit LCG with exact index-partitioned terminal categories",
+    "id": "authored_projection_benchmark_v1",
+    "outside_image_percent": 15,
+    "provenance": "authored deterministic synthetic geometry; no KITTI data",
+    "seed_hex": "0x123456789abcdef0",
+    "visible_percent": 70
+  },
+  "throughput_points_per_sec": {
+    "aggregate": 171405782.29521906,
+    "at_p50_latency": 171428669.3878111
+  },
+  "verification": {
+    "all_measured_iterations_accounted": true,
+    "all_warmup_iterations_accounted": true,
+    "verified_measured_iterations": 100,
+    "verified_warmup_iterations": 10
+  }
+}
