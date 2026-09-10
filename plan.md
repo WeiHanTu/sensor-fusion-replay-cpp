@@ -62,8 +62,8 @@ gate passes or a failure is explicitly preserved and the version is not tagged.
 - [x] Add `origin` as
   `https://github.com/WeiHanTu/sensor-fusion-replay-cpp.git`.
 - [x] Add a conservative `.gitignore` before any dataset is placed nearby.
-- [ ] Choose the project-code license. Default recommendation: Apache-2.0 for an
-  explicit patent grant. Do not add it until the choice is accepted.
+- [x] Choose Apache-2.0 for the project-authored code and documentation, with its
+  explicit patent grant. The repository does not license or redistribute KITTI.
 - [x] Create a local checkpoint commit after the implemented baseline checks
   pass. A local commit is not publication; do not push, tag, or release until
   the project-code license is accepted.
@@ -253,8 +253,7 @@ synthetic side passes; the private KITTI run remains open.
   Apple M4 Pro Release build.
 - [~] Complete README build/test/private-data/example/benchmark instructions.
   Benchmark usage, scope, and the canonical clean report link are present.
-  Fresh-checkout execution and release-blocking license/private-data sections
-  remain open.
+  Fresh-checkout execution and private-data sections remain open.
 - [ ] Publish synthetic overlay, sensitivity comparison, and frame tree only.
 - [x] Add a capability/evidence table: implemented and verified items only.
 - [ ] Run every `v0.1` acceptance item from `spec.md` on a release candidate.

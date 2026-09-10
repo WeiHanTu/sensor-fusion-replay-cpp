@@ -34,7 +34,7 @@ with GCC 13 and OpenCV 4.6, then Clang 18 with ASan+UBSan, in a clean Ubuntu
 24.04 container. Format-check passed; the clang-tidy target completed with no
 actionable project diagnostics. Hosted GitHub Actions has not run. This state
 has local commits but has not been pushed,
-tagged, or released. A project-code license has not been selected.
+tagged, or released. Project-authored code and documentation use Apache-2.0.
 
 ## Prerequisites
 
@@ -137,3 +137,9 @@ must not be presented as a native sanitizer pass.
 No KITTI data is distributed by this repository. Obtain authorized data
 separately from the [KITTI Raw Data](https://www.cvlibs.net/datasets/kitti/raw_data.php)
 page and keep it outside version control.
+
+## License
+
+Project-authored code and documentation are licensed under the
+[Apache License 2.0](LICENSE). KITTI data is not included, redistributed, or
+relicensed by this project.
