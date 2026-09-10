@@ -30,12 +30,13 @@ and acceptance gates are in [`spec.md`](spec.md), and ordered work is in
 | Replay/backpressure metrics | Planned (`v0.3`) | None |
 
 “Locally verified” currently means 79/79 public tests passed in macOS debug and
-release builds with AppleClang 16 and OpenCV 5.0. The same 79/79 tests passed
-with GCC 13 and OpenCV 4.6, then Clang 18 with ASan+UBSan, in a clean Ubuntu
-24.04 container. Format-check passed; the clang-tidy target completed with no
+a fresh Release build with AppleClang 16 and OpenCV 5.0. The earlier 73-test
+surface passed with GCC 13 and OpenCV 4.6, then Clang 18 with ASan+UBSan, in a
+clean Ubuntu 24.04 container; the expanded 79-test surface has not yet been
+rerun there. Format-check passed; the clang-tidy target completed with no
 actionable project diagnostics. Hosted GitHub Actions has not run. This state
-has local commits but has not been pushed,
-tagged, or released. Project-authored code and documentation use Apache-2.0.
+has local commits but has not been pushed, tagged, or released.
+Project-authored code and documentation use Apache-2.0.
 
 ## Prerequisites
 
@@ -92,6 +93,22 @@ reproducible public demonstration, not real-data evidence. Maintainers regenerat
 the two checked-in README images from a release build with
 `./examples/generate_public_artifacts.sh build/release docs/images`.
 
+## Public synthetic geometry evidence
+
+![Authored synthetic camera-LiDAR depth overlay](docs/images/synthetic_projection.png)
+
+The overlay above is generated from a project-authored road-like image and
+project-authored 3D geometry. Color encodes clamped rectified-camera depth; it
+is a reproducible pipeline demonstration, not KITTI evidence or calibration
+ground truth.
+
+![Authored synthetic calibration sensitivity grid](docs/images/synthetic_calibration_sensitivity.png)
+
+The grid holds the synthetic scene fixed while applying the required camera
+`+y` yaw and camera `+x` translation perturbations. Read the
+[`frame tree and projection conventions`](docs/frame_conventions.md) before
+interpreting the signs or treating `image_02` as an SE(3) frame.
+
 Run the authored projection microbenchmark from an optimized build:
 
 ```bash
@@ -112,9 +129,9 @@ tree was dirty when CMake configured the build. See
 percentile, accounting, and evidence rules.
 
 The retained Apple M4 Pro reference report for clean implementation commit
-`7432516` records geometry-only p50/p95/p99 latency of
-`0.583/0.629/0.670 ms` and aggregate throughput of
-`171.4 million points/s` for this exact authored workload. These are
+`185e287` records geometry-only p50/p95/p99 latency of
+`0.568/0.648/0.668 ms` and aggregate throughput of
+`171.3 million points/s` for this exact authored workload. These are
 single-host measurements, not an end-to-end or real-time claim. Inspect the
 [`machine-readable report`](docs/results/projection_benchmark_apple_m4_pro.json)
 and the incomplete [`v0.1` verification record](docs/v0.1_verification.md)
@@ -133,8 +150,11 @@ Project one frame from an authorized local KITTI Raw synced drive:
 The command creates a unique child run directory containing
 `run_summary.json`, `frames.jsonl`, and `overlays/<frame>.png`. Run
 `./build/dev/project_kitti --help` for validated defaults and optional flags.
-This command shape is tested with authored synthetic inputs; no private KITTI
-smoke run has been performed yet.
+This command shape is tested with authored synthetic inputs. A clean Release
+build also consumed frame 0 of an authorized local
+`2011_09_26_drive_0005_sync` copy: all 123,397 finite input points were
+accounted for, and the private overlay was opened for a visual sanity check.
+The KITTI input and derived image remain local and uncommitted.
 
 Run the fixed calibration-sensitivity suite on the same kind of private input:
 
@@ -149,9 +169,11 @@ Run the fixed calibration-sensitivity suite on the same kind of private input:
 It writes a baseline, four camera-`+y` yaw panels, four camera-`+x`
 translation panels, a combined comparison, and a JSON report. Perturbations are
 left-applied in `camera_rect_00`; the report gives common-visible-set median/p95
-pixel displacement plus appeared/disappeared counts. The synthetic comparison
-was opened and inspected. No private KITTI sensitivity run has been performed.
-The reported `50*tan(1 deg)` value is an analytic illustration, not a measured
+pixel displacement plus appeared/disappeared counts. Both the public synthetic
+comparison and the private frame-0 comparison were opened and inspected. The
+private Release run contained one baseline plus all eight required
+perturbations; its KITTI-derived images remain local and uncommitted. The
+reported `50*tan(1 deg)` value is an analytic illustration, not a measured
 calibration error or pixel-accuracy claim.
 
 The `asan-ubsan` preset is intended for the Ubuntu CI toolchain. AppleClang 16's

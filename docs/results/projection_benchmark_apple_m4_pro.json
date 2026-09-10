@@ -3,7 +3,7 @@
   "build": {
     "build_type": "Release",
     "compiler": "AppleClang 16.0.0.16000026",
-    "git_commit": "743251641dec3c21c6a5ba396f9f83c938f754f3",
+    "git_commit": "185e287ca41e1696d0752570b6dba36780639af3",
     "git_dirty": false
   },
   "config": {
@@ -29,12 +29,12 @@
   },
   "latency_ms": {
     "count": 100,
-    "max": 0.677542,
-    "mean": 0.58341089,
-    "min": 0.525208,
-    "p50": 0.583333,
-    "p95": 0.629208,
-    "p99": 0.670042
+    "max": 0.678625,
+    "mean": 0.5838125499999999,
+    "min": 0.553709,
+    "p50": 0.568167,
+    "p95": 0.647708,
+    "p99": 0.667542
   },
   "measurement": {
     "clock": "std::chrono::steady_clock",
@@ -104,8 +104,8 @@
     "visible_percent": 70
   },
   "throughput_points_per_sec": {
-    "aggregate": 171405782.29521906,
-    "at_p50_latency": 171428669.3878111
+    "aggregate": 171287856.00789163,
+    "at_p50_latency": 176004590.19971243
   },
   "verification": {
     "all_measured_iterations_accounted": true,

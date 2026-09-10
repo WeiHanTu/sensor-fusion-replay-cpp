@@ -257,9 +257,9 @@ synthetic side passes; the private KITTI run remains open.
 - [~] Complete README build/test/private-data/example/benchmark instructions.
   Benchmark usage, scope, and the canonical clean report link are present.
   Fresh-checkout execution and private-data sections remain open.
-- [~] Publish synthetic overlay, sensitivity comparison, and frame tree only.
-  The reproducible generator and publishing script are implemented; final
-  release-build images and README placement are pending.
+- [x] Publish synthetic overlay, sensitivity comparison, and frame tree only.
+  The checked-in images are generated from project-authored inputs by the
+  documented release-build script; the frame tree marks unavailable edges.
 - [x] Add a capability/evidence table: implemented and verified items only.
 - [ ] Run every `v0.1` acceptance item from `spec.md` on a release candidate.
 - [x] Review for misleading words: real-time, fusion, accuracy, production,
