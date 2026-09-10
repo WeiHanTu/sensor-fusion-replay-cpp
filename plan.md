@@ -83,14 +83,14 @@ push. The local checkpoint alone does not pass this gate.
 
 ### 0.2 Freeze reproducible inputs
 
-- [ ] Select one KITTI Raw synced drive for local manual testing and record only
+- [x] Select one KITTI Raw synced drive for local manual testing and record only
   its public sequence ID, never local absolute paths.
-- [ ] Verify it has `image_02`, `velodyne_points`, their timestamp files, and the
+- [x] Verify it has `image_02`, `velodyne_points`, their timestamp files, and the
   matching daily camera/Velodyne calibration.
-- [ ] Record the private smoke-test frame ID/range in a local ignored config.
+- [x] Record the private smoke-test frame ID/range in a local ignored config.
 - [x] Record the intended reference benchmark host: macOS Darwin 25.6.0,
   arm64, Apple M4 Pro.
-- [ ] Decide that public visuals remain synthetic unless redistribution
+- [x] Decide that public visuals remain synthetic unless redistribution
   permission for real-data screenshots is documented.
 
 Exit gate: the private input exists locally, remains ignored, and its layout is
@@ -230,7 +230,7 @@ private real-data output has been visually inspected but is still untracked.
   set failure.
 - [x] Generate baseline plus four yaw and four translation panels on synthetic
   data and inspect labels/legend.
-- [ ] Run the same experiment locally on the chosen private frame.
+- [x] Run the same experiment locally on the chosen private frame.
 - [x] Document `50*tan(1 deg)` as an analytic illustration, explicitly separate
   from measured pixel displacement.
 
@@ -244,24 +244,24 @@ ctest --preset dev \
 ```
 
 Exit gate: nine individual images, combined comparison, and JSON report satisfy
-the `v0.1` sensitivity contract; all perturbation metadata is unambiguous. The
-synthetic side passes; the private KITTI run remains open.
+the `v0.1` sensitivity contract; all perturbation metadata is unambiguous. Both
+the synthetic and private frame-0 runs were visually inspected.
 
 ### 1.6 Benchmark, documentation, and `v0.1` release (0.5-1 day)
 
 - [x] Add projection microbenchmark with at least 100,000 deterministic points,
   warm-up, at least 100 measured iterations, and machine-readable output.
 - [x] Run only an optimized build; capture commit/dirty state/compiler/host/config.
-  The retained report references clean implementation commit `7432516` and an
+  The retained report references clean implementation commit `185e287` and an
   Apple M4 Pro Release build.
-- [~] Complete README build/test/private-data/example/benchmark instructions.
-  Benchmark usage, scope, and the canonical clean report link are present.
-  Fresh-checkout execution and private-data sections remain open.
+- [x] Complete README build/test/private-data/example/benchmark instructions.
+  The documented commands passed from a separate clean clone of `9ef8765`.
 - [x] Publish synthetic overlay, sensitivity comparison, and frame tree only.
   The checked-in images are generated from project-authored inputs by the
   documented release-build script; the frame tree marks unavailable edges.
 - [x] Add a capability/evidence table: implemented and verified items only.
-- [ ] Run every `v0.1` acceptance item from `spec.md` on a release candidate.
+- [~] Run every `v0.1` acceptance item from `spec.md` on a release candidate.
+  All local items pass; hosted GCC/Clang CI remains pending the first push.
 - [x] Review for misleading words: real-time, fusion, accuracy, production,
   detection, collision avoidance, and safety.
 - [ ] Tag `v0.1.0` only after the tree is clean and evidence is attached/linked.
