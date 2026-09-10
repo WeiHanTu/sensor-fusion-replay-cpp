@@ -415,8 +415,8 @@ void writeReportAtomically(const std::filesystem::path& output_path, const Json&
 [[nodiscard]] Json makeReport(const BenchmarkOptions& options, const SyntheticFixture& fixture,
                               const LatencyStats& stats,
                               const sfr::geometry::ProjectionCounts& counts,
-                              const double mean_throughput_points_per_sec,
-                              const double p50_throughput_points_per_sec) {
+                              const double aggregate_throughput_points_per_sec,
+                              const double throughput_at_p50_latency_points_per_sec) {
   return {
       {"schema_version", "1.1.0"},
       {"benchmark", "projection_pipeline"},
@@ -465,7 +465,8 @@ void writeReportAtomically(const std::filesystem::path& output_path, const Json&
         {"p95", stats.p95_ms},
         {"p99", stats.p99_ms}}},
       {"throughput_points_per_sec",
-       {{"mean", mean_throughput_points_per_sec}, {"p50", p50_throughput_points_per_sec}}},
+       {{"aggregate", aggregate_throughput_points_per_sec},
+        {"at_p50_latency", throughput_at_p50_latency_points_per_sec}}},
       {"counts",
        {{"input_points", counts.input_points},
         {"visible_points", counts.visible_points},
@@ -515,12 +516,13 @@ void writeReportAtomically(const std::filesystem::path& output_path, const Json&
   }
 
   const LatencyStats stats = computeStats(std::move(sample_durations_ms));
-  const double mean_throughput_points_per_sec =
+  const double aggregate_throughput_points_per_sec =
       static_cast<double>(options.point_count) * 1000.0 / stats.mean_ms;
-  const double p50_throughput_points_per_sec =
+  const double throughput_at_p50_latency_points_per_sec =
       static_cast<double>(options.point_count) * 1000.0 / stats.p50_ms;
-  const Json report = makeReport(options, fixture, stats, expected, mean_throughput_points_per_sec,
-                                 p50_throughput_points_per_sec);
+  const Json report =
+      makeReport(options, fixture, stats, expected, aggregate_throughput_points_per_sec,
+                 throughput_at_p50_latency_points_per_sec);
 
   std::cout << "SFR projection microbenchmark\n"
             << "commit: " << sfr::core::kBuildInfo.git_commit
@@ -536,8 +538,8 @@ void writeReportAtomically(const std::filesystem::path& output_path, const Json&
             << " mean=" << stats.mean_ms << " p50=" << stats.p50_ms << " p95=" << stats.p95_ms
             << " p99=" << stats.p99_ms << " max=" << stats.max_ms << '\n'
             << std::setprecision(0)
-            << "throughput points/s: mean=" << mean_throughput_points_per_sec
-            << " p50=" << p50_throughput_points_per_sec << '\n'
+            << "throughput points/s: aggregate=" << aggregate_throughput_points_per_sec
+            << " at_p50_latency=" << throughput_at_p50_latency_points_per_sec << '\n'
             << "counts: visible=" << expected.visible_points
             << " behind_or_too_near=" << expected.behind_or_too_near
             << " outside_image=" << expected.outside_image << " input=" << expected.input_points

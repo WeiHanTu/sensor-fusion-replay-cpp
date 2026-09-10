@@ -78,6 +78,10 @@ TEST_F(BenchmarkProjectionCliTest, WritesVerifiedSyntheticSmokeReport) {
   EXPECT_EQ(report.at("counts").at("outside_image"), 150U);
   EXPECT_EQ(report.at("counts").at("behind_or_too_near"), 150U);
   EXPECT_EQ(report.at("counts").at("input_points"), 1'000U);
+  EXPECT_GT(report.at("throughput_points_per_sec").at("aggregate").get<double>(), 0.0);
+  EXPECT_GT(report.at("throughput_points_per_sec").at("at_p50_latency").get<double>(), 0.0);
+  EXPECT_FALSE(report.at("throughput_points_per_sec").contains("mean"));
+  EXPECT_FALSE(report.at("throughput_points_per_sec").contains("p50"));
   EXPECT_TRUE(report.at("verification").at("all_warmup_iterations_accounted"));
   EXPECT_TRUE(report.at("verification").at("all_measured_iterations_accounted"));
   EXPECT_LE(report.at("latency_ms").at("min").get<double>(),

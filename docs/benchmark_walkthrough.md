@@ -75,9 +75,12 @@ rank = clamp(ceil(p * N), 1, N)
 percentile(p) = sorted_samples[rank - 1]
 ```
 
-The report includes sample count, min, max, mean, p50, p95, and p99 latency,
-plus mean and p50-derived point throughput. Throughput describes only the timed
-geometry boundary above.
+The report includes sample count, min, max, mean, p50, p95, and p99 latency.
+It reports aggregate point throughput derived from total points divided by total
+measured time, plus the rate corresponding to p50 latency. The latter is named
+`at_p50_latency`; it is not misrepresented as a percentile of independently
+sorted throughput samples. Throughput describes only the timed geometry boundary
+above.
 
 ## Running it
 
