@@ -8,7 +8,7 @@ Planning baseline on 2026-09-09:
   planning contract and a local `v0.1` checkpoint through the synthetic
   calibration-sensitivity experiment.
 - The local repository is initialized on `main` with the intended `origin` and
-  one local checkpoint commit. The public GitHub repository was confirmed empty
+  local checkpoint commits. The public GitHub repository was confirmed empty
   before local initialization; no push has been performed.
 - Frame-labelled rigid transforms, a deterministic cycle-free frame graph, a
   full `3x4` rectified projection primitive, and strict synthetic KITTI
@@ -19,9 +19,11 @@ Planning baseline on 2026-09-09:
   Equivalent clean Ubuntu 24.04 container runs passed GCC 13 debug tests and
   Clang 18 ASan+UBSan tests. Hosted GitHub Actions has not run.
 - Synthetic projection and calibration-sensitivity outputs have been generated
-  and inspected. No benchmark, private-data smoke run, push, tag, or release
-  claim exists yet. The authored synthetic output proves fixture contracts; it
-  is not real-data or publication-quality portfolio evidence.
+  and inspected. The authored projection microbenchmark and its CLI/schema
+  regression tests are implemented; a clean-commit release report is still
+  pending. No private-data smoke run, push, tag, or release claim exists yet.
+  Authored synthetic output proves fixture contracts; it is not real-data or
+  publication-quality portfolio evidence.
 
 Status vocabulary:
 
@@ -85,7 +87,8 @@ push. The local checkpoint alone does not pass this gate.
 - [ ] Verify it has `image_02`, `velodyne_points`, their timestamp files, and the
   matching daily camera/Velodyne calibration.
 - [ ] Record the private smoke-test frame ID/range in a local ignored config.
-- [ ] Record the intended reference benchmark host (OS, architecture, CPU).
+- [x] Record the intended reference benchmark host: macOS Darwin 25.6.0,
+  arm64, Apple M4 Pro.
 - [ ] Decide that public visuals remain synthetic unless redistribution
   permission for real-data screenshots is documented.
 
@@ -242,14 +245,18 @@ synthetic side passes; the private KITTI run remains open.
 
 ### 1.6 Benchmark, documentation, and `v0.1` release (0.5-1 day)
 
-- [ ] Add projection microbenchmark with at least 100,000 deterministic points,
+- [x] Add projection microbenchmark with at least 100,000 deterministic points,
   warm-up, at least 100 measured iterations, and machine-readable output.
-- [ ] Run only an optimized build; capture commit/dirty state/compiler/host/config.
-- [ ] Complete README build/test/private-data/example/benchmark instructions.
+- [~] Run only an optimized build; capture commit/dirty state/compiler/host/config.
+  The release harness enforces these rules; the clean-commit evidence report is
+  pending the implementation commit and fresh configure.
+- [~] Complete README build/test/private-data/example/benchmark instructions.
+  Benchmark usage and scope are documented; the canonical clean report link is
+  pending.
 - [ ] Publish synthetic overlay, sensitivity comparison, and frame tree only.
-- [ ] Add a capability/evidence table: implemented and verified items only.
+- [x] Add a capability/evidence table: implemented and verified items only.
 - [ ] Run every `v0.1` acceptance item from `spec.md` on a release candidate.
-- [ ] Review for misleading words: real-time, fusion, accuracy, production,
+- [x] Review for misleading words: real-time, fusion, accuracy, production,
   detection, collision avoidance, and safety.
 - [ ] Tag `v0.1.0` only after the tree is clean and evidence is attached/linked.
 

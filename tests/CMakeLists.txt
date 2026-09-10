@@ -48,3 +48,13 @@ target_compile_definitions(
 add_dependencies(cli_analyze_calibration_test analyze_calibration)
 
 add_test(NAME cli_analyze_calibration_help COMMAND analyze_calibration --help)
+
+sfr_add_test(cli_benchmark_projection_test integration/benchmark_projection_cli_test.cpp
+             sfr::geometry)
+target_link_libraries(cli_benchmark_projection_test PRIVATE nlohmann_json::nlohmann_json)
+target_compile_definitions(
+  cli_benchmark_projection_test
+  PRIVATE SFR_BENCHMARK_PROJECTION_EXE="$<TARGET_FILE:benchmark_projection>")
+add_dependencies(cli_benchmark_projection_test benchmark_projection)
+
+add_test(NAME cli_benchmark_projection_help COMMAND benchmark_projection --help)

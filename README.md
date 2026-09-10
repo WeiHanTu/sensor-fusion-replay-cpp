@@ -24,14 +24,16 @@ and acceptance gates are in [`spec.md`](spec.md), and ordered work is in
 | Atomic JSON/JSONL run artifacts | Locally verified on synthetic inputs | Schema/accounting/overwrite tests |
 | `project_kitti` CLI | Locally verified on synthetic inputs | End-to-end process and exit-code tests |
 | Calibration sensitivity | Locally verified on synthetic inputs | Hand-computed sign/axis tests, JSON checks, and inspected nine-panel output |
+| Projection microbenchmark | Locally verified on authored synthetic input | Exact per-iteration accounting, CLI/schema tests, and cross-toolchain smoke runs |
 | Geometric perception | Planned (`v0.2`) | None |
 | Replay/backpressure metrics | Planned (`v0.3`) | None |
 
-“Locally verified” currently means 65/65 public tests passed in macOS debug and
-release builds with AppleClang 16 and OpenCV 5.0. The same 65/65 tests passed
+“Locally verified” currently means 73/73 public tests passed in macOS debug and
+release builds with AppleClang 16 and OpenCV 5.0. The same 73/73 tests passed
 with GCC 13 and OpenCV 4.6, then Clang 18 with ASan+UBSan, in a clean Ubuntu
-24.04 container. Format and clang-tidy passed locally. Hosted GitHub Actions has
-not run. This state has a local checkpoint commit but has not been pushed,
+24.04 container. Format-check passed; the clang-tidy target completed with no
+actionable project diagnostics. Hosted GitHub Actions has not run. This state
+has local commits but has not been pushed,
 tagged, or released. A project-code license has not been selected.
 
 ## Prerequisites
@@ -64,6 +66,25 @@ ctest --preset dev --output-on-failure
 cmake --build --preset dev --target format-check
 cmake --build --preset dev --target clang-tidy
 ```
+
+Run the authored projection microbenchmark from an optimized build:
+
+```bash
+cmake --preset release
+cmake --build --preset release --parallel
+./build/release/benchmark_projection \
+  --output-json artifacts/benchmarks/projection_benchmark_current.json \
+  --overwrite
+```
+
+The default run measures 100 iterations of 100,000 deterministic finite points
+after 10 warm-up iterations. It times only SE(3) transformation, rectified
+projection, classification, and output-vector construction. It does not measure
+KITTI decoding, visualization, report serialization, queues, replay pacing, or
+end-to-end latency. Formal JSON output is refused for a non-smoke run if the
+tree was dirty when CMake configured the build. See
+[`docs/benchmark_walkthrough.md`](docs/benchmark_walkthrough.md) for the fixture,
+percentile, accounting, and evidence rules.
 
 Project one frame from an authorized local KITTI Raw synced drive:
 

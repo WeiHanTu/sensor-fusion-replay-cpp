@@ -33,7 +33,7 @@ in this file and reflected in `intend.md`, `plan.md`, tests, and release evidenc
 | OpenCV core/imgcodecs/imgproc | Runtime | Image loading and rendering; no GUI requirement. |
 | nlohmann_json or equivalent small JSON library | Runtime | Reports only; pin/acquire reproducibly. |
 | GoogleTest | Tests | No production dependency. |
-| Google Benchmark | Benchmarks | Optional until a benchmark target exists; not part of library API. |
+| Google Benchmark | Benchmarks | Not currently required; the audited `v0.1` harness uses `std::chrono::steady_clock`. |
 
 PCL, ROS 2, CUDA, TensorRT, and neural inference dependencies MUST NOT be added
 through `v0.3` without a spec revision and measured justification.
@@ -86,6 +86,7 @@ Required CMake targets:
 | `sfr_viz` | overlay and panel rendering | geometry, perception, OpenCV |
 | `project_kitti` | one-frame/range projection CLI | io, geometry, viz |
 | `analyze_calibration` | controlled perturbation CLI | io, geometry, viz |
+| `benchmark_projection` | authored projection microbenchmark and JSON report | geometry, JSON, build info |
 | `replay_sequence` | sequence/perception/runtime CLI | all libraries |
 
 Apps MUST contain composition and argument/error handling only. Core algorithms
@@ -622,6 +623,17 @@ or private data.
 - Warm-up samples are excluded and counted separately.
 - Projection benchmark uses at least 100,000 finite synthetic points and reports
   input points/s plus rejection counts.
+- The projection fixture MUST record an authored-fixture identifier, deterministic
+  generator and seed, category distribution, `T_camera_rect_00_lidar`, full
+  `P_image_camera_rect_00`, image dimensions, and minimum camera depth.
+- Every warm-up and measured projection iteration MUST satisfy the terminal
+  accounting equation and the fixture's exact expected category counts. A report
+  MUST state how many iterations were checked; one sampled iteration is
+  insufficient evidence for the full run.
+- Projection timing MUST use `std::chrono::steady_clock` and state the measured
+  boundary. Fixture generation, validation, image decode, visualization,
+  serialization, queue wait, and replay pacing are excluded from this geometry
+  microbenchmark and MUST NOT be implied by its throughput.
 - End-to-end runtime evidence uses at least 1,000 measured pairs after warm-up.
   Cycling a shorter sequence is allowed only if the report records cycles and
   warns about cache effects.

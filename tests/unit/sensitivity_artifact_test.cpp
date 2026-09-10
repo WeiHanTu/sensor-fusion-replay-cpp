@@ -131,5 +131,14 @@ TEST_F(SensitivityArtifactTest, RejectsIncompleteOrDuplicatePerturbationSets) {
   EXPECT_THROW(static_cast<void>(writeSensitivityArtifacts(duplicate)), ArtifactError);
 }
 
+TEST_F(SensitivityArtifactTest, PreservesPreexistingTemporaryDirectory) {
+  const std::filesystem::path temporary_directory = root_ / "sensitivity-run.tmp";
+  ASSERT_TRUE(std::filesystem::create_directories(temporary_directory));
+  std::ofstream(temporary_directory / "owner-marker.txt") << "not owned by this writer";
+
+  EXPECT_THROW(static_cast<void>(writeSensitivityArtifacts(request())), ArtifactError);
+  EXPECT_TRUE(std::filesystem::is_regular_file(temporary_directory / "owner-marker.txt"));
+}
+
 } // namespace
 } // namespace sfr::viz

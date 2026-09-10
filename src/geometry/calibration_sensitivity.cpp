@@ -49,7 +49,8 @@ using ProjectionBySource = std::map<std::uint64_t, const core::ProjectedPoint*>;
 [[nodiscard]] double nearestRank(std::vector<double> sorted_values, const double percentile) {
   std::ranges::sort(sorted_values);
   const double rank = std::ceil(percentile * static_cast<double>(sorted_values.size()));
-  const auto one_based_rank = static_cast<std::size_t>(std::max(1.0, rank));
+  const auto one_based_rank = std::clamp(static_cast<std::size_t>(std::max(1.0, rank)),
+                                         std::size_t{1}, sorted_values.size());
   return sorted_values.at(one_based_rank - 1U);
 }
 

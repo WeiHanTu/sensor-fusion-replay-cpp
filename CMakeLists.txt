@@ -60,14 +60,17 @@ if(NOT TARGET nlohmann_json::nlohmann_json)
   FetchContent_MakeAvailable(nlohmann_json)
 endif()
 
+if(SFR_BUILD_TESTS)
+  enable_testing()
+endif()
+
 add_subdirectory(src/geometry)
 add_subdirectory(src/io)
 add_subdirectory(src/viz)
 add_subdirectory(apps)
+add_subdirectory(benchmarks)
 
 if(SFR_BUILD_TESTS)
-  enable_testing()
-
   find_package(GTest 1.15 CONFIG QUIET)
   if(NOT TARGET GTest::gtest_main)
     message(STATUS "GoogleTest was not found; fetching pinned v1.15.2")
@@ -103,6 +106,7 @@ sfr_add_developer_tools(
   include/sfr/viz/sensitivity_artifact.hpp
   apps/analyze_calibration.cpp
   apps/project_kitti.cpp
+  benchmarks/benchmark_projection.cpp
   src/geometry/calibration_sensitivity.cpp
   src/geometry/frame_graph.cpp
   src/geometry/point_cloud_projection.cpp
@@ -117,6 +121,7 @@ sfr_add_developer_tools(
   src/viz/projection_artifact.cpp
   src/viz/sensitivity_artifact.cpp
   tests/integration/analyze_calibration_cli_test.cpp
+  tests/integration/benchmark_projection_cli_test.cpp
   tests/integration/project_kitti_cli_test.cpp
   tests/unit/calibration_sensitivity_test.cpp
   tests/unit/calibration_test.cpp

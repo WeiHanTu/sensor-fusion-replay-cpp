@@ -29,7 +29,18 @@ using Json = nlohmann::json;
 
 class TemporarySensitivityDirectory final {
 public:
-  explicit TemporarySensitivityDirectory(std::filesystem::path path) : path_(std::move(path)) {}
+  explicit TemporarySensitivityDirectory(std::filesystem::path path) : path_(std::move(path)) {
+    try {
+      if (!std::filesystem::create_directory(path_)) {
+        throw ArtifactError(ArtifactErrorCode::kExistingRun,
+                            "temporary sensitivity directory already exists: " + path_.string());
+      }
+    } catch (const std::filesystem::filesystem_error& error) {
+      throw ArtifactError(ArtifactErrorCode::kFilesystem,
+                          std::string("unable to claim temporary sensitivity directory: ") +
+                              error.what());
+    }
+  }
 
   TemporarySensitivityDirectory(const TemporarySensitivityDirectory&) = delete;
   TemporarySensitivityDirectory& operator=(const TemporarySensitivityDirectory&) = delete;
@@ -226,14 +237,12 @@ SensitivityArtifactResult writeSensitivityArtifacts(const SensitivityArtifactReq
   const std::filesystem::path temporary_directory = request.output_root / (request.run_id + ".tmp");
   const std::filesystem::path temporary_sensitivity_directory =
       temporary_directory / "calibration_sensitivity";
-  TemporarySensitivityDirectory cleanup(temporary_directory);
 
   try {
     std::filesystem::create_directories(request.output_root);
-    if (!std::filesystem::is_directory(request.output_root) ||
-        std::filesystem::exists(temporary_directory)) {
-      throw ArtifactError(ArtifactErrorCode::kExistingRun,
-                          "output root is invalid or temporary run directory already exists");
+    if (!std::filesystem::is_directory(request.output_root)) {
+      throw ArtifactError(ArtifactErrorCode::kFilesystem,
+                          "sensitivity output root is not a directory");
     }
     if (std::filesystem::exists(final_directory)) {
       if (!std::filesystem::is_directory(final_directory)) {
@@ -248,11 +257,18 @@ SensitivityArtifactResult writeSensitivityArtifacts(const SensitivityArtifactReq
             "sensitivity run directory is nonempty; pass --overwrite to replace it");
       }
     }
-    std::filesystem::create_directories(temporary_sensitivity_directory);
   } catch (const std::filesystem::filesystem_error& error) {
     throw ArtifactError(ArtifactErrorCode::kFilesystem,
                         std::string("unable to prepare sensitivity run directory: ") +
                             error.what());
+  }
+
+  TemporarySensitivityDirectory cleanup(temporary_directory);
+  try {
+    std::filesystem::create_directory(temporary_sensitivity_directory);
+  } catch (const std::filesystem::filesystem_error& error) {
+    throw ArtifactError(ArtifactErrorCode::kFilesystem,
+                        std::string("unable to prepare sensitivity directory: ") + error.what());
   }
 
   const auto serialization_start = std::chrono::steady_clock::now();

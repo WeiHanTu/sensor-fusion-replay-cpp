@@ -95,6 +95,15 @@ TEST_F(ProjectionArtifactTest, RefusesNonemptyRunUnlessOverwriteIsExplicit) {
   EXPECT_NO_THROW(static_cast<void>(writeProjectionArtifacts(first)));
 }
 
+TEST_F(ProjectionArtifactTest, PreservesPreexistingTemporaryDirectory) {
+  const std::filesystem::path temporary_directory = root_ / "deterministic-run.tmp";
+  ASSERT_TRUE(std::filesystem::create_directories(temporary_directory));
+  std::ofstream(temporary_directory / "owner-marker.txt") << "not owned by this writer";
+
+  EXPECT_THROW(static_cast<void>(writeProjectionArtifacts(request())), ArtifactError);
+  EXPECT_TRUE(std::filesystem::is_regular_file(temporary_directory / "owner-marker.txt"));
+}
+
 TEST_F(ProjectionArtifactTest, RejectsUnsafeRunIdAndBrokenAccounting) {
   ProjectionArtifactRequest invalid_id = request();
   invalid_id.run_id = "../outside";

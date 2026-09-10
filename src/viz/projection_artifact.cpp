@@ -27,7 +27,17 @@ using Json = nlohmann::json;
 
 class TemporaryRunDirectory final {
 public:
-  explicit TemporaryRunDirectory(std::filesystem::path path) : path_(std::move(path)) {}
+  explicit TemporaryRunDirectory(std::filesystem::path path) : path_(std::move(path)) {
+    try {
+      if (!std::filesystem::create_directory(path_)) {
+        throw ArtifactError(ArtifactErrorCode::kExistingRun,
+                            "temporary run directory already exists: " + path_.string());
+      }
+    } catch (const std::filesystem::filesystem_error& error) {
+      throw ArtifactError(ArtifactErrorCode::kFilesystem,
+                          std::string("unable to claim temporary run directory: ") + error.what());
+    }
+  }
 
   TemporaryRunDirectory(const TemporaryRunDirectory&) = delete;
   TemporaryRunDirectory& operator=(const TemporaryRunDirectory&) = delete;
@@ -174,18 +184,12 @@ ProjectionArtifactResult writeProjectionArtifacts(const ProjectionArtifactReques
   const std::filesystem::path final_directory = request.output_root / request.run_id;
   const std::filesystem::path temporary_directory = request.output_root / (request.run_id + ".tmp");
   const std::filesystem::path temporary_overlay_directory = temporary_directory / "overlays";
-  TemporaryRunDirectory cleanup(temporary_directory);
 
   try {
     std::filesystem::create_directories(request.output_root);
     if (!std::filesystem::is_directory(request.output_root)) {
       throw ArtifactError(ArtifactErrorCode::kFilesystem,
                           "output root is not a directory: " + request.output_root.string());
-    }
-    if (std::filesystem::exists(temporary_directory)) {
-      throw ArtifactError(ArtifactErrorCode::kExistingRun,
-                          "temporary run directory already exists: " +
-                              temporary_directory.string());
     }
     if (std::filesystem::exists(final_directory)) {
       if (!std::filesystem::is_directory(final_directory)) {
@@ -201,10 +205,17 @@ ProjectionArtifactResult writeProjectionArtifacts(const ProjectionArtifactReques
                                 final_directory.string());
       }
     }
-    std::filesystem::create_directories(temporary_overlay_directory);
   } catch (const std::filesystem::filesystem_error& error) {
     throw ArtifactError(ArtifactErrorCode::kFilesystem,
                         std::string("unable to prepare run directory: ") + error.what());
+  }
+
+  TemporaryRunDirectory cleanup(temporary_directory);
+  try {
+    std::filesystem::create_directory(temporary_overlay_directory);
+  } catch (const std::filesystem::filesystem_error& error) {
+    throw ArtifactError(ArtifactErrorCode::kFilesystem,
+                        std::string("unable to prepare overlay directory: ") + error.what());
   }
 
   const std::string overlay_name = frameFilename(request.image_frame_id);
