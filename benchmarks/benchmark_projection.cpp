@@ -418,7 +418,7 @@ void writeReportAtomically(const std::filesystem::path& output_path, const Json&
                               const double aggregate_throughput_points_per_sec,
                               const double throughput_at_p50_latency_points_per_sec) {
   return {
-      {"schema_version", "1.1.0"},
+      {"schema_version", "1.2.0"},
       {"benchmark", "projection_pipeline"},
       {"percentile_method", "nearest_rank"},
       {"measurement",

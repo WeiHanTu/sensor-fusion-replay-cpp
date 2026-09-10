@@ -111,7 +111,7 @@ is never implicit.
 
 ## Report interpretation
 
-The JSON schema version is `1.1.0`. Build and host fields provide commit, dirty
+The JSON schema version is `1.2.0`. Build and host fields provide commit, dirty
 state, build type, compiler, OS, architecture, and CPU. Configuration and
 fixture fields bind the results to the exact workload. Verification fields prove
 that all declared iterations were checked.

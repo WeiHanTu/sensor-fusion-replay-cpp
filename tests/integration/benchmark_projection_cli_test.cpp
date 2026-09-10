@@ -64,7 +64,7 @@ TEST_F(BenchmarkProjectionCliTest, WritesVerifiedSyntheticSmokeReport) {
 
   nlohmann::json report;
   std::ifstream(report_path) >> report;
-  EXPECT_EQ(report.at("schema_version"), "1.1.0");
+  EXPECT_EQ(report.at("schema_version"), "1.2.0");
   EXPECT_EQ(report.at("benchmark"), "projection_pipeline");
   EXPECT_EQ(report.at("percentile_method"), "nearest_rank");
   EXPECT_EQ(report.at("measurement").at("clock"), "std::chrono::steady_clock");
