@@ -110,8 +110,8 @@ manually checked. No automatic KITTI downloader is added.
   Installation/export boundaries remain deferred until a consumable SDK exists.
 - [x] Add `.clang-format`, `.clang-tidy`, `format`, `format-check`, and
   `clang-tidy` targets.
-- [~] Add Ubuntu GitHub Actions jobs for GCC, Clang, and ASan/UBSan. Workflow is
-  written; hosted execution is unverified because nothing has been pushed.
+- [x] Add Ubuntu GitHub Actions jobs for GCC, Clang, and ASan/UBSan. All three
+  passed in hosted run `34457080539` on release-candidate commit `d868970`.
 - [x] Add a minimal README capability table that separates locally verified,
   in-progress, and planned work.
 
@@ -260,8 +260,9 @@ the synthetic and private frame-0 runs were visually inspected.
   The checked-in images are generated from project-authored inputs by the
   documented release-build script; the frame tree marks unavailable edges.
 - [x] Add a capability/evidence table: implemented and verified items only.
-- [~] Run every `v0.1` acceptance item from `spec.md` on a release candidate.
-  All local items pass; hosted GCC/Clang CI remains pending the first push.
+- [x] Run every `v0.1` acceptance item from `spec.md` on a release candidate.
+  Local, fresh-clone, container, private-data, visual, benchmark, and hosted CI
+  evidence is recorded in `docs/v0.1_verification.md`.
 - [x] Review for misleading words: real-time, fusion, accuracy, production,
   detection, collision avoidance, and safety.
 - [ ] Tag `v0.1.0` only after the tree is clean and evidence is attached/linked.

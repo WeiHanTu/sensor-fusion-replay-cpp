@@ -3,8 +3,8 @@
 A C++20-first offline camera/LiDAR replay project for inspectable geometry,
 runtime, testing, and performance evidence.
 
-> Status: early `v0.1 Geometry` implementation. This is not a released,
-> production, real-time, or safety system.
+> Status: `v0.1 Geometry` verification complete. This is not a production,
+> real-time, or safety system.
 
 The product contract is in [`intend.md`](intend.md), the normative architecture
 and acceptance gates are in [`spec.md`](spec.md), and ordered work is in
@@ -34,9 +34,11 @@ a fresh Release build with AppleClang 16 and OpenCV 5.0. The same 79/79 tests
 passed with GCC 13, Clang 18, and Clang 18 ASan+UBSan in an Ubuntu 24.04
 container built from exact commit `9ef8765`. Format-check passed; the
 clang-tidy target completed with no actionable project diagnostics. The README
-commands also passed from a separate clean clone. Hosted GitHub Actions has not
-run. This state has local commits but has not been pushed, tagged, or released.
-Project-authored code and documentation use Apache-2.0.
+commands also passed from a separate clean clone. Hosted GitHub Actions passed
+GCC, Clang, and ASan+UBSan on release-candidate commit `d868970`; see the
+[`v0.1` verification record](docs/v0.1_verification.md). Git tags and GitHub
+Releases are the authority for publication state. Project-authored code and
+documentation use Apache-2.0.
 
 ## Prerequisites
 
