@@ -58,3 +58,12 @@ target_compile_definitions(
 add_dependencies(cli_benchmark_projection_test benchmark_projection)
 
 add_test(NAME cli_benchmark_projection_help COMMAND benchmark_projection --help)
+
+sfr_add_test(cli_generate_synthetic_kitti_test
+             integration/generate_synthetic_kitti_cli_test.cpp sfr::io)
+target_compile_definitions(
+  cli_generate_synthetic_kitti_test
+  PRIVATE SFR_GENERATE_SYNTHETIC_KITTI_EXE="$<TARGET_FILE:generate_synthetic_kitti>")
+add_dependencies(cli_generate_synthetic_kitti_test generate_synthetic_kitti)
+
+add_test(NAME cli_generate_synthetic_kitti_help COMMAND generate_synthetic_kitti --help)

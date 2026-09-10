@@ -69,6 +69,7 @@ add_subdirectory(src/io)
 add_subdirectory(src/viz)
 add_subdirectory(apps)
 add_subdirectory(benchmarks)
+add_subdirectory(examples)
 
 if(SFR_BUILD_TESTS)
   find_package(GTest 1.15 CONFIG QUIET)
@@ -107,6 +108,7 @@ sfr_add_developer_tools(
   apps/analyze_calibration.cpp
   apps/project_kitti.cpp
   benchmarks/benchmark_projection.cpp
+  examples/generate_synthetic_kitti.cpp
   src/geometry/calibration_sensitivity.cpp
   src/geometry/frame_graph.cpp
   src/geometry/point_cloud_projection.cpp
@@ -122,6 +124,7 @@ sfr_add_developer_tools(
   src/viz/sensitivity_artifact.cpp
   tests/integration/analyze_calibration_cli_test.cpp
   tests/integration/benchmark_projection_cli_test.cpp
+  tests/integration/generate_synthetic_kitti_cli_test.cpp
   tests/integration/project_kitti_cli_test.cpp
   tests/unit/calibration_sensitivity_test.cpp
   tests/unit/calibration_test.cpp

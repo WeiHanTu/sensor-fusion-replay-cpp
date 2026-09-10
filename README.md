@@ -25,11 +25,12 @@ and acceptance gates are in [`spec.md`](spec.md), and ordered work is in
 | `project_kitti` CLI | Locally verified on synthetic inputs | End-to-end process and exit-code tests |
 | Calibration sensitivity | Locally verified on synthetic inputs | Hand-computed sign/axis tests, JSON checks, and inspected nine-panel output |
 | Projection microbenchmark | Locally verified on authored synthetic input | Exact per-iteration accounting, CLI/schema tests, and cross-toolchain smoke runs |
+| Authored synthetic demo | Locally verified | Staged fixture generator and loader/overwrite/ownership tests |
 | Geometric perception | Planned (`v0.2`) | None |
 | Replay/backpressure metrics | Planned (`v0.3`) | None |
 
-“Locally verified” currently means 73/73 public tests passed in macOS debug and
-release builds with AppleClang 16 and OpenCV 5.0. The same 73/73 tests passed
+“Locally verified” currently means 79/79 public tests passed in macOS debug and
+release builds with AppleClang 16 and OpenCV 5.0. The same 79/79 tests passed
 with GCC 13 and OpenCV 4.6, then Clang 18 with ASan+UBSan, in a clean Ubuntu
 24.04 container. Format-check passed; the clang-tidy target completed with no
 actionable project diagnostics. Hosted GitHub Actions has not run. This state
@@ -66,6 +67,30 @@ ctest --preset dev --output-on-failure
 cmake --build --preset dev --target format-check
 cmake --build --preset dev --target clang-tidy
 ```
+
+Create a project-owned KITTI-shaped demo fixture and run both geometry CLIs:
+
+```bash
+./build/dev/generate_synthetic_kitti \
+  --output-dir artifacts/synthetic_kitti \
+  --overwrite
+./build/dev/project_kitti \
+  --dataset-root artifacts/synthetic_kitti \
+  --drive synthetic_drive_sync \
+  --frame 0 \
+  --output-dir artifacts/synthetic_projection
+./build/dev/analyze_calibration \
+  --dataset-root artifacts/synthetic_kitti \
+  --drive synthetic_drive_sync \
+  --frame 0 \
+  --output-dir artifacts/synthetic_sensitivity
+```
+
+The generated daily root, image, point cloud, calibration, and timestamps are
+authored for this repository and contain no KITTI data. Their purpose is a
+reproducible public demonstration, not real-data evidence. Maintainers regenerate
+the two checked-in README images from a release build with
+`./examples/generate_public_artifacts.sh build/release docs/images`.
 
 Run the authored projection microbenchmark from an optimized build:
 

@@ -87,6 +87,7 @@ Required CMake targets:
 | `project_kitti` | one-frame/range projection CLI | io, geometry, viz |
 | `analyze_calibration` | controlled perturbation CLI | io, geometry, viz |
 | `benchmark_projection` | authored projection microbenchmark and JSON report | geometry, JSON, build info |
+| `generate_synthetic_kitti` | authored one-frame public demo fixture | OpenCV only |
 | `replay_sequence` | sequence/perception/runtime CLI | all libraries |
 
 Apps MUST contain composition and argument/error handling only. Core algorithms
@@ -616,6 +617,12 @@ Fixture expected values MUST be independent of the production implementation.
 
 Tests MUST be order-independent and repeatable. No public test may need network
 or private data.
+
+The public demo generator MUST label its output as authored synthetic data,
+write through an exclusively claimed staging directory, refuse implicit
+overwrite, and produce a fixture that the same strict loaders and CLIs consume.
+Generated demo images MUST be reproduced from a documented release-build command
+and MUST NOT contain or derive from KITTI data.
 
 ## 13. Performance specification
 
