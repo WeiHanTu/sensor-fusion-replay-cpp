@@ -38,10 +38,15 @@ struct RectifiedProjectionConfig final {
   double z_min_m{0.1};
 };
 
+// Owns the full 3x4 matrix, image dimensions in pixels, and positive z_min in
+// meters. Construction throws GeometryError for invalid configuration.
 class RectifiedProjection final {
 public:
   explicit RectifiedProjection(RectifiedProjectionConfig config);
 
+  // Borrows a camera_rect_00 point; returns an owned value. Expected rejection
+  // uses status/absence. Camera z and homogeneous q.z are distinct checks; bounds
+  // are continuous [0,width) x [0,height), before visualization rounds pixels.
   [[nodiscard]] ProjectionResult project(const Vector3d& point_camera_rect_00_m) const;
   [[nodiscard]] const Matrix34d& matrix() const noexcept;
   [[nodiscard]] int imageWidthPixels() const noexcept;

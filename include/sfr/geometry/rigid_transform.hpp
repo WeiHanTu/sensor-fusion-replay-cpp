@@ -18,6 +18,8 @@ using Matrix3d = Eigen::Matrix3d;
 using Matrix4d = Eigen::Matrix4d;
 using Vector3d = Eigen::Vector3d;
 
+// Runtime labels support dataset-driven frames; they do not validate physical
+// calibration or provide compile-time frame compatibility.
 class FrameId final {
 public:
   explicit FrameId(std::string value);
@@ -58,6 +60,8 @@ struct RigidTransformParameters final {
   Vector3d translation_target_source_m;
 };
 
+// Owns a validated SE(3) value: p_target = R_target_source * p_source + t_m.
+// Construction rejects non-finite values and rotations outside tolerance.
 class RigidTransform final {
 public:
   static constexpr double kRotationTolerance = 1e-6;
@@ -72,7 +76,10 @@ public:
   [[nodiscard]] const Vector3d& translationMeters() const noexcept;
   [[nodiscard]] Matrix4d matrix() const;
   [[nodiscard]] RigidTransform inverse() const;
+  // Coordinates are meters in sourceFrame(); no input reference is retained.
+  // Non-finite inputs throw GeometryError. The returned point is a value.
   [[nodiscard]] Vector3d transformPoint(const Vector3d& point_source_m) const;
+  // Borrows only for this call; owns the returned O(N) vector in input order.
   [[nodiscard]] std::vector<Vector3d>
   transformPoints(std::span<const Vector3d> points_source_m) const;
 
@@ -83,6 +90,7 @@ private:
   Vector3d translation_target_source_m_;
 };
 
+// Applies T_middle_source first. Mismatched middle labels throw kFrameMismatch.
 [[nodiscard]] RigidTransform compose(const RigidTransform& T_target_middle,
                                      const RigidTransform& T_middle_source);
 

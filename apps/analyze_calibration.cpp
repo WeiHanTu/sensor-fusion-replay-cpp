@@ -209,6 +209,8 @@ findFrame(const std::vector<sfr::io::TimedFrameFile>& frames, const std::uint64_
 }
 
 [[nodiscard]] int run(const AnalyzeOptions& options) {
+  // Selected pair -> fixed baseline -> eight camera-frame perturbations ->
+  // common-visible-set comparisons -> panels -> staged publication.
   const auto decode_start = std::chrono::steady_clock::now();
   const sfr::io::KittiCalibration calibration = sfr::io::loadKittiCalibration(options.dataset_root);
   const sfr::io::KittiSequenceLayout layout =

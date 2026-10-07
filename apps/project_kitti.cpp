@@ -197,6 +197,8 @@ findFrame(const std::vector<sfr::io::TimedFrameFile>& frames, const std::uint64_
 }
 
 [[nodiscard]] int run(const ProjectOptions& options) {
+  // Walkthrough entry: local owned inputs -> geometry -> visualization ->
+  // artifact publication. Typed errors leave through main; no retry/skip path.
   const auto decode_start = std::chrono::steady_clock::now();
   const sfr::io::KittiCalibration calibration = sfr::io::loadKittiCalibration(options.dataset_root);
   const sfr::io::KittiSequenceLayout layout =
@@ -211,6 +213,7 @@ findFrame(const std::vector<sfr::io::TimedFrameFile>& frames, const std::uint64_
   const double source_decode_ms = millisecondsSince(decode_start);
 
   const auto geometry_start = std::chrono::steady_clock::now();
+  // Calibration supplies rectification composition and the full 3x4 P, not K.
   const sfr::geometry::PointCloudProjectionResult projected =
       sfr::geometry::projectPointCloud(lidar.points, calibration.TCameraRect00Lidar(),
                                        calibration.rectifiedProjection(options.z_min_m));

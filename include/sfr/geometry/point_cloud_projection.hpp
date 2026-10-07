@@ -25,6 +25,13 @@ struct PointCloudProjectionResult final {
   ProjectionCounts counts;
 };
 
+// Borrows LiDAR-frame meter coordinates for this call; retains no references.
+// Requires T_camera_rect_00_lidar endpoints exactly as named (else GeometryError).
+// Normal per-point rejection is counted, not thrown. Visible output owns storage
+// and preserves input-span order/index, continuous pixels, camera-z meters, and
+// reflectance. Loader compaction means source_index need not be a file-record ID.
+// Each input reaches one terminal bucket. Artifact/benchmark boundaries check
+// the total. O(N) time and O(N) reserved output capacity, even if few are visible.
 [[nodiscard]] PointCloudProjectionResult
 projectPointCloud(std::span<const core::PointXYZI> points_lidar,
                   const RigidTransform& T_camera_rect_00_lidar,

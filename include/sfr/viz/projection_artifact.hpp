@@ -72,6 +72,12 @@ struct ProjectionArtifactResult final {
 };
 
 [[nodiscard]] std::string makeRunId();
+// Borrows request (including ref-counted image storage) only for this call.
+// Validates accounting, exclusively claims a temporary sibling, closes files,
+// then renames a new run into view. Throws ArtifactError on invalid requests or
+// output failure; RAII removes only staging claimed by this call. No fsync/crash
+// durability. Explicit overwrite deletes the old run before rename, not an
+// atomic replacement; old data can be lost if subsequent publication fails.
 [[nodiscard]] ProjectionArtifactResult
 writeProjectionArtifacts(const ProjectionArtifactRequest& request);
 
