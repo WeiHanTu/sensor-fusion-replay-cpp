@@ -48,7 +48,7 @@ PointCloudProjectionResult projectPointCloud(const std::span<const core::PointXY
     const ProjectionResult projected = projection.project(point_camera_rect_00_m);
     switch (projected.status) {
     case ProjectionStatus::kVisible: {
-      const ImageProjection visible = projected.point.value_or(ImageProjection{});
+      const ImageProjection& visible = projected.point.value();
       result.visible_points.push_back(
           core::ProjectedPoint{static_cast<std::uint64_t>(index), visible.u_px, visible.v_px,
                                visible.depth_camera_m, point.reflectance});

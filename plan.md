@@ -290,10 +290,10 @@ tag and do not claim `v0.1` complete.
 - [~] Add `docs/code_walkthrough.md`: three stations, 5/15-minute route, maps,
   independent proof, failure path, and honest reviewer drill-downs. Verify its
   links, symbols, and synthetic commands before marking accepted.
-- [ ] Add core API ownership/frame/unit/error/allocation comments and entry
+- [x] Add core API ownership/frame/unit/error/allocation comments and entry
   reading cues without introducing a pipeline framework.
-- [ ] Fail closed on inconsistent projection result payloads, with regression
-  evidence captured before and after the fix.
+- [x] Fail closed on inconsistent projection result payloads. Three regression
+  cases failed before the fix; all 13 projection tests passed afterward.
 - [ ] Describe actual one-frame timing and publication guarantees in the schema
   and machine-readable reports without silently redefining existing metrics.
 - [ ] Run fresh dev/Release tests, format/tidy, synthetic demos and sanitizer

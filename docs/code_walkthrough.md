@@ -132,6 +132,7 @@ The fourth matrix column matters; `image_02` is not an SE(3) frame.
 | --- | --- | --- | --- |
 | Composition endpoints match | Numerically multiply unrelated frames | `compose` in rigid_transform.cpp | `RejectsFrameMismatchDuringComposition` |
 | Full `3x4 P` is used | Drop the camera-baseline column | `RectifiedProjection::project` | `PreservesFullThreeByFourProjectionMatrix` |
+| Visible status has a point; rejection does not | Substitute a fake `(0,0,0)` point | Validating, immutable `ProjectionResult` | `RejectsVisibleResultWithoutPayload`, `RejectsRejectionResultWithPayload`, `RejectsUnknownResultStatus` in projection_test.cpp |
 | Every geometry input gets one bucket | Silent skip or double counting | Loop branches; artifact `validateRequest`; benchmark `validateCounts` | `AccountsForEveryInputAndPreservesSourceIndex`; `RejectsUnsafeRunIdAndBrokenAccounting` |
 | Nearest depth wins at each projected center pixel | Far point hides near point | Strict `<` in `renderDepthOverlay` | `UsesNearestDepthAndClampsRoundedUpperBoundary` in [overlay_test.cpp](../tests/unit/overlay_test.cpp) |
 | Staging cleanup owns its directory | Delete another writer's preexisting temporary directory | Successful `create_directory` before RAII ownership | `PreservesPreexistingTemporaryDirectory` in [projection_artifact_test.cpp](../tests/unit/projection_artifact_test.cpp) |

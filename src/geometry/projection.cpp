@@ -5,6 +5,25 @@
 
 namespace sfr::geometry {
 
+ProjectionResult::ProjectionResult(const ProjectionStatus status_value,
+                                   std::optional<ImageProjection> point_value)
+    : status(status_value), point(std::move(point_value)) {
+  switch (status) {
+  case ProjectionStatus::kVisible:
+  case ProjectionStatus::kNonFiniteInput:
+  case ProjectionStatus::kBehindOrTooNear:
+  case ProjectionStatus::kNonPositiveHomogeneousDepth:
+  case ProjectionStatus::kOutsideImage:
+    break;
+  default:
+    throw GeometryError(GeometryErrorCode::kInvalidProjection, "unknown projection status");
+  }
+  if ((status == ProjectionStatus::kVisible) != point.has_value()) {
+    throw GeometryError(GeometryErrorCode::kInvalidProjection,
+                        "projection status and payload disagree");
+  }
+}
+
 RectifiedProjection::RectifiedProjection(RectifiedProjectionConfig config)
     : P_image_camera_rect_00_(std::move(config.P_image_camera_rect_00)),
       image_width_px_(config.image_width_px), image_height_px_(config.image_height_px),

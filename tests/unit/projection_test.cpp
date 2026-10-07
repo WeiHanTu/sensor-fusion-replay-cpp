@@ -95,5 +95,25 @@ TEST(ProjectionTest, RejectsInvalidConfiguration) {
   }
 }
 
+TEST(ProjectionTest, RejectsVisibleResultWithoutPayload) {
+  EXPECT_THROW(static_cast<void>(ProjectionResult{ProjectionStatus::kVisible, std::nullopt}),
+               GeometryError);
+}
+
+TEST(ProjectionTest, RejectsRejectionResultWithPayload) {
+  for (const ProjectionStatus status :
+       {ProjectionStatus::kNonFiniteInput, ProjectionStatus::kBehindOrTooNear,
+        ProjectionStatus::kNonPositiveHomogeneousDepth, ProjectionStatus::kOutsideImage}) {
+    EXPECT_THROW(static_cast<void>(ProjectionResult{status, ImageProjection{1.0, 2.0, 3.0}}),
+                 GeometryError);
+  }
+}
+
+TEST(ProjectionTest, RejectsUnknownResultStatus) {
+  EXPECT_THROW(
+      static_cast<void>(ProjectionResult{static_cast<ProjectionStatus>(255), std::nullopt}),
+      GeometryError);
+}
+
 } // namespace
 } // namespace sfr::geometry

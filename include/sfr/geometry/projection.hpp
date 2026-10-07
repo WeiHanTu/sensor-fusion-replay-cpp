@@ -27,8 +27,12 @@ struct ImageProjection final {
 };
 
 struct ProjectionResult final {
-  ProjectionStatus status;
-  std::optional<ImageProjection> point;
+  // Construction rejects unknown statuses and status/payload disagreement.
+  // Immutable fields prevent turning normal rejection into a fabricated point.
+  ProjectionResult(ProjectionStatus status_value, std::optional<ImageProjection> point_value);
+
+  const ProjectionStatus status;
+  const std::optional<ImageProjection> point;
 };
 
 struct RectifiedProjectionConfig final {

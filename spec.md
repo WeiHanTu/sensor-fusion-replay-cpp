@@ -174,6 +174,11 @@ The point is renderable only if all values are finite, `X_rect_00.z > z_min_m`,
 non-finite input, behind/too-near camera, non-positive homogeneous depth, and
 outside image.
 
+Projection results MUST reject construction with an unknown status, a visible
+status without a point, or a rejection status with a point. Status/payload are
+immutable after construction; consumers MUST NOT substitute default image
+coordinates when a required visible payload is absent.
+
 If multiple points round to the same pixel, visualization MUST retain the
 nearest positive camera-depth point (z-buffer rule). Pixel conversion MUST use
 one documented rule consistently; default is nearest integer after the
