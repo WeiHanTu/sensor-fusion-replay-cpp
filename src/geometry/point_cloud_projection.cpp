@@ -48,6 +48,11 @@ PointCloudProjectionResult projectPointCloud(const std::span<const core::PointXY
     const ProjectionResult projected = projection.project(point_camera_rect_00_m);
     switch (projected.status) {
     case ProjectionStatus::kVisible: {
+      // Make the result contract explicit locally for static analysis, too.
+      if (!projected.point.has_value()) {
+        throw GeometryError(GeometryErrorCode::kInvalidProjection,
+                            "visible projection requires a point payload");
+      }
       const ImageProjection& visible = projected.point.value();
       result.visible_points.push_back(
           core::ProjectedPoint{static_cast<std::uint64_t>(index), visible.u_px, visible.v_px,

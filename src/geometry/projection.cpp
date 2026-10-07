@@ -7,7 +7,7 @@ namespace sfr::geometry {
 
 ProjectionResult::ProjectionResult(const ProjectionStatus status_value,
                                    std::optional<ImageProjection> point_value)
-    : status(status_value), point(std::move(point_value)) {
+    : status(status_value), point(point_value) {
   switch (status) {
   case ProjectionStatus::kVisible:
   case ProjectionStatus::kNonFiniteInput:
