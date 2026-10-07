@@ -11,6 +11,7 @@
 
 namespace sfr::geometry {
 
+/// Mutually exclusive terminal counts for one projection input span.
 struct ProjectionCounts final {
   std::uint64_t input_points;
   std::uint64_t visible_points;
@@ -20,18 +21,23 @@ struct ProjectionCounts final {
   std::uint64_t outside_image;
 };
 
+/// Owned visible points plus complete terminal accounting for the input span.
 struct PointCloudProjectionResult final {
   std::vector<core::ProjectedPoint> visible_points;
   ProjectionCounts counts;
 };
 
-// Borrows LiDAR-frame meter coordinates for this call; retains no references.
-// Requires T_camera_rect_00_lidar endpoints exactly as named (else GeometryError).
-// Normal per-point rejection is counted, not thrown. Visible output owns storage
-// and preserves input-span order/index, continuous pixels, camera-z meters, and
-// reflectance. Loader compaction means source_index need not be a file-record ID.
-// Each input reaches one terminal bucket. Artifact/benchmark boundaries check
-// the total. O(N) time and O(N) reserved output capacity, even if few are visible.
+/// Projects LiDAR-frame points through a rectified camera model.
+///
+/// The input span is borrowed only for the call; no references are retained.
+/// `T_camera_rect_00_lidar` must map `lidar` to `camera_rect_00`. Normal
+/// per-point rejection is counted rather than thrown. Visible output owns its
+/// storage and preserves input-span order/index, reflectance, continuous pixels,
+/// and camera-forward depth in meters. Loader compaction means `source_index`
+/// need not identify the original file record.
+///
+/// @throws GeometryError For wrong transform endpoints or accounting overflow.
+/// Complexity: O(N) time and O(N) reserved output capacity.
 [[nodiscard]] PointCloudProjectionResult
 projectPointCloud(std::span<const core::PointXYZI> points_lidar,
                   const RigidTransform& T_camera_rect_00_lidar,

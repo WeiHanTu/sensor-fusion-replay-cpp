@@ -14,11 +14,13 @@
 
 namespace sfr::viz {
 
+/// Supported left-applied perturbation family and serialized unit convention.
 enum class SensitivityPerturbationKind : std::uint8_t {
   kYawCameraYDegrees,
   kTranslationCameraXMeters,
 };
 
+/// Owned metrics and ref-counted overlay for one nonzero perturbation.
 struct SensitivityPanelResult final {
   SensitivityPerturbationKind kind;
   double signed_value;
@@ -27,6 +29,11 @@ struct SensitivityPanelResult final {
   OverlayResult overlay;
 };
 
+/// Baseline/perturbation input bundle required for sensitivity output.
+///
+/// Exactly eight perturbations are required. Their image dimensions must match
+/// the baseline, identifiers must be unique, and common-visible sets nonempty.
+/// Relative source names must not disclose absolute private dataset paths.
 struct SensitivityArtifactRequest final {
   std::filesystem::path output_root;
   std::string run_id;
@@ -47,6 +54,7 @@ struct SensitivityArtifactRequest final {
   bool overwrite{false};
 };
 
+/// Owned paths to the published sensitivity run and its primary outputs.
 struct SensitivityArtifactResult final {
   std::filesystem::path run_directory;
   std::filesystem::path summary_file;
@@ -55,6 +63,15 @@ struct SensitivityArtifactResult final {
   std::filesystem::path comparison_file;
 };
 
+/// Validates and publishes baseline/eight-perturbation sensitivity artifacts.
+///
+/// Input OpenCV storage is borrowed only for this call. The writer labels nine
+/// panels, creates a comparison grid and JSON reports, then publishes through an
+/// exclusively claimed temporary sibling. It has the same non-durable,
+/// non-transactional overwrite boundary as `writeProjectionArtifacts`.
+///
+/// @throws ArtifactError For invalid accounting/configuration/perturbations,
+///         collisions, filesystem failure, image encoding, or write failure.
 [[nodiscard]] SensitivityArtifactResult
 writeSensitivityArtifacts(const SensitivityArtifactRequest& request);
 

@@ -7,6 +7,7 @@
 
 namespace sfr::io {
 
+/// Stable categories for local input, layout, and decode failures.
 enum class IoErrorCode : std::uint8_t {
   kFileOpen,
   kMalformedLine,
@@ -22,10 +23,13 @@ enum class IoErrorCode : std::uint8_t {
   kUnsupportedPlatform,
 };
 
+/// Typed I/O exception with a machine-checkable category.
 class IoError final : public std::runtime_error {
 public:
+  /// Copies `message` into `std::runtime_error` and stores `code`.
   IoError(IoErrorCode code, const std::string& message);
 
+  /// Returns the stored error category.
   [[nodiscard]] IoErrorCode code() const noexcept;
 
 private:
