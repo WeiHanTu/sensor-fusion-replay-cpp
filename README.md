@@ -33,7 +33,7 @@ are linked drill-downs, not prerequisites to navigating the entry point.
 | Strict KITTI calibration/data loading | Locally verified on synthetic inputs | Typed parser/I/O negative tests |
 | Point-cloud projection and rejection accounting | Locally verified on synthetic inputs | Hand-computed and integration tests |
 | Depth-colored z-buffer overlay | Locally verified on synthetic inputs | Deterministic pixel tests |
-| Atomic JSON/JSONL run artifacts | Locally verified on synthetic inputs | Schema/accounting/overwrite tests |
+| Staged JSON/JSONL run publication | Locally verified on synthetic inputs | Schema/accounting/overwrite tests; not crash-durable or transactional overwrite |
 | `project_kitti` CLI | Locally verified on synthetic inputs | End-to-end process and exit-code tests |
 | Calibration sensitivity | Locally verified on synthetic inputs | Hand-computed sign/axis tests, JSON checks, and inspected nine-panel output |
 | Projection microbenchmark | Locally verified on authored synthetic input | Exact per-iteration accounting, CLI/schema tests, and cross-toolchain smoke runs |

@@ -499,6 +499,10 @@ replace only files within the exact resolved run directory, never the dataset.
 `run-id` is unique and filesystem-safe. Tests MAY inject a deterministic ID.
 Writes MUST use a temporary sibling followed by an atomic rename where the
 filesystem permits, so a partial `run_summary.json` is never presented as final.
+For a new run this is staged publication, not crash durability: `v0.1` performs
+no fsync. Explicit overwrite removes the previous exact run before rename and
+MUST NOT be described as gap-free transactional replacement or rollback. An
+overwrite publication failure can lose the previous run. Prefer unique run IDs.
 
 ### 10.2 `run_summary.json`
 
@@ -543,6 +547,29 @@ but MUST be conspicuous and MUST NOT support release benchmark claims.
 Each latency series contains `count`, `min`, `max`, `mean`, `p50`, `p95`, and
 `p99`, all finite or explicit `null` when count is zero. Nearest-rank percentile
 for sorted `N` samples uses one-based index `ceil(p*N)`, clamped to `[1,N]`.
+
+The one-frame `v0.1` writers retain their existing schema `1.0.0` stage meanings:
+
+- `source_decode` includes calibration/layout loading, selection, image and
+  point-cloud loading. It is not just image decoding.
+- `geometry` includes transform/project/classify; sensitivity additionally
+  includes all perturbation projections and common-set comparisons.
+- `visualization` covers overlay rendering. Sensitivity panel labeling/grid
+  construction are measured in its serialization boundary instead.
+- Projection `serialization` measures overlay PNG encoding and writing only.
+  Sensitivity `serialization` includes panel labeling, PNG encoding/writing,
+  grid construction, and sensitivity `report.json` construction/writing.
+- `processing_total` is the sum of those measured stages; both writers exclude
+  `frames.jsonl`, `run_summary.json`, output preparation and final publication.
+  It MUST NOT be equated to runtime Section 8.5 processing or end-to-end sojourn.
+- With one sample all percentiles coincide; this is not a tail-latency study.
+
+New one-frame summaries MUST include additive `measurement` fields: `clock`,
+`serialization_scope`, `processing_total_scope`, `end_to_end=false`, and
+`excluded` listing output preparation, JSONL/summary writing, directory publication, queue wait and
+replay pacing. Additive `publication` fields record `new_run=staged_sibling_rename`,
+`overwrite=remove_existing_then_rename`, and `crash_durable=false`. These clarify
+existing scope; they do not redefine timing or claim crash-safe overwrite.
 
 ### 10.3 `frames.jsonl`
 

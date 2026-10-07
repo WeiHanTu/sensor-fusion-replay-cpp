@@ -70,6 +70,8 @@ with actionable errors. The pipeline must not silently skip corrupt inputs.
 Every report carries the configuration, sample count, clock domain, build and
 host metadata needed to interpret it. Offline replay pacing is not reported as
 algorithm latency. Synthetic fault injection is labeled as synthetic.
+One-frame geometry reports label their partial stage-sum and publication
+boundaries; these are not end-to-end runtime measurements or crash-safe storage.
 
 ### Private datasets stay private
 

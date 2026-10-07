@@ -206,6 +206,10 @@ The full `3x4` test separately derives `(2*1+1)/4=0.75` and
   visualization, publication, timestamp matching, or end-to-end FPS.
 - A one-frame CLI report has one latency sample; p50=p95=p99 is not a tail-latency
   study. Its stage sum is not the `v0.3` runtime processing/sojourn metric.
+  New summaries record `measurement` and `publication` boundaries. Projection
+  serialization times PNG encode/write; sensitivity also times panel/grid work
+  and its sensitivity report. Neither includes final JSONL/summary writing or
+  directory publication. See [spec §10.2](../spec.md#102-run_summaryjson).
 - Fixed input ordering gives deterministic geometry decisions. Run IDs, timings,
   build/host metadata vary; whole JSON artifacts are not byte-identical.
 - Visual overlays are sanity checks, not calibration ground truth. Sensitivity

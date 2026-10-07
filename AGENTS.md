@@ -61,6 +61,8 @@ change and every reference is updated.
   them from a release build and preserve the report that supports the claim.
 - Keep algorithm processing time, queue wait time, replay pacing time, and
   end-to-end sojourn time as separate metrics.
+- One-frame stage sums are not runtime sojourn. Record measured/excluded scope
+  and distinguish staged publication from overwrite/crash durability guarantees.
 - Label sample output as `synthetic` or `KITTI` and `measured` or `illustrative`.
 
 ## Dataset and licensing rules

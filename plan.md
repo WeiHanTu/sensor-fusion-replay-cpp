@@ -282,9 +282,7 @@ The historical release record is
 Exit gate: every `v0.1` item in Section 14 of `spec.md` passes. Otherwise do not
 tag and do not claim `v0.1` complete.
 
-## 5. `v0.2 Perception` (5-7 days)
-
-### Reviewability work before additional features (2026-10-06)
+## 4a. Reviewability maintenance before additional features (2026-10-06)
 
 - [x] Reconcile publication/license status without rewriting historical results.
 - [~] Add `docs/code_walkthrough.md`: three stations, 5/15-minute route, maps,
@@ -294,8 +292,10 @@ tag and do not claim `v0.1` complete.
   reading cues without introducing a pipeline framework.
 - [x] Fail closed on inconsistent projection result payloads. Three regression
   cases failed before the fix; all 13 projection tests passed afterward.
-- [ ] Describe actual one-frame timing and publication guarantees in the schema
+- [x] Describe actual one-frame timing and publication guarantees in the schema
   and machine-readable reports without silently redefining existing metrics.
+  Both new scope tests failed before metadata was added and passed afterward;
+  a CLI duplicate-calibration test also verifies exit 3 and no publication.
 - [ ] Run fresh dev/Release tests, format/tidy, synthetic demos and sanitizer
   verification; record exact outcomes separately from the `v0.1.0` baseline.
 - [ ] Human timed rehearsal with an unfamiliar engineer. Static navigation and
@@ -303,6 +303,8 @@ tag and do not claim `v0.1` complete.
 
 Use narrow documentation, API-comment, and individual fix commits. Preserve
 `v0.1.0`; this maintenance work does not implement `v0.2` or retag a release.
+
+## 5. `v0.2 Perception` (5-7 days)
 
 ### 2.1 Deterministic voxel and ROI filtering (1 day)
 

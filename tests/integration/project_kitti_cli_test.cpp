@@ -105,6 +105,27 @@ TEST_F(ProjectKittiCliTest, UsesDocumentedArgumentExitCategory) {
   EXPECT_EQ(exitCode(std::system(command.c_str())), 2);
 }
 
+TEST_F(ProjectKittiCliTest, RejectsDuplicateCalibrationWithoutPublishingOutput) {
+  {
+    std::ofstream calibration(root_ / "calib_cam_to_cam.txt", std::ios::app);
+    calibration << "P_rect_02: 2 0 4 1 0 2 3 0 0 0 1 0\n";
+    ASSERT_TRUE(calibration.good());
+  }
+  const std::filesystem::path output_root = root_ / "unused-output";
+  const std::filesystem::path diagnostic = root_ / "diagnostic.txt";
+  const std::string command =
+      shellQuote(SFR_PROJECT_KITTI_EXE) + " --dataset-root " + shellQuote(root_.string()) +
+      " --drive synthetic_drive_sync --frame 0 --output-dir " + shellQuote(output_root.string()) +
+      " 2>" + shellQuote(diagnostic.string());
+  EXPECT_EQ(exitCode(std::system(command.c_str())), 3);
+  EXPECT_FALSE(std::filesystem::exists(output_root));
+  std::ifstream input(diagnostic);
+  std::string message;
+  std::getline(input, message);
+  EXPECT_NE(message.find("input error:"), std::string::npos);
+  EXPECT_NE(message.find("duplicate"), std::string::npos);
+}
+
 TEST_F(ProjectKittiCliTest, UsesDocumentedInputAndOutputExitCategories) {
   const std::string missing_input = shellQuote(SFR_PROJECT_KITTI_EXE) + " --dataset-root " +
                                     shellQuote((root_ / "missing").string()) +

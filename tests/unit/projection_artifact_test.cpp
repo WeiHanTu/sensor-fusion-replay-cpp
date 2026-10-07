@@ -114,5 +114,26 @@ TEST_F(ProjectionArtifactTest, RejectsUnsafeRunIdAndBrokenAccounting) {
   EXPECT_THROW(static_cast<void>(writeProjectionArtifacts(invalid_counts)), ArtifactError);
 }
 
+TEST_F(ProjectionArtifactTest, DescribesTimingAndPublicationBoundaries) {
+  const auto result = writeProjectionArtifacts(request());
+  nlohmann::json summary;
+  std::ifstream(result.summary_file) >> summary;
+  EXPECT_EQ(summary.at("measurement").at("clock"), "std::chrono::steady_clock");
+  EXPECT_EQ(summary.at("measurement").at("serialization_scope"), "overlay_png_encode_and_write");
+  EXPECT_FALSE(summary.at("measurement").at("end_to_end").get<bool>());
+  EXPECT_EQ(summary.at("measurement").at("processing_total_scope"),
+            "sum_source_decode_geometry_visualization_serialization");
+  EXPECT_EQ(
+      summary.at("measurement").at("excluded"),
+      nlohmann::json::array({"output_preparation", "frames_jsonl_write", "run_summary_json_write",
+                             "directory_publication", "queue_wait", "replay_pacing"}));
+  EXPECT_EQ(summary.at("publication").at("new_run"), "staged_sibling_rename");
+  EXPECT_EQ(summary.at("publication").at("overwrite"), "remove_existing_then_rename");
+  EXPECT_FALSE(summary.at("publication").at("crash_durable").get<bool>());
+  const double serialization = summary.at("latency_ms").at("serialization").at("mean");
+  EXPECT_DOUBLE_EQ(summary.at("latency_ms").at("processing_total").at("mean"),
+                   1.0 + 2.0 + 3.0 + serialization);
+}
+
 } // namespace
 } // namespace sfr::viz
