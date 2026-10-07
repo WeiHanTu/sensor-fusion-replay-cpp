@@ -19,7 +19,7 @@ is green.
 The implemented `v0.1` path is synchronous one-frame processing:
 
 ```mermaid
-flowchart LR
+flowchart TD
   A[Local image/cloud + calibration] --> B[Strict loading]
   B --> C[Transform + full 3x4 projection]
   C --> D[Classify/count + depth overlay]

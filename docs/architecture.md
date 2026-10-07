@@ -17,7 +17,7 @@ real-time, production, or safety system. Requirements are in
 ## Execution flow
 
 ```mermaid
-flowchart LR
+flowchart TD
   A[CLI/config] --> B[Strict local loading]
   B --> C[Frame-labelled calibration chain]
   C --> D[Project/classify/count]

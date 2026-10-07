@@ -161,6 +161,10 @@ remain attributed to their clean implementation checkpoint, not this revision.
 The removed public guide is retained locally under the ignored `artifacts/`
 directory. No Git history rewrite is part of this presentation revision.
 
+GitHub preview of presentation commit `74a905b` exposed clipping of the horizontal
+README flow at a narrow panel width. Execution diagrams were changed to vertical
+layout for readability; this changes presentation, not system behavior.
+
 ## Publication and remaining work
 
 The static-analysis follow-up adds an explicit optional guard and copies the
