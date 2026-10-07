@@ -212,14 +212,12 @@ Primary references:
 - [Vision meets Robotics: The KITTI Dataset](https://www.cvlibs.net/publications/Geiger2013IJRR.pdf)
 - [KITTI Terms of Service](https://www.cvlibs.net/datasets/kitti/terms_of_service.php)
 
-## Deferred decisions
+## Recorded release decisions
 
-These must be resolved in Phase 0 of `plan.md`, before public release:
-
-- Confirm Apache-2.0 (recommended for explicit patent terms) or choose another
-  license for original project code.
-- Select and record one private KITTI drive for manual acceptance runs. CI must
-  remain independent of it.
-- Record the reference host used for non-gating performance evidence.
-- Decide whether any real-data screenshot has explicit redistribution permission;
-  otherwise publish only synthetic visuals.
+- Original code and documentation use Apache-2.0; KITTI is not relicensed.
+- Private acceptance used `2011_09_26_drive_0005_sync`, frame 0. CI remains
+  independent of private data.
+- The retained geometry benchmark records Apple M4 Pro, arm64, Darwin 25.6.0.
+  Measurements are workload- and commit-specific, not portable speed guarantees.
+- Public visuals remain authored synthetic output. No permission to publish
+  KITTI-derived screenshots is claimed.

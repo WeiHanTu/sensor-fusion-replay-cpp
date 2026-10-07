@@ -2,29 +2,20 @@
 
 ## 1. Current state
 
-Planning baseline on 2026-09-09:
+Status reconciled on 2026-10-06:
 
-- Before this work, the local workspace directory was empty. It now contains the
-  planning contract and a local `v0.1` checkpoint through the synthetic
-  calibration-sensitivity experiment.
-- The local repository is initialized on `main` with the intended `origin` and
-  local checkpoint commits. The public GitHub repository was confirmed empty
-  before local initialization; no push has been performed.
-- Frame-labelled rigid transforms, a deterministic cycle-free frame graph, a
-  full `3x4` rectified projection primitive, and strict synthetic KITTI
-  calibration/data loaders are implemented and locally tested. The one-frame
-  projection CLI now emits an atomic depth-overlay/JSON/JSONL run directory on
-  authored synthetic input.
-- AppleClang 16 cannot run its ASan runtime on the current macOS 26.6 host.
-  Equivalent clean Ubuntu 24.04 container runs passed GCC 13 debug tests and
-  Clang 18 ASan+UBSan tests. Hosted GitHub Actions has not run.
-- Synthetic projection and calibration-sensitivity outputs have been generated
-  and inspected. The authored projection microbenchmark and its CLI/schema
-  regression tests are implemented. A clean-commit Apple M4 Pro release report
-  is retained under `docs/results/` and interpreted in
-  `docs/v0.1_verification.md`. No private-data smoke run, push, tag, or release
-  claim exists yet. Authored synthetic output proves fixture contracts; it is
-  not real-data or publication-quality portfolio evidence.
+- `v0.1.0` tags commit `88da6dd`; the repository has been published. This tag is
+  an immutable historical baseline, not acceptance of later changes.
+- Geometry, strict I/O, projection/accounting, overlays, sensitivity, authored
+  synthetic demos, and the projection benchmark are implemented. Perception
+  (`v0.2`) and runtime synchronization/queues (`v0.3`) remain unimplemented.
+- Historical local, container, hosted CI, private KITTI smoke, and visual
+  evidence is recorded in [`docs/v0.1_verification.md`](docs/v0.1_verification.md).
+  Its passing results do not imply a fresh test run on later HEADs.
+- The retained benchmark belongs to clean implementation commit `185e287`;
+  it measures authored synthetic geometry, not dataset/end-to-end performance.
+- Public visuals are project-owned synthetic data. KITTI inputs and derived
+  images remain private. Original code/documentation use Apache-2.0.
 
 Status vocabulary:
 
@@ -201,8 +192,8 @@ typed category; tests remain hermetic.
   and synthetic integration test.
 - [x] Generate and inspect a synthetic overlay; check expected pixels before
   accepting its appearance.
-- [ ] Run one private KITTI frame locally, inspect the overlay, and record only
-  command shape/result status plus non-sensitive metadata.
+- [x] Run private KITTI frame 0 locally and inspect the overlay; historical
+  evidence is recorded in `docs/v0.1_verification.md`, without publishing data.
 
 Verification:
 
@@ -265,7 +256,8 @@ the synthetic and private frame-0 runs were visually inspected.
   evidence is recorded in `docs/v0.1_verification.md`.
 - [x] Review for misleading words: real-time, fusion, accuracy, production,
   detection, collision avoidance, and safety.
-- [ ] Tag `v0.1.0` only after the tree is clean and evidence is attached/linked.
+- [x] Tag `v0.1.0` at `88da6dd` after release verification. Do not move the tag
+  to include subsequent reviewability work.
 
 Required record:
 
@@ -284,7 +276,7 @@ benchmark report:
 known limitations:
 ```
 
-The current, explicitly incomplete record is
+The historical release record is
 [`docs/v0.1_verification.md`](docs/v0.1_verification.md).
 
 Exit gate: every `v0.1` item in Section 14 of `spec.md` passes. Otherwise do not

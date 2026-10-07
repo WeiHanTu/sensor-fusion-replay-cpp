@@ -10,6 +10,10 @@ The product contract is in [`intend.md`](intend.md), the normative architecture
 and acceptance gates are in [`spec.md`](spec.md), and ordered work is in
 [`plan.md`](plan.md).
 
+The release results below are historical. Later source changes need their own
+verification record; the presence of CI configuration does not prove current CI
+is green.
+
 ## Capability status
 
 | Capability | Status | Evidence |
@@ -136,7 +140,7 @@ The retained Apple M4 Pro reference report for clean implementation commit
 `171.3 million points/s` for this exact authored workload. These are
 single-host measurements, not an end-to-end or real-time claim. Inspect the
 [`machine-readable report`](docs/results/projection_benchmark_apple_m4_pro.json)
-and the incomplete [`v0.1` verification record](docs/v0.1_verification.md)
+and the historical [`v0.1` verification record](docs/v0.1_verification.md)
 before quoting them.
 
 Project one frame from an authorized local KITTI Raw synced drive:
