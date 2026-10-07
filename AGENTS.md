@@ -183,6 +183,16 @@ Before declaring a version complete:
 - Do not weaken warnings, tests, sanitizers, or gates to make CI green. Fix the
   defect or document a narrowly scoped, justified exception.
 
+## Reviewability maintenance
+
+- Keep `docs/code_walkthrough.md` navigation, invariant/test map, and claim
+  boundaries synchronized with changed public APIs or orchestration.
+- Public core APIs document frames/units, ownership/lifetime, ordering, expected
+  absence versus errors, and relevant allocation trade-offs. Explain decisions,
+  not syntax; avoid creating helper layers solely for presentation.
+- A static navigation check is not a human timed walkthrough. Record rehearsals
+  and fresh verification separately from historical release evidence.
+
 ## Definition of done
 
 A task is done only when code, tests, documentation, and acceptance evidence

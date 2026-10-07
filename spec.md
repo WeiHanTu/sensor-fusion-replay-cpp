@@ -704,6 +704,14 @@ distribution, message mappings, QoS scenarios, and rosbag evidence.
 
 ## 15. Documentation contract
 
+`docs/code_walkthrough.md` MUST provide one fixed entry/core/proof route,
+separate execution/dependency maps, an invariant-to-enforcement/test map, a
+complete error path, and reproducible synthetic commands. It MUST distinguish
+historical versus fresh verification and deterministic decisions versus variable
+run metadata. Public core API comments MUST explain frames/units, borrowed or
+owned state, ordering, failures, and relevant allocation costs. Human timed
+rehearsal status MUST NOT be inferred from static checks or executable commands.
+
 The eventual README MUST include:
 
 - one-sentence scope and an explicit non-safety disclaimer;

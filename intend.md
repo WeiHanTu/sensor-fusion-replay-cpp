@@ -138,6 +138,8 @@ The project succeeds when all of the following are true:
   per-frame record, and run summary required by `spec.md`.
 - A reviewer can trace the projection formula, frames, units, and calibration
   keys from documentation into tests and implementation.
+- A fixed entry/core/proof walkthrough supports technical discussion, with
+  ownership, failure handling, and evidence boundaries visible at each stop.
 - Every input frame accepted by the replay runtime is accounted for exactly once
   as processed or as one explicit terminal failure/drop reason.
 - Queue occupancy never exceeds configured capacity, and closure cannot strand

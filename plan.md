@@ -284,6 +284,26 @@ tag and do not claim `v0.1` complete.
 
 ## 5. `v0.2 Perception` (5-7 days)
 
+### Reviewability work before additional features (2026-10-06)
+
+- [x] Reconcile publication/license status without rewriting historical results.
+- [~] Add `docs/code_walkthrough.md`: three stations, 5/15-minute route, maps,
+  independent proof, failure path, and honest reviewer drill-downs. Verify its
+  links, symbols, and synthetic commands before marking accepted.
+- [ ] Add core API ownership/frame/unit/error/allocation comments and entry
+  reading cues without introducing a pipeline framework.
+- [ ] Fail closed on inconsistent projection result payloads, with regression
+  evidence captured before and after the fix.
+- [ ] Describe actual one-frame timing and publication guarantees in the schema
+  and machine-readable reports without silently redefining existing metrics.
+- [ ] Run fresh dev/Release tests, format/tidy, synthetic demos and sanitizer
+  verification; record exact outcomes separately from the `v0.1.0` baseline.
+- [ ] Human timed rehearsal with an unfamiliar engineer. Static navigation and
+  commands do not prove this gate; record it as not run until performed.
+
+Use narrow documentation, API-comment, and individual fix commits. Preserve
+`v0.1.0`; this maintenance work does not implement `v0.2` or retag a release.
+
 ### 2.1 Deterministic voxel and ROI filtering (1 day)
 
 - [ ] Implement validated ROI and voxel configs.

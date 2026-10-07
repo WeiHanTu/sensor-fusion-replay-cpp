@@ -14,6 +14,14 @@ The release results below are historical. Later source changes need their own
 verification record; the presence of CI configuration does not prove current CI
 is green.
 
+## Review the code
+
+Start with the [5/15-minute code walkthrough](docs/code_walkthrough.md):
+`project_kitti::run` → `projectPointCloud` → an independent numeric test.
+It maps invariants to enforcement/tests, walks a failure path, and separates
+current source from historical evidence. Frame conventions and benchmark details
+are linked drill-downs, not prerequisites to navigating the entry point.
+
 ## Capability status
 
 | Capability | Status | Evidence |
