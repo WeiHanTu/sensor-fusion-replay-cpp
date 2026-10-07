@@ -10,9 +10,9 @@ Fresh local builds and synthetic artifacts below use clean implementation commit
 do not retroactively become the tested local build commit. Hosted CI, when run,
 is bound to its own exact head SHA. `v0.1.0` remains at `88da6dd`.
 
-- [Walkthrough](code_walkthrough.md): fixed entry/core/proof stations, bilingual
-  opening cues, 5/15-minute routes, execution/dependency diagrams, invariant/test
-  map, error path, and evidence boundaries.
+- [Architecture](architecture.md): execution/dependency diagrams, ownership,
+  invariant/test map, error path, and evidence boundaries. Public documentation
+  presents engineering design; interview/rehearsal notes remain local and ignored.
 - Public geometry APIs describe frames/units, ownership/lifetime, ordering,
   failure handling and allocation. No pipeline framework or new dependencies.
 - Immutable, validated projection results reject inconsistent status/payloads;
@@ -33,17 +33,17 @@ clean implementation commit with pinned GoogleTest acquisition.
 | Fresh Debug configure/build/CTest | 85/85 passed | `build/review-dev`; warnings-as-errors |
 | Fresh Release configure/build/CTest | 85/85 passed | `build/review-release`; warnings-as-errors |
 | Standard dev preset build/CTest | 85/85 passed | Existing `build/dev` reconfigured at the same commit |
-| Walkthrough focused test command | 24/24 passed | Defined projection/calibration/CLI route |
+| Focused test command | 24/24 passed | Projection/calibration/CLI contracts |
 | format-check | Passed | Standard dev target |
-| Initial clang-tidy | Failed, then corrected | Unchecked optional access and ineffective move; targeted checks on both corrected files passed; full rerun pending |
+| Initial clang-tidy | Failed, then corrected | Unchecked optional access and ineffective move; targeted checks passed; full follow-up result recorded below |
 | Native ASan+UBSan | Failed at test discovery | Runtime `sanitizer_malloc_mac.inc:189`, `!asan_init_is_running`; not a sanitizer pass |
 | Docker sanitizer fallback | Unavailable | Daemon not running; no container tests claimed |
-| Synthetic walkthrough commands | Passed | Fixture generator plus both geometry CLIs; no KITTI |
+| Synthetic demo commands | Passed | Fixture generator plus both geometry CLIs; no KITTI |
 | Artifact checks | Passed | Summary/frame status, timing/publication metadata and projection/z-buffer equations |
 | Visual inspection | Passed | Overlay and nine-panel comparison opened; labels and geometry inspected |
 | Navigation | Passed | 28 local link targets exist; 10 named route/test symbols located |
-| High-level Mermaid rendering | Not run yet | Source is present; rendering is distinct from link checks |
-| Human 15-minute rehearsal | Not run | Requires an unfamiliar engineer; static checks do not prove usability |
+| Original high-level Mermaid rendering | Passed | Execution/dependency graphs rendered at `1dceeca` in GitHub Preview; not a check of later README rendering |
+| Independent documentation usability evaluation | Not run | Static checks do not prove usability |
 | Private KITTI smoke rerun | Not run | Historical private-data evidence is not relabeled as fresh |
 
 85 configured checks comprise 80 GoogleTest cases, four CLI help checks, and one
@@ -69,8 +69,9 @@ cmake --build build/review-asan --parallel 4
 ```
 
 The final sanitizer build command failed; sanitizer CTest was consequently not
-run. No warning/sanitizer settings were weakened. Walkthrough generator and CLI
-commands were executed exactly as listed in [the guide](code_walkthrough.md#reproduce-proof-without-kitti).
+run. No warning/sanitizer settings were weakened. Synthetic generator and CLI
+commands used the retained local paths recorded below; the public architecture
+document provides the same workflow with separate output directories.
 
 ## Regression evidence
 
@@ -103,15 +104,70 @@ or regression conclusion. Other developer checks were active during this run;
 there was no controlled performance comparison. The retained public benchmark
 at `185e287` remains explicitly historical.
 
+## Final implementation verification
+
+Clean source: `1dceeca5eef3315afa6ed5081247881ac173089a`, including the
+static-analysis follow-up. New `build/review-final-dev` and
+`build/review-final-release` directories each configured, built and passed 85/85
+checks. Debug format-check and the full 33-translation-unit clang-tidy target
+passed. Dependency/system warnings were filtered by the existing configuration;
+this is not a zero-warning claim. No suppressions were added.
+
+```bash
+cmake --preset dev -B build/review-final-dev
+cmake --build build/review-final-dev --parallel 4
+ctest --test-dir build/review-final-dev --output-on-failure
+cmake --build build/review-final-dev --target format-check
+cmake --build build/review-final-dev --target clang-tidy
+cmake --preset release -B build/review-final-release
+cmake --build build/review-final-release --parallel 4
+ctest --test-dir build/review-final-release --output-on-failure
+./build/review-final-dev/generate_synthetic_kitti --output-dir artifacts/walkthrough_final_fixture
+./build/review-final-dev/project_kitti --dataset-root artifacts/walkthrough_final_fixture --drive synthetic_drive_sync --frame 0 --output-dir artifacts/walkthrough_final_projection
+./build/review-final-dev/analyze_calibration --dataset-root artifacts/walkthrough_final_fixture --drive synthetic_drive_sync --frame 0 --output-dir artifacts/walkthrough_final_sensitivity
+./build/review-final-release/benchmark_projection --output-json artifacts/benchmarks/projection_benchmark_reviewability_final.json
+```
+
+All commands above passed. Final synthetic overlays/panels were opened and
+inspected again. Summary/frame status, clean source provenance, timing/publication
+metadata, projection/z-buffer equations and all 110 benchmark iteration counts
+were checked. Final benchmark SHA-256:
+`46c02df81129046b594dc2e0f7f261211ecdf750ce37200c883a0a61e547ca24`.
+This was also an uncontrolled harness verification run, not a performance
+comparison. Both benchmark files remain ignored local artifacts.
+
+## Hosted implementation checks
+
+[GitHub Actions run 37552909043](https://github.com/WeiHanTu/sensor-fusion-replay-cpp/actions/runs/37552909043)
+completed successfully at exact commit `1dceeca5eef3315afa6ed5081247881ac173089a`.
+Completed logs confirm 85/85 tests in each job: GCC 13.3.0 Debug, Clang 18.1.3
+Debug, and Clang 18.1.3 ASan+UBSan. Formatting passed in both compiler jobs;
+clang-tidy passed in the Clang job. This verifies the implementation checkpoint,
+not later documentation revisions. The native macOS sanitizer failure remains
+a separate observed limitation.
+
+## Public architecture presentation checks
+
+The presentation revision changes documentation only; no C++/CMake changes.
+On the working tree based on `1dceeca`, `cmake --preset dev`, the documented
+parallel build, full CTest (85/85), focused CTest (24/24), and format-check passed.
+All 47 relative link targets in the edited public documents exist. The
+`architecture.md` generator/projection/sensitivity commands passed with the
+`artifacts/architecture_*` directories; both images were opened and inspected,
+and complete summary status plus measurement/publication metadata were checked.
+These are development checks with a dirty documentation tree, not a new release
+or performance claim. Full local Release/tidy and hosted sanitizer results above
+remain attributed to their clean implementation checkpoint, not this revision.
+The removed public guide is retained locally under the ignored `artifacts/`
+directory. No Git history rewrite is part of this presentation revision.
+
 ## Publication and remaining work
 
 The static-analysis follow-up adds an explicit optional guard and copies the
-trivially-copyable payload. Full clean-build verification of that follow-up is
-pending in this checkpoint; the table above belongs to the initial implementation
-commit, not silently to the follow-up.
+trivially-copyable payload. The initial table above belongs to `3c48c50`; final
+implementation verification is separately attributed above.
 
-Push/hosted CI status must be checked against the exact final commit; the old
-release's passing CI cannot accept these changes. Human timed rehearsal remains
-pending even when commands and CI pass. Crash-durable storage, transactional
+Independent documentation usability evaluation remains not run even when
+commands and CI pass. Crash-durable storage, transactional
 overwrite, runtime metrics, synchronization, queues and perception remain outside
 this maintenance change.

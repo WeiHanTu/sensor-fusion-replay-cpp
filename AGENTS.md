@@ -187,13 +187,14 @@ Before declaring a version complete:
 
 ## Reviewability maintenance
 
-- Keep `docs/code_walkthrough.md` navigation, invariant/test map, and claim
+- Keep `docs/architecture.md` navigation, invariant/test map, and claim
   boundaries synchronized with changed public APIs or orchestration.
 - Public core APIs document frames/units, ownership/lifetime, ordering, expected
   absence versus errors, and relevant allocation trade-offs. Explain decisions,
   not syntax; avoid creating helper layers solely for presentation.
-- A static navigation check is not a human timed walkthrough. Record rehearsals
-  and fresh verification separately from historical release evidence.
+- Public documents explain the engineering system, not interview scripts.
+  Rehearsal notes remain local and ignored. Record fresh verification separately
+  from historical release evidence; static navigation is not human usability proof.
 
 ## Definition of done
 

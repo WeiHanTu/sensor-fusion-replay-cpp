@@ -285,9 +285,10 @@ tag and do not claim `v0.1` complete.
 ## 4a. Reviewability maintenance before additional features (2026-10-06)
 
 - [x] Reconcile publication/license status without rewriting historical results.
-- [~] Add `docs/code_walkthrough.md`: three stations, 5/15-minute route, maps,
-  independent proof, failure path, and honest reviewer drill-downs. Verify its
-  links, symbols, and synthetic commands before marking accepted.
+- [x] Publish engineering maps/contracts/test links in `docs/architecture.md`
+  and a compact README diagram. Keep interview/rehearsal notes local and ignored.
+  The original execution/dependency graphs rendered on GitHub; verify the new
+  public presentation separately before claiming its rendering was inspected.
 - [x] Add core API ownership/frame/unit/error/allocation comments and entry
   reading cues without introducing a pipeline framework.
 - [x] Fail closed on inconsistent projection result payloads. Three regression
@@ -296,10 +297,13 @@ tag and do not claim `v0.1` complete.
   and machine-readable reports without silently redefining existing metrics.
   Both new scope tests failed before metadata was added and passed afterward;
   a CLI duplicate-calibration test also verifies exit 3 and no publication.
-- [ ] Run fresh dev/Release tests, format/tidy, synthetic demos and sanitizer
-  verification; record exact outcomes separately from the `v0.1.0` baseline.
-- [ ] Human timed rehearsal with an unfamiliar engineer. Static navigation and
-  commands do not prove this gate; record it as not run until performed.
+- [x] Run fresh dev/Release tests (85/85 each), format/tidy and synthetic demos;
+  record exact commits/outcomes in `docs/reviewability_verification.md`.
+- [x] Verify Ubuntu hosted GCC/Clang and ASan+UBSan at implementation commit
+  `1dceeca`: run `37552909043`, each 85/85 tests. Native macOS sanitizer discovery
+  still aborts; the hosted result does not turn that local failure into a pass.
+- [ ] Evaluate documentation usability with an unfamiliar engineer. Not run;
+  static navigation and executable commands do not establish this result.
 
 Use narrow documentation, API-comment, and individual fix commits. Preserve
 `v0.1.0`; this maintenance work does not implement `v0.2` or retag a release.

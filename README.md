@@ -14,16 +14,24 @@ The release results below are historical. Later source changes need their own
 verification record; the presence of CI configuration does not prove current CI
 is green.
 
-## Review the code
+## Architecture
 
-Start with the [5/15-minute code walkthrough](docs/code_walkthrough.md):
-`project_kitti::run` → `projectPointCloud` → an independent numeric test.
-It maps invariants to enforcement/tests, walks a failure path, and separates
-current source from historical evidence. Frame conventions and benchmark details
-are linked drill-downs, not prerequisites to navigating the entry point.
-The [high-level design diagrams](docs/code_walkthrough.md#two-maps-execution-versus-dependencies)
-separate execution flow from library dependencies; the
-[frame tree](docs/frame_conventions.md#frame-tree) separately explains geometry.
+The implemented `v0.1` path is synchronous one-frame processing:
+
+```mermaid
+flowchart LR
+  A[Local image/cloud + calibration] --> B[Strict loading]
+  B --> C[Transform + full 3x4 projection]
+  C --> D[Classify/count + depth overlay]
+  D --> E[Staged PNG/JSON publication]
+```
+
+The [architecture document](docs/architecture.md) describes execution and library
+dependencies, ownership, failure/publication contracts, and invariant-to-test
+mapping. Geometry is Eigen-only; I/O and visualization use OpenCV. There are no
+runtime queues or timestamp synchronizer yet. The
+[frame tree](docs/frame_conventions.md#frame-tree) separately explains calibrated
+geometry and unresolved world/vehicle edges.
 
 Post-release reviewability changes and their fresh checks are recorded in
 [`docs/reviewability_verification.md`](docs/reviewability_verification.md).

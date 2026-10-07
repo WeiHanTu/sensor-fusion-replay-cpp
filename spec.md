@@ -566,8 +566,9 @@ The one-frame `v0.1` writers retain their existing schema `1.0.0` stage meanings
 
 New one-frame summaries MUST include additive `measurement` fields: `clock`,
 `serialization_scope`, `processing_total_scope`, `end_to_end=false`, and
-`excluded` listing output preparation, JSONL/summary writing, directory publication, queue wait and
-replay pacing. Additive `publication` fields record `new_run=staged_sibling_rename`,
+`excluded` listing output preparation, JSONL/summary writing, directory
+publication, queue wait and replay pacing. Additive `publication` fields record
+`new_run=staged_sibling_rename`,
 `overwrite=remove_existing_then_rename`, and `crash_durable=false`. These clarify
 existing scope; they do not redefine timing or claim crash-safe overwrite.
 
@@ -736,13 +737,16 @@ distribution, message mappings, QoS scenarios, and rosbag evidence.
 
 ## 15. Documentation contract
 
-`docs/code_walkthrough.md` MUST provide one fixed entry/core/proof route,
-separate execution/dependency maps, an invariant-to-enforcement/test map, a
-complete error path, and reproducible synthetic commands. It MUST distinguish
-historical versus fresh verification and deterministic decisions versus variable
-run metadata. Public core API comments MUST explain frames/units, borrowed or
-owned state, ordering, failures, and relevant allocation costs. Human timed
-rehearsal status MUST NOT be inferred from static checks or executable commands.
+The README MUST show a compact implemented-system diagram and link to
+`docs/architecture.md` for execution/dependency maps, data ownership,
+invariant-to-enforcement/test mapping, a complete error path, and reproducible
+synthetic commands. Public documentation MUST explain engineering behavior,
+not interview scripts or timed presentation routes; rehearsal notes stay local
+and ignored. This presentation change retains the technical review requirements.
+Documentation MUST distinguish historical versus fresh verification and
+deterministic decisions versus variable run metadata. Public core API comments
+MUST explain frames/units, borrowed or owned state, ordering, failures, and
+relevant allocation costs. Static checks do not establish human usability.
 
 The eventual README MUST include:
 
