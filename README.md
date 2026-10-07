@@ -21,6 +21,12 @@ Start with the [5/15-minute code walkthrough](docs/code_walkthrough.md):
 It maps invariants to enforcement/tests, walks a failure path, and separates
 current source from historical evidence. Frame conventions and benchmark details
 are linked drill-downs, not prerequisites to navigating the entry point.
+The [high-level design diagrams](docs/code_walkthrough.md#two-maps-execution-versus-dependencies)
+separate execution flow from library dependencies; the
+[frame tree](docs/frame_conventions.md#frame-tree) separately explains geometry.
+
+Post-release reviewability changes and their fresh checks are recorded in
+[`docs/reviewability_verification.md`](docs/reviewability_verification.md).
 
 ## Capability status
 
