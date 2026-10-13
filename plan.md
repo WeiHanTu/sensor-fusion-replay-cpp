@@ -457,6 +457,13 @@ all required campaign gates passed. C exact-recovery misses, D poor conditioning
 E bound hits and E off-grid refinement-edge miss were preserved. This draft was
 a dirty Release build, not the clean measured/public evidence required by R7.
 
+R7 checkpoint: clean `da261d1` Release campaign and macOS dev/Release full
+133/133 tests passed. Ubuntu GCC and Clang runtime suites also passed 133/133,
+but Ubuntu's clang-tidy rejected three optional-access expressions accepted by
+the local version. Replace those with portable optional equality/stable guarded
+references; do not suppress checks. Final Ubuntu/static/sanitizer gates remain
+open. Native macOS sanitizer initialization failed before recovery tests.
+
 ### R7. Verify, publish evidence, and close V1
 
 - [ ] Run dev/Release and supported ASan+UBSan from clean directories; run

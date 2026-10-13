@@ -79,8 +79,10 @@ prepareObservations(const std::span<const ExtrinsicObservationFrame> frames,
     for (const ExtrinsicObservation& observation : frame.observations) {
       const core::PointXYZI& point = observation.point_lidar;
       const ObservedPixel& target = observation.observed_pixel;
-      if ((previous_source.has_value() && previous_source.value() == observation.source_index) ||
-          !std::isfinite(point.x_m) || !std::isfinite(point.y_m) || !std::isfinite(point.z_m) ||
+      if (previous_source == observation.source_index) {
+        invalidRecovery("duplicate source ID");
+      }
+      if (!std::isfinite(point.x_m) || !std::isfinite(point.y_m) || !std::isfinite(point.z_m) ||
           !std::isfinite(point.reflectance) || !std::isfinite(target.u_px) ||
           !std::isfinite(target.v_px) || target.u_px < 0.0 || target.v_px < 0.0 ||
           target.u_px >= projection.imageWidthPixels() ||

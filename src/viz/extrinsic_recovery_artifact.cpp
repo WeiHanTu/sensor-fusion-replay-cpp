@@ -325,14 +325,16 @@ void label(cv::Mat& image, const std::string& text, const int x, const int y,
                                                         t->pooled.rmse_px};
       const std::array<std::string, 3> labels{"median", "p95", "RMSE"};
       for (std::size_t m = 0; m < values.size(); ++m) {
+        const auto& metric_value = values[m];
         const int y = 125 + static_cast<int>(m) * 70;
         label(image,
-              labels[m] + ": " + (values[m].has_value() ? formatted(values[m].value()) : "null"), x,
-              y, 0.43);
-        if (values[m].has_value()) {
+              labels[m] + ": " +
+                  (metric_value.has_value() ? formatted(metric_value.value()) : "null"),
+              x, y, 0.43);
+        if (metric_value.has_value()) {
           cv::rectangle(
               image, {x, y + 10},
-              {x + static_cast<int>(140.0 * std::min(1.0, values[m].value() / maximum)), y + 27},
+              {x + static_cast<int>(140.0 * std::min(1.0, metric_value.value() / maximum)), y + 27},
               {60, 190, 120}, cv::FILLED);
         }
       }
