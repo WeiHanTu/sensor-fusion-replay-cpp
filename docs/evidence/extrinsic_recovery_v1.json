@@ -1,0 +1,3829 @@
+{
+  "schema_name": "sfr.extrinsic_recovery_evidence",
+  "schema_version": "1.0.0",
+  "build": {
+    "build_type": "Release",
+    "compiler": "AppleClang 16.0.0.16000026",
+    "git_commit": "da261d1816aefe115d2e9bb733f5bc6ec15791f4",
+    "git_dirty": false
+  },
+  "host": {
+    "arch": "arm64",
+    "cpu": "Apple M4 Pro",
+    "os": "Darwin 25.6.0"
+  },
+  "required_gates_passed": true,
+  "B_noise": {
+    "absolute_translation_error_m": {
+      "conditional_on_available": false,
+      "maximum": 6.938893903907228e-18,
+      "median": 6.938893903907228e-18,
+      "minimum": 6.938893903907228e-18,
+      "requested": 5,
+      "samples": 5
+    },
+    "absolute_yaw_error_deg": {
+      "conditional_on_available": false,
+      "maximum": 1.987846675914698e-16,
+      "median": 1.987846675914698e-16,
+      "minimum": 1.987846675914698e-16,
+      "requested": 5,
+      "samples": 5
+    },
+    "all_fixed_seeds_retained": true,
+    "held_out_clean_rmse_px": {
+      "conditional_on_available": false,
+      "maximum": 1.2710574864626037e-14,
+      "median": 1.2710574864626037e-14,
+      "minimum": 1.2710574864626037e-14,
+      "requested": 5,
+      "samples": 5
+    },
+    "seeds": [
+      17,
+      29,
+      43,
+      71,
+      101
+    ],
+    "signed_translation_error_m": {
+      "conditional_on_available": false,
+      "maximum": -6.938893903907228e-18,
+      "median": -6.938893903907228e-18,
+      "minimum": -6.938893903907228e-18,
+      "requested": 5,
+      "samples": 5
+    },
+    "signed_yaw_error_deg": {
+      "conditional_on_available": false,
+      "maximum": 1.987846675914698e-16,
+      "median": 1.987846675914698e-16,
+      "minimum": 1.987846675914698e-16,
+      "requested": 5,
+      "samples": 5
+    }
+  },
+  "C_outliers": {
+    "huber_held_out_clean_rmse_px": 0.19363379888718332,
+    "huber_normalized_parameter_error": 0.0050000000000000365,
+    "l2_held_out_clean_rmse_px": 4.095101834348833,
+    "l2_normalized_parameter_error": 0.11280514172678485,
+    "required_robustness_gate": true,
+    "same_fixture_identity": "fnv1a64-json-v1-b6eb1c89e582283e"
+  },
+  "claim_boundary": "Authored synthetic known-correspondence two-parameter recovery only; not physical/KITTI calibration, HIL, sim-to-real or production.",
+  "fixture_version": "1.0.0",
+  "generator_version": "authored-grid-splitmix64-v1",
+  "train_frames": [
+    0,
+    1
+  ],
+  "held_out_frames": [
+    2
+  ],
+  "training_points": 372,
+  "held_out_points": 160,
+  "metric_array_model_order": [
+    "nominal",
+    "recovered",
+    "oracle"
+  ],
+  "projection_matrix": [
+    [
+      520,
+      0,
+      480,
+      -52
+    ],
+    [
+      0,
+      520,
+      270,
+      0
+    ],
+    [
+      0,
+      0,
+      1,
+      0
+    ]
+  ],
+  "nominal_rotation": [
+    [
+      0,
+      -1,
+      0
+    ],
+    [
+      0,
+      0,
+      -1
+    ],
+    [
+      1,
+      0,
+      0
+    ]
+  ],
+  "performance_scope": {
+    "explicit_warmup": 0,
+    "timed_search_samples_per_case": 1,
+    "percentiles": "not_computed",
+    "replay": "separate verification pass excluded from primary search",
+    "interpretation": "Elapsed diagnostics, not a steady-state latency benchmark"
+  },
+  "cases": [
+    {
+      "case_id": "A_zero",
+      "fixture_identity": "fnv1a64-json-v1-3e8b7dd9b76582fa",
+      "seed": 17,
+      "geometry": "rich",
+      "noise_stddev_px": 0,
+      "outlier_fraction": 0,
+      "nominal_translation_m": [
+        0,
+        0,
+        0
+      ],
+      "hidden": {
+        "translation_camera_x_m": 0,
+        "yaw_camera_y_deg": 0,
+        "yaw_camera_y_rad": 0
+      },
+      "recovered": {
+        "translation_camera_x_m": -3.469446951953614e-18,
+        "yaw_camera_y_deg": 1.1181637552020177e-16,
+        "yaw_camera_y_rad": 1.951563910473908e-18
+      },
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.1,
+            "minimum": -0.1
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 2,
+            "minimum": -2
+          }
+        },
+        "loss": "squared_l2",
+        "status": "grid_complete",
+        "evaluations": 2113,
+        "points_evaluated": 786036,
+        "global_bound_hits": {
+          "translation": false,
+          "yaw": false
+        },
+        "refinement_edge_hit": false,
+        "identifiability": {
+          "available": true,
+          "condition": 8.711493536205335,
+          "difference_method": "central",
+          "points_evaluated": 1860,
+          "poorly_identifiable": false,
+          "rank": 2,
+          "sigma_max": 764.0673108615938,
+          "sigma_min": 87.70795819179544
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": 3.469446951953614e-18,
+        "absolute_yaw_deg": 1.1181637552020177e-16,
+        "signed_translation_m": -3.469446951953614e-18,
+        "signed_yaw_deg": 1.1181637552020177e-16
+      },
+      "train_observed": {
+        "median_px": [
+          0,
+          0,
+          0
+        ],
+        "p95_px": [
+          0,
+          0,
+          0
+        ],
+        "rmse_px": [
+          0,
+          0,
+          0
+        ],
+        "visible": [
+          372,
+          372,
+          372
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          372,
+          372,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          0,
+          0,
+          0
+        ],
+        "p95_px": [
+          0,
+          0,
+          0
+        ],
+        "rmse_px": [
+          0,
+          0,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          0,
+          0,
+          0
+        ],
+        "p95_px": [
+          0,
+          0,
+          0
+        ],
+        "rmse_px": [
+          0,
+          0,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": true,
+        "held_out_gate": true,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": true,
+        "passed": true,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": true
+      },
+      "reproducible": true
+    },
+    {
+      "case_id": "A_yaw_positive",
+      "fixture_identity": "fnv1a64-json-v1-f5e82b90859417e3",
+      "seed": 17,
+      "geometry": "rich",
+      "noise_stddev_px": 0,
+      "outlier_fraction": 0,
+      "nominal_translation_m": [
+        0,
+        0,
+        0
+      ],
+      "hidden": {
+        "translation_camera_x_m": 0,
+        "yaw_camera_y_deg": 0.7,
+        "yaw_camera_y_rad": 0.012217304763960306
+      },
+      "recovered": {
+        "translation_camera_x_m": -3.469446951953614e-18,
+        "yaw_camera_y_deg": 0.7000000000000002,
+        "yaw_camera_y_rad": 0.01221730476396031
+      },
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.1,
+            "minimum": -0.1
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 2,
+            "minimum": -2
+          }
+        },
+        "loss": "squared_l2",
+        "status": "grid_complete",
+        "evaluations": 2113,
+        "points_evaluated": 786036,
+        "global_bound_hits": {
+          "translation": false,
+          "yaw": false
+        },
+        "refinement_edge_hit": false,
+        "identifiability": {
+          "available": true,
+          "condition": 8.712868066726235,
+          "difference_method": "central",
+          "points_evaluated": 1860,
+          "poorly_identifiable": false,
+          "rank": 2,
+          "sigma_max": 764.7766660804166,
+          "sigma_min": 87.77553616369323
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": 3.469446951953614e-18,
+        "absolute_yaw_deg": 1.987846675914698e-16,
+        "signed_translation_m": -3.469446951953614e-18,
+        "signed_yaw_deg": 1.987846675914698e-16
+      },
+      "train_observed": {
+        "median_px": [
+          6.589386413732275,
+          0,
+          0
+        ],
+        "p95_px": [
+          7.412104479692373,
+          0,
+          0
+        ],
+        "rmse_px": [
+          6.7663646840904415,
+          1.38235650727529e-14,
+          0
+        ],
+        "visible": [
+          372,
+          372,
+          372
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          372,
+          372,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          6.608008163560423,
+          0,
+          0
+        ],
+        "p95_px": [
+          7.626474079290196,
+          0,
+          0
+        ],
+        "rmse_px": [
+          6.7833964744389545,
+          1.2710574864626037e-14,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          6.608008163560423,
+          0,
+          0
+        ],
+        "p95_px": [
+          7.626474079290196,
+          0,
+          0
+        ],
+        "rmse_px": [
+          6.7833964744389545,
+          1.2710574864626037e-14,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": true,
+        "held_out_gate": true,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": true,
+        "passed": true,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": true
+      },
+      "reproducible": true
+    },
+    {
+      "case_id": "A_yaw_negative",
+      "fixture_identity": "fnv1a64-json-v1-5487f28581a0c993",
+      "seed": 17,
+      "geometry": "rich",
+      "noise_stddev_px": 0,
+      "outlier_fraction": 0,
+      "nominal_translation_m": [
+        0,
+        0,
+        0
+      ],
+      "hidden": {
+        "translation_camera_x_m": 0,
+        "yaw_camera_y_deg": -0.7,
+        "yaw_camera_y_rad": -0.012217304763960306
+      },
+      "recovered": {
+        "translation_camera_x_m": -3.469446951953614e-18,
+        "yaw_camera_y_deg": -0.6999999999999998,
+        "yaw_camera_y_rad": -0.012217304763960305
+      },
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.1,
+            "minimum": -0.1
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 2,
+            "minimum": -2
+          }
+        },
+        "loss": "squared_l2",
+        "status": "grid_complete",
+        "evaluations": 2113,
+        "points_evaluated": 786036,
+        "global_bound_hits": {
+          "translation": false,
+          "yaw": false
+        },
+        "refinement_edge_hit": false,
+        "identifiability": {
+          "available": true,
+          "condition": 8.711401256802406,
+          "difference_method": "central",
+          "points_evaluated": 1860,
+          "poorly_identifiable": false,
+          "rank": 2,
+          "sigma_max": 763.6578786235045,
+          "sigma_min": 87.66188769311857
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": 3.469446951953614e-18,
+        "absolute_yaw_deg": 9.93923337957349e-17,
+        "signed_translation_m": -3.469446951953614e-18,
+        "signed_yaw_deg": 9.93923337957349e-17
+      },
+      "train_observed": {
+        "median_px": [
+          6.601412478943966,
+          0,
+          0
+        ],
+        "p95_px": [
+          7.463858456292942,
+          0,
+          0
+        ],
+        "rmse_px": [
+          6.761227731346395,
+          8.465170213601006e-15,
+          0
+        ],
+        "visible": [
+          372,
+          372,
+          372
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          372,
+          372,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          6.57646032323186,
+          0,
+          0
+        ],
+        "p95_px": [
+          7.712238123128287,
+          0,
+          0
+        ],
+        "rmse_px": [
+          6.799507371942412,
+          8.987733679556355e-15,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          6.57646032323186,
+          0,
+          0
+        ],
+        "p95_px": [
+          7.712238123128287,
+          0,
+          0
+        ],
+        "rmse_px": [
+          6.799507371942412,
+          8.987733679556355e-15,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": true,
+        "held_out_gate": true,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": true,
+        "passed": true,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": true
+      },
+      "reproducible": true
+    },
+    {
+      "case_id": "A_tx_positive",
+      "fixture_identity": "fnv1a64-json-v1-688ac65bb7174f4c",
+      "seed": 17,
+      "geometry": "rich",
+      "noise_stddev_px": 0,
+      "outlier_fraction": 0,
+      "nominal_translation_m": [
+        0,
+        0,
+        0
+      ],
+      "hidden": {
+        "translation_camera_x_m": 0.04,
+        "yaw_camera_y_deg": 0,
+        "yaw_camera_y_rad": 0
+      },
+      "recovered": {
+        "translation_camera_x_m": 0.039999999999999994,
+        "yaw_camera_y_deg": 1.1181637552020177e-16,
+        "yaw_camera_y_rad": 1.951563910473908e-18
+      },
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.1,
+            "minimum": -0.1
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 2,
+            "minimum": -2
+          }
+        },
+        "loss": "squared_l2",
+        "status": "grid_complete",
+        "evaluations": 2113,
+        "points_evaluated": 786036,
+        "global_bound_hits": {
+          "translation": false,
+          "yaw": false
+        },
+        "refinement_edge_hit": false,
+        "identifiability": {
+          "available": true,
+          "condition": 8.712308647772119,
+          "difference_method": "central",
+          "points_evaluated": 1860,
+          "poorly_identifiable": false,
+          "rank": 2,
+          "sigma_max": 764.134123879773,
+          "sigma_min": 87.70742116386967
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": 6.938893903907228e-18,
+        "absolute_yaw_deg": 1.1181637552020177e-16,
+        "signed_translation_m": -6.938893903907228e-18,
+        "signed_yaw_deg": 1.1181637552020177e-16
+      },
+      "train_observed": {
+        "median_px": [
+          1.386666666666656,
+          0,
+          0
+        ],
+        "p95_px": [
+          3.466666666666697,
+          0,
+          0
+        ],
+        "rmse_px": [
+          1.9635068392865678,
+          0,
+          0
+        ],
+        "visible": [
+          372,
+          372,
+          372
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          372,
+          372,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          0.9454545454544814,
+          0,
+          0
+        ],
+        "p95_px": [
+          2.9714285714285893,
+          0,
+          0
+        ],
+        "rmse_px": [
+          1.6230325010342281,
+          0,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          0.9454545454544814,
+          0,
+          0
+        ],
+        "p95_px": [
+          2.9714285714285893,
+          0,
+          0
+        ],
+        "rmse_px": [
+          1.6230325010342281,
+          0,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": true,
+        "held_out_gate": true,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": true,
+        "passed": true,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": true
+      },
+      "reproducible": true
+    },
+    {
+      "case_id": "A_tx_negative",
+      "fixture_identity": "fnv1a64-json-v1-fb4a763770378ab7",
+      "seed": 17,
+      "geometry": "rich",
+      "noise_stddev_px": 0,
+      "outlier_fraction": 0,
+      "nominal_translation_m": [
+        0,
+        0,
+        0
+      ],
+      "hidden": {
+        "translation_camera_x_m": -0.04,
+        "yaw_camera_y_deg": 0,
+        "yaw_camera_y_rad": 0
+      },
+      "recovered": {
+        "translation_camera_x_m": -0.04000000000000001,
+        "yaw_camera_y_deg": 1.1181637552020177e-16,
+        "yaw_camera_y_rad": 1.951563910473908e-18
+      },
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.1,
+            "minimum": -0.1
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 2,
+            "minimum": -2
+          }
+        },
+        "loss": "squared_l2",
+        "status": "grid_complete",
+        "evaluations": 2113,
+        "points_evaluated": 786036,
+        "global_bound_hits": {
+          "translation": false,
+          "yaw": false
+        },
+        "refinement_edge_hit": false,
+        "identifiability": {
+          "available": true,
+          "condition": 8.710660555503104,
+          "difference_method": "central",
+          "points_evaluated": 1860,
+          "poorly_identifiable": false,
+          "rank": 2,
+          "sigma_max": 764.001038732915,
+          "sigma_min": 87.70873734142295
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": 6.938893903907228e-18,
+        "absolute_yaw_deg": 1.1181637552020177e-16,
+        "signed_translation_m": -6.938893903907228e-18,
+        "signed_yaw_deg": 1.1181637552020177e-16
+      },
+      "train_observed": {
+        "median_px": [
+          1.386666666666656,
+          0,
+          0
+        ],
+        "p95_px": [
+          3.466666666666697,
+          0,
+          0
+        ],
+        "rmse_px": [
+          1.9635068392865647,
+          0,
+          0
+        ],
+        "visible": [
+          372,
+          372,
+          372
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          372,
+          372,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          0.9454545454545382,
+          0,
+          0
+        ],
+        "p95_px": [
+          2.9714285714285893,
+          0,
+          0
+        ],
+        "rmse_px": [
+          1.6230325010342308,
+          0,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          0.9454545454545382,
+          0,
+          0
+        ],
+        "p95_px": [
+          2.9714285714285893,
+          0,
+          0
+        ],
+        "rmse_px": [
+          1.6230325010342308,
+          0,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": true,
+        "held_out_gate": true,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": true,
+        "passed": true,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": true
+      },
+      "reproducible": true
+    },
+    {
+      "case_id": "A_joint_positive",
+      "fixture_identity": "fnv1a64-json-v1-9fe63031e4fe483b",
+      "seed": 17,
+      "geometry": "rich",
+      "noise_stddev_px": 0,
+      "outlier_fraction": 0,
+      "nominal_translation_m": [
+        0,
+        0,
+        0
+      ],
+      "hidden": {
+        "translation_camera_x_m": -0.04,
+        "yaw_camera_y_deg": 0.7,
+        "yaw_camera_y_rad": 0.012217304763960306
+      },
+      "recovered": {
+        "translation_camera_x_m": -0.04000000000000001,
+        "yaw_camera_y_deg": 0.7000000000000002,
+        "yaw_camera_y_rad": 0.01221730476396031
+      },
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.1,
+            "minimum": -0.1
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 2,
+            "minimum": -2
+          }
+        },
+        "loss": "squared_l2",
+        "status": "grid_complete",
+        "evaluations": 2113,
+        "points_evaluated": 786036,
+        "global_bound_hits": {
+          "translation": false,
+          "yaw": false
+        },
+        "refinement_edge_hit": false,
+        "identifiability": {
+          "available": true,
+          "condition": 8.7113382898879,
+          "difference_method": "central",
+          "points_evaluated": 1860,
+          "poorly_identifiable": false,
+          "rank": 2,
+          "sigma_max": 764.6750352876173,
+          "sigma_min": 87.77928371525306
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": 6.938893903907228e-18,
+        "absolute_yaw_deg": 1.987846675914698e-16,
+        "signed_translation_m": -6.938893903907228e-18,
+        "signed_yaw_deg": 1.987846675914698e-16
+      },
+      "train_observed": {
+        "median_px": [
+          5.2071148431154715,
+          0,
+          0
+        ],
+        "p95_px": [
+          6.359571308300834,
+          0,
+          0
+        ],
+        "rmse_px": [
+          5.123263053847747,
+          0,
+          0
+        ],
+        "visible": [
+          372,
+          372,
+          372
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          372,
+          372,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          5.758962603194446,
+          0,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          0,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          1.2710574864626037e-14,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          5.758962603194446,
+          0,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          0,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          1.2710574864626037e-14,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": true,
+        "held_out_gate": true,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": true,
+        "passed": true,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": true
+      },
+      "reproducible": true
+    },
+    {
+      "case_id": "A_joint_negative",
+      "fixture_identity": "fnv1a64-json-v1-71c46462211fd859",
+      "seed": 17,
+      "geometry": "rich",
+      "noise_stddev_px": 0,
+      "outlier_fraction": 0,
+      "nominal_translation_m": [
+        0,
+        0,
+        0
+      ],
+      "hidden": {
+        "translation_camera_x_m": 0.035,
+        "yaw_camera_y_deg": -0.6,
+        "yaw_camera_y_rad": -0.010471975511965976
+      },
+      "recovered": {
+        "translation_camera_x_m": 0.034999999999999996,
+        "yaw_camera_y_deg": -0.6,
+        "yaw_camera_y_rad": -0.010471975511965976
+      },
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.1,
+            "minimum": -0.1
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 2,
+            "minimum": -2
+          }
+        },
+        "loss": "squared_l2",
+        "status": "grid_complete",
+        "evaluations": 2113,
+        "points_evaluated": 786036,
+        "global_bound_hits": {
+          "translation": false,
+          "yaw": false
+        },
+        "refinement_edge_hit": false,
+        "identifiability": {
+          "available": true,
+          "condition": 8.711527562609435,
+          "difference_method": "central",
+          "points_evaluated": 1860,
+          "poorly_identifiable": false,
+          "rank": 2,
+          "sigma_max": 763.729995883371,
+          "sigma_min": 87.66889508119799
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": 6.938893903907228e-18,
+        "absolute_yaw_deg": 0,
+        "signed_translation_m": -6.938893903907228e-18,
+        "signed_yaw_deg": 0
+      },
+      "train_observed": {
+        "median_px": [
+          4.444798890812775,
+          0,
+          0
+        ],
+        "p95_px": [
+          5.40700696965078,
+          0,
+          0
+        ],
+        "rmse_px": [
+          4.360679276153663,
+          0,
+          0
+        ],
+        "visible": [
+          372,
+          372,
+          372
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          372,
+          372,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          4.946748392431883,
+          0,
+          0
+        ],
+        "p95_px": [
+          5.783160908449487,
+          0,
+          0
+        ],
+        "rmse_px": [
+          4.749770934905171,
+          0,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          4.946748392431883,
+          0,
+          0
+        ],
+        "p95_px": [
+          5.783160908449487,
+          0,
+          0
+        ],
+        "rmse_px": [
+          4.749770934905171,
+          0,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": true,
+        "held_out_gate": true,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": true,
+        "passed": true,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": true
+      },
+      "reproducible": true
+    },
+    {
+      "case_id": "B_seed_17",
+      "fixture_identity": "fnv1a64-json-v1-e51d094586ec7047",
+      "seed": 17,
+      "geometry": "rich",
+      "noise_stddev_px": 1,
+      "outlier_fraction": 0,
+      "nominal_translation_m": [
+        0,
+        0,
+        0
+      ],
+      "hidden": {
+        "translation_camera_x_m": -0.04,
+        "yaw_camera_y_deg": 0.7,
+        "yaw_camera_y_rad": 0.012217304763960306
+      },
+      "recovered": {
+        "translation_camera_x_m": -0.04000000000000001,
+        "yaw_camera_y_deg": 0.7000000000000002,
+        "yaw_camera_y_rad": 0.01221730476396031
+      },
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.1,
+            "minimum": -0.1
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 2,
+            "minimum": -2
+          }
+        },
+        "loss": "huber",
+        "status": "grid_complete",
+        "evaluations": 2113,
+        "points_evaluated": 786036,
+        "global_bound_hits": {
+          "translation": false,
+          "yaw": false
+        },
+        "refinement_edge_hit": false,
+        "identifiability": {
+          "available": true,
+          "condition": 8.7113382898879,
+          "difference_method": "central",
+          "points_evaluated": 1860,
+          "poorly_identifiable": false,
+          "rank": 2,
+          "sigma_max": 764.6750352876173,
+          "sigma_min": 87.77928371525306
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": 6.938893903907228e-18,
+        "absolute_yaw_deg": 1.987846675914698e-16,
+        "signed_translation_m": -6.938893903907228e-18,
+        "signed_yaw_deg": 1.987846675914698e-16
+      },
+      "train_observed": {
+        "median_px": [
+          5.200954067494548,
+          1.3671234541193655,
+          1.3671234541193655
+        ],
+        "p95_px": [
+          7.188410963470595,
+          2.0029738176055747,
+          2.0029738176055747
+        ],
+        "rmse_px": [
+          5.3091420297741365,
+          1.401669839502973,
+          1.401669839502973
+        ],
+        "visible": [
+          372,
+          372,
+          372
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          372,
+          372,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          5.574435563042653,
+          1.4729307269771281,
+          1.4729307269771281
+        ],
+        "p95_px": [
+          7.684823321292713,
+          1.9722449648223344,
+          1.9722449648223344
+        ],
+        "rmse_px": [
+          5.733062475841127,
+          1.4209693879860195,
+          1.4209693879860195
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          5.758962603194446,
+          0,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          0,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          1.2710574864626037e-14,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": true,
+        "held_out_gate": true,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": true,
+        "passed": true,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": true
+      },
+      "reproducible": true
+    },
+    {
+      "case_id": "B_seed_29",
+      "fixture_identity": "fnv1a64-json-v1-4a78a9bcd2b626ea",
+      "seed": 29,
+      "geometry": "rich",
+      "noise_stddev_px": 1,
+      "outlier_fraction": 0,
+      "nominal_translation_m": [
+        0,
+        0,
+        0
+      ],
+      "hidden": {
+        "translation_camera_x_m": -0.04,
+        "yaw_camera_y_deg": 0.7,
+        "yaw_camera_y_rad": 0.012217304763960306
+      },
+      "recovered": {
+        "translation_camera_x_m": -0.04000000000000001,
+        "yaw_camera_y_deg": 0.7000000000000002,
+        "yaw_camera_y_rad": 0.01221730476396031
+      },
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.1,
+            "minimum": -0.1
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 2,
+            "minimum": -2
+          }
+        },
+        "loss": "huber",
+        "status": "grid_complete",
+        "evaluations": 2113,
+        "points_evaluated": 786036,
+        "global_bound_hits": {
+          "translation": false,
+          "yaw": false
+        },
+        "refinement_edge_hit": false,
+        "identifiability": {
+          "available": true,
+          "condition": 8.7113382898879,
+          "difference_method": "central",
+          "points_evaluated": 1860,
+          "poorly_identifiable": false,
+          "rank": 2,
+          "sigma_max": 764.6750352876173,
+          "sigma_min": 87.77928371525306
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": 6.938893903907228e-18,
+        "absolute_yaw_deg": 1.987846675914698e-16,
+        "signed_translation_m": -6.938893903907228e-18,
+        "signed_yaw_deg": 1.987846675914698e-16
+      },
+      "train_observed": {
+        "median_px": [
+          5.204064044380118,
+          1.3045030808380702,
+          1.3045030808380702
+        ],
+        "p95_px": [
+          7.236261151810272,
+          2.042200577968916,
+          2.042200577968916
+        ],
+        "rmse_px": [
+          5.306514498689572,
+          1.3802009372651323,
+          1.3802009372651323
+        ],
+        "visible": [
+          372,
+          372,
+          372
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          372,
+          372,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          5.538453511717227,
+          1.37154978808493,
+          1.37154978808493
+        ],
+        "p95_px": [
+          7.579478210784796,
+          1.9857458269803276,
+          1.9857458269803276
+        ],
+        "rmse_px": [
+          5.7328928036274185,
+          1.4136073637583084,
+          1.4136073637583084
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          5.758962603194446,
+          0,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          0,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          1.2710574864626037e-14,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": true,
+        "held_out_gate": true,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": true,
+        "passed": true,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": true
+      },
+      "reproducible": true
+    },
+    {
+      "case_id": "B_seed_43",
+      "fixture_identity": "fnv1a64-json-v1-b6be6578f4c9d795",
+      "seed": 43,
+      "geometry": "rich",
+      "noise_stddev_px": 1,
+      "outlier_fraction": 0,
+      "nominal_translation_m": [
+        0,
+        0,
+        0
+      ],
+      "hidden": {
+        "translation_camera_x_m": -0.04,
+        "yaw_camera_y_deg": 0.7,
+        "yaw_camera_y_rad": 0.012217304763960306
+      },
+      "recovered": {
+        "translation_camera_x_m": -0.04000000000000001,
+        "yaw_camera_y_deg": 0.7000000000000002,
+        "yaw_camera_y_rad": 0.01221730476396031
+      },
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.1,
+            "minimum": -0.1
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 2,
+            "minimum": -2
+          }
+        },
+        "loss": "huber",
+        "status": "grid_complete",
+        "evaluations": 2113,
+        "points_evaluated": 786036,
+        "global_bound_hits": {
+          "translation": false,
+          "yaw": false
+        },
+        "refinement_edge_hit": false,
+        "identifiability": {
+          "available": true,
+          "condition": 8.7113382898879,
+          "difference_method": "central",
+          "points_evaluated": 1860,
+          "poorly_identifiable": false,
+          "rank": 2,
+          "sigma_max": 764.6750352876173,
+          "sigma_min": 87.77928371525306
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": 6.938893903907228e-18,
+        "absolute_yaw_deg": 1.987846675914698e-16,
+        "signed_translation_m": -6.938893903907228e-18,
+        "signed_yaw_deg": 1.987846675914698e-16
+      },
+      "train_observed": {
+        "median_px": [
+          5.130250057642717,
+          1.4418160375373528,
+          1.4418160375373528
+        ],
+        "p95_px": [
+          7.435782058659427,
+          2.1084805952208043,
+          2.1084805952208043
+        ],
+        "rmse_px": [
+          5.319719114130635,
+          1.4388772623768724,
+          1.4388772623768724
+        ],
+        "visible": [
+          372,
+          372,
+          372
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          372,
+          372,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          5.481432476662385,
+          1.4418462204807212,
+          1.4418462204807212
+        ],
+        "p95_px": [
+          7.596737599666645,
+          2.078835858215352,
+          2.078835858215352
+        ],
+        "rmse_px": [
+          5.73603586515567,
+          1.4365311867996513,
+          1.4365311867996513
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          5.758962603194446,
+          0,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          0,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          1.2710574864626037e-14,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": true,
+        "held_out_gate": true,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": true,
+        "passed": true,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": true
+      },
+      "reproducible": true
+    },
+    {
+      "case_id": "B_seed_71",
+      "fixture_identity": "fnv1a64-json-v1-10667a968a814ab6",
+      "seed": 71,
+      "geometry": "rich",
+      "noise_stddev_px": 1,
+      "outlier_fraction": 0,
+      "nominal_translation_m": [
+        0,
+        0,
+        0
+      ],
+      "hidden": {
+        "translation_camera_x_m": -0.04,
+        "yaw_camera_y_deg": 0.7,
+        "yaw_camera_y_rad": 0.012217304763960306
+      },
+      "recovered": {
+        "translation_camera_x_m": -0.04000000000000001,
+        "yaw_camera_y_deg": 0.7000000000000002,
+        "yaw_camera_y_rad": 0.01221730476396031
+      },
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.1,
+            "minimum": -0.1
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 2,
+            "minimum": -2
+          }
+        },
+        "loss": "huber",
+        "status": "grid_complete",
+        "evaluations": 2113,
+        "points_evaluated": 786036,
+        "global_bound_hits": {
+          "translation": false,
+          "yaw": false
+        },
+        "refinement_edge_hit": false,
+        "identifiability": {
+          "available": true,
+          "condition": 8.7113382898879,
+          "difference_method": "central",
+          "points_evaluated": 1860,
+          "poorly_identifiable": false,
+          "rank": 2,
+          "sigma_max": 764.6750352876173,
+          "sigma_min": 87.77928371525306
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": 6.938893903907228e-18,
+        "absolute_yaw_deg": 1.987846675914698e-16,
+        "signed_translation_m": -6.938893903907228e-18,
+        "signed_yaw_deg": 1.987846675914698e-16
+      },
+      "train_observed": {
+        "median_px": [
+          5.076681725160102,
+          1.4063968888297889,
+          1.4063968888297889
+        ],
+        "p95_px": [
+          7.553623781232978,
+          2.0663311749238558,
+          2.0663311749238558
+        ],
+        "rmse_px": [
+          5.31869017982582,
+          1.432198099121024,
+          1.432198099121024
+        ],
+        "visible": [
+          372,
+          372,
+          372
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          372,
+          372,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          5.479504879715623,
+          1.406396888829734,
+          1.406396888829734
+        ],
+        "p95_px": [
+          7.8312377910169015,
+          1.965470157089258,
+          1.965470157089258
+        ],
+        "rmse_px": [
+          5.72922156521807,
+          1.4142743655660308,
+          1.4142743655660308
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          5.758962603194446,
+          0,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          0,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          1.2710574864626037e-14,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": true,
+        "held_out_gate": true,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": true,
+        "passed": true,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": true
+      },
+      "reproducible": true
+    },
+    {
+      "case_id": "B_seed_101",
+      "fixture_identity": "fnv1a64-json-v1-f43559bffe2d50c1",
+      "seed": 101,
+      "geometry": "rich",
+      "noise_stddev_px": 1,
+      "outlier_fraction": 0,
+      "nominal_translation_m": [
+        0,
+        0,
+        0
+      ],
+      "hidden": {
+        "translation_camera_x_m": -0.04,
+        "yaw_camera_y_deg": 0.7,
+        "yaw_camera_y_rad": 0.012217304763960306
+      },
+      "recovered": {
+        "translation_camera_x_m": -0.04000000000000001,
+        "yaw_camera_y_deg": 0.7000000000000002,
+        "yaw_camera_y_rad": 0.01221730476396031
+      },
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.1,
+            "minimum": -0.1
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 2,
+            "minimum": -2
+          }
+        },
+        "loss": "huber",
+        "status": "grid_complete",
+        "evaluations": 2113,
+        "points_evaluated": 786036,
+        "global_bound_hits": {
+          "translation": false,
+          "yaw": false
+        },
+        "refinement_edge_hit": false,
+        "identifiability": {
+          "available": true,
+          "condition": 8.7113382898879,
+          "difference_method": "central",
+          "points_evaluated": 1860,
+          "poorly_identifiable": false,
+          "rank": 2,
+          "sigma_max": 764.6750352876173,
+          "sigma_min": 87.77928371525306
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": 6.938893903907228e-18,
+        "absolute_yaw_deg": 1.987846675914698e-16,
+        "signed_translation_m": -6.938893903907228e-18,
+        "signed_yaw_deg": 1.987846675914698e-16
+      },
+      "train_observed": {
+        "median_px": [
+          5.136497953708293,
+          1.3588315543462224,
+          1.3588315543462224
+        ],
+        "p95_px": [
+          7.405467184902812,
+          2.094635184079662,
+          2.094635184079662
+        ],
+        "rmse_px": [
+          5.315385696877405,
+          1.414968768291879,
+          1.414968768291879
+        ],
+        "visible": [
+          372,
+          372,
+          372
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          372,
+          372,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          5.573823622076271,
+          1.298128838060911,
+          1.298128838060911
+        ],
+        "p95_px": [
+          7.667703806296779,
+          2.080954123220744,
+          2.080954123220744
+        ],
+        "rmse_px": [
+          5.7234139973252125,
+          1.3815098749874735,
+          1.3815098749874735
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          5.758962603194446,
+          0,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          0,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          1.2710574864626037e-14,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": true,
+        "held_out_gate": true,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": true,
+        "passed": true,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": true
+      },
+      "reproducible": true
+    },
+    {
+      "case_id": "C_l2",
+      "fixture_identity": "fnv1a64-json-v1-b6eb1c89e582283e",
+      "seed": 17,
+      "geometry": "rich",
+      "noise_stddev_px": 0,
+      "outlier_fraction": 0.1,
+      "nominal_translation_m": [
+        0,
+        0,
+        0
+      ],
+      "hidden": {
+        "translation_camera_x_m": -0.04,
+        "yaw_camera_y_deg": 0.7,
+        "yaw_camera_y_rad": 0.012217304763960306
+      },
+      "recovered": {
+        "translation_camera_x_m": -0.045000000000000005,
+        "yaw_camera_y_deg": 1.1400000000000001,
+        "yaw_camera_y_rad": 0.01989675347273536
+      },
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.1,
+            "minimum": -0.1
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 2,
+            "minimum": -2
+          }
+        },
+        "loss": "squared_l2",
+        "status": "refinement_limited",
+        "evaluations": 2113,
+        "points_evaluated": 786036,
+        "global_bound_hits": {
+          "translation": false,
+          "yaw": false
+        },
+        "refinement_edge_hit": true,
+        "identifiability": {
+          "available": true,
+          "condition": 8.712175518630655,
+          "difference_method": "central",
+          "points_evaluated": 1860,
+          "poorly_identifiable": false,
+          "rank": 2,
+          "sigma_max": 765.2372594440988,
+          "sigma_min": 87.8353813932775
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": 0.0050000000000000044,
+        "absolute_yaw_deg": 0.4400000000000003,
+        "signed_translation_m": -0.0050000000000000044,
+        "signed_yaw_deg": 0.4400000000000003
+      },
+      "train_observed": {
+        "median_px": [
+          5.316355429745527,
+          4.016322045562638,
+          0
+        ],
+        "p95_px": [
+          54.3376389045428,
+          46.87787903875683,
+          50
+        ],
+        "rmse_px": [
+          17.766499576262294,
+          15.25091375552522,
+          15.768827286088671
+        ],
+        "visible": [
+          372,
+          372,
+          372
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          372,
+          372,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          5.758962603194446,
+          4.005844242884333,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          4.642158678298017,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          4.095101834348833,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          5.758962603194446,
+          4.005844242884333,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          4.642158678298017,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          4.095101834348833,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": true,
+        "held_out_gate": false,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": false,
+        "passed": false,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": false
+      },
+      "reproducible": true
+    },
+    {
+      "case_id": "C_huber",
+      "fixture_identity": "fnv1a64-json-v1-b6eb1c89e582283e",
+      "seed": 17,
+      "geometry": "rich",
+      "noise_stddev_px": 0,
+      "outlier_fraction": 0.1,
+      "nominal_translation_m": [
+        0,
+        0,
+        0
+      ],
+      "hidden": {
+        "translation_camera_x_m": -0.04,
+        "yaw_camera_y_deg": 0.7,
+        "yaw_camera_y_rad": 0.012217304763960306
+      },
+      "recovered": {
+        "translation_camera_x_m": -0.04000000000000001,
+        "yaw_camera_y_deg": 0.7200000000000002,
+        "yaw_camera_y_rad": 0.012566370614359175
+      },
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.1,
+            "minimum": -0.1
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 2,
+            "minimum": -2
+          }
+        },
+        "loss": "huber",
+        "status": "refinement_limited",
+        "evaluations": 2113,
+        "points_evaluated": 786036,
+        "global_bound_hits": {
+          "translation": false,
+          "yaw": false
+        },
+        "refinement_edge_hit": true,
+        "identifiability": {
+          "available": true,
+          "condition": 8.711376540064244,
+          "difference_method": "central",
+          "points_evaluated": 1860,
+          "poorly_identifiable": false,
+          "rank": 2,
+          "sigma_max": 764.6987096094865,
+          "sigma_min": 87.78161592402562
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": 6.938893903907228e-18,
+        "absolute_yaw_deg": 0.020000000000000146,
+        "signed_translation_m": -6.938893903907228e-18,
+        "signed_yaw_deg": 0.020000000000000146
+      },
+      "train_observed": {
+        "median_px": [
+          5.316355429745527,
+          0.19137583031017258,
+          0
+        ],
+        "p95_px": [
+          54.3376389045428,
+          49.84597491886748,
+          50
+        ],
+        "rmse_px": [
+          17.766499576262294,
+          15.720813210740017,
+          15.768827286088671
+        ],
+        "visible": [
+          372,
+          372,
+          372
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          372,
+          372,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          5.758962603194446,
+          0.18925618989983906,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          0.21681203897608678,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          0.19363379888718332,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          5.758962603194446,
+          0.18925618989983906,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          0.21681203897608678,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          0.19363379888718332,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": true,
+        "held_out_gate": true,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": false,
+        "passed": false,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": false
+      },
+      "reproducible": true
+    },
+    {
+      "case_id": "D_rich",
+      "fixture_identity": "fnv1a64-json-v1-9fe63031e4fe483b",
+      "seed": 17,
+      "geometry": "rich",
+      "noise_stddev_px": 0,
+      "outlier_fraction": 0,
+      "nominal_translation_m": [
+        0,
+        0,
+        0
+      ],
+      "hidden": {
+        "translation_camera_x_m": -0.04,
+        "yaw_camera_y_deg": 0.7,
+        "yaw_camera_y_rad": 0.012217304763960306
+      },
+      "recovered": {
+        "translation_camera_x_m": -0.04000000000000001,
+        "yaw_camera_y_deg": 0.7000000000000002,
+        "yaw_camera_y_rad": 0.01221730476396031
+      },
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.1,
+            "minimum": -0.1
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 2,
+            "minimum": -2
+          }
+        },
+        "loss": "huber",
+        "status": "grid_complete",
+        "evaluations": 2113,
+        "points_evaluated": 786036,
+        "global_bound_hits": {
+          "translation": false,
+          "yaw": false
+        },
+        "refinement_edge_hit": false,
+        "identifiability": {
+          "available": true,
+          "condition": 8.7113382898879,
+          "difference_method": "central",
+          "points_evaluated": 1860,
+          "poorly_identifiable": false,
+          "rank": 2,
+          "sigma_max": 764.6750352876173,
+          "sigma_min": 87.77928371525306
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": 6.938893903907228e-18,
+        "absolute_yaw_deg": 1.987846675914698e-16,
+        "signed_translation_m": -6.938893903907228e-18,
+        "signed_yaw_deg": 1.987846675914698e-16
+      },
+      "train_observed": {
+        "median_px": [
+          5.2071148431154715,
+          0,
+          0
+        ],
+        "p95_px": [
+          6.359571308300834,
+          0,
+          0
+        ],
+        "rmse_px": [
+          5.123263053847747,
+          0,
+          0
+        ],
+        "visible": [
+          372,
+          372,
+          372
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          372,
+          372,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          5.758962603194446,
+          0,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          0,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          1.2710574864626037e-14,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          5.758962603194446,
+          0,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          0,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          1.2710574864626037e-14,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": true,
+        "held_out_gate": true,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": true,
+        "passed": true,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": true
+      },
+      "reproducible": true
+    },
+    {
+      "case_id": "D_narrow",
+      "fixture_identity": "fnv1a64-json-v1-ab94a0b8ef5b14c6",
+      "seed": 17,
+      "geometry": "narrow",
+      "noise_stddev_px": 0,
+      "outlier_fraction": 0,
+      "nominal_translation_m": [
+        0,
+        0,
+        0
+      ],
+      "hidden": {
+        "translation_camera_x_m": -0.04,
+        "yaw_camera_y_deg": 0.7,
+        "yaw_camera_y_rad": 0.012217304763960306
+      },
+      "recovered": {
+        "translation_camera_x_m": -0.04000000000000001,
+        "yaw_camera_y_deg": 0.7000000000000002,
+        "yaw_camera_y_rad": 0.01221730476396031
+      },
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.1,
+            "minimum": -0.1
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 2,
+            "minimum": -2
+          }
+        },
+        "loss": "huber",
+        "status": "grid_complete",
+        "evaluations": 2113,
+        "points_evaluated": 786036,
+        "global_bound_hits": {
+          "translation": false,
+          "yaw": false
+        },
+        "refinement_edge_hit": false,
+        "identifiability": {
+          "available": true,
+          "condition": 380386.4713001222,
+          "difference_method": "central",
+          "points_evaluated": 1860,
+          "poorly_identifiable": true,
+          "rank": 2,
+          "sigma_max": 707.3827332334993,
+          "sigma_min": 0.0018596421970942794
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": 6.938893903907228e-18,
+        "absolute_yaw_deg": 1.987846675914698e-16,
+        "signed_translation_m": -6.938893903907228e-18,
+        "signed_yaw_deg": 1.987846675914698e-16
+      },
+      "train_observed": {
+        "median_px": [
+          5.31303600432193,
+          0,
+          0
+        ],
+        "p95_px": [
+          5.313367500942434,
+          0,
+          0
+        ],
+        "rmse_px": [
+          5.3131065206304715,
+          0,
+          0
+        ],
+        "visible": [
+          372,
+          372,
+          372
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          372,
+          372,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          5.758962603194446,
+          0,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          0,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          1.2710574864626037e-14,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          5.758962603194446,
+          0,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          0,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          1.2710574864626037e-14,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": true,
+        "held_out_gate": true,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": true,
+        "passed": false,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": false
+      },
+      "reproducible": true
+    },
+    {
+      "case_id": "E_yaw_bound",
+      "fixture_identity": "fnv1a64-json-v1-9fe63031e4fe483b",
+      "seed": 17,
+      "geometry": "rich",
+      "noise_stddev_px": 0,
+      "outlier_fraction": 0,
+      "nominal_translation_m": [
+        0,
+        0,
+        0
+      ],
+      "hidden": {
+        "translation_camera_x_m": -0.04,
+        "yaw_camera_y_deg": 0.7,
+        "yaw_camera_y_rad": 0.012217304763960306
+      },
+      "recovered": {
+        "translation_camera_x_m": -0.005500000000000003,
+        "yaw_camera_y_deg": 0.5000000000000001,
+        "yaw_camera_y_rad": 0.00872664625997165
+      },
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.1,
+            "minimum": -0.1
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 0.5,
+            "minimum": -0.5
+          }
+        },
+        "loss": "huber",
+        "status": "bound_limited",
+        "evaluations": 676,
+        "points_evaluated": 251472,
+        "global_bound_hits": {
+          "translation": false,
+          "yaw": true
+        },
+        "refinement_edge_hit": false,
+        "identifiability": {
+          "available": true,
+          "condition": 3.9592691064200483,
+          "difference_method": "one_sided_or_mixed",
+          "points_evaluated": 1488,
+          "poorly_identifiable": false,
+          "rank": 2,
+          "sigma_max": 257.6955125582055,
+          "sigma_min": 65.08663736454442
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": 0.034499999999999996,
+        "absolute_yaw_deg": 0.1999999999999999,
+        "signed_translation_m": 0.034499999999999996,
+        "signed_yaw_deg": -0.1999999999999999
+      },
+      "train_observed": {
+        "median_px": [
+          5.2071148431154715,
+          0.8817537545881443,
+          0
+        ],
+        "p95_px": [
+          6.359571308300834,
+          1.4061837938363053,
+          0
+        ],
+        "rmse_px": [
+          5.123263053847747,
+          0.9184784124059319,
+          0
+        ],
+        "visible": [
+          372,
+          372,
+          372
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          372,
+          372,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          5.758962603194446,
+          1.0740962210671203,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          1.6629483510306144,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          1.1486548756485775,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          5.758962603194446,
+          1.0740962210671203,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          1.6629483510306144,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          1.1486548756485775,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": true,
+        "held_out_gate": false,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": false,
+        "passed": false,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": false
+      },
+      "reproducible": true
+    },
+    {
+      "case_id": "E_tx_bound",
+      "fixture_identity": "fnv1a64-json-v1-9fe63031e4fe483b",
+      "seed": 17,
+      "geometry": "rich",
+      "noise_stddev_px": 0,
+      "outlier_fraction": 0,
+      "nominal_translation_m": [
+        0,
+        0,
+        0
+      ],
+      "hidden": {
+        "translation_camera_x_m": -0.04,
+        "yaw_camera_y_deg": 0.7,
+        "yaw_camera_y_rad": 0.012217304763960306
+      },
+      "recovered": {
+        "translation_camera_x_m": -0.02,
+        "yaw_camera_y_deg": 0.6100000000000002,
+        "yaw_camera_y_rad": 0.010646508437165412
+      },
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.02,
+            "minimum": -0.02
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 2,
+            "minimum": -2
+          }
+        },
+        "loss": "huber",
+        "status": "bound_limited",
+        "evaluations": 594,
+        "points_evaluated": 220968,
+        "global_bound_hits": {
+          "translation": true,
+          "yaw": false
+        },
+        "refinement_edge_hit": false,
+        "identifiability": {
+          "available": true,
+          "condition": 41.54318588457012,
+          "difference_method": "one_sided_or_mixed",
+          "points_evaluated": 1488,
+          "poorly_identifiable": false,
+          "rank": 2,
+          "sigma_max": 746.7136338367337,
+          "sigma_min": 17.974395028621924
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": 0.02,
+        "absolute_yaw_deg": 0.08999999999999986,
+        "signed_translation_m": 0.02,
+        "signed_yaw_deg": -0.08999999999999986
+      },
+      "train_observed": {
+        "median_px": [
+          5.2071148431154715,
+          0.40392671075825987,
+          0
+        ],
+        "p95_px": [
+          6.359571308300834,
+          0.8930970112593405,
+          0
+        ],
+        "rmse_px": [
+          5.123263053847747,
+          0.466499630383413,
+          0
+        ],
+        "visible": [
+          372,
+          372,
+          372
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          372,
+          372,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          5.758962603194446,
+          0.5690168147201845,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          0.7016042094574534,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          0.5218205053499914,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          5.758962603194446,
+          0.5690168147201845,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          0.7016042094574534,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          0.5218205053499914,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": true,
+        "held_out_gate": false,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": false,
+        "passed": false,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": false
+      },
+      "reproducible": true
+    },
+    {
+      "case_id": "E_nominal_offset",
+      "fixture_identity": "fnv1a64-json-v1-5d67932f240e34fc",
+      "seed": 17,
+      "geometry": "rich",
+      "noise_stddev_px": 0,
+      "outlier_fraction": 0,
+      "nominal_translation_m": [
+        0.12,
+        -0.04,
+        0.2
+      ],
+      "hidden": {
+        "translation_camera_x_m": -0.04,
+        "yaw_camera_y_deg": 0.7,
+        "yaw_camera_y_rad": 0.012217304763960306
+      },
+      "recovered": {
+        "translation_camera_x_m": -0.04000000000000001,
+        "yaw_camera_y_deg": 0.7000000000000002,
+        "yaw_camera_y_rad": 0.01221730476396031
+      },
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.1,
+            "minimum": -0.1
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 2,
+            "minimum": -2
+          }
+        },
+        "loss": "huber",
+        "status": "grid_complete",
+        "evaluations": 2113,
+        "points_evaluated": 786036,
+        "global_bound_hits": {
+          "translation": false,
+          "yaw": false
+        },
+        "refinement_edge_hit": false,
+        "identifiability": {
+          "available": true,
+          "condition": 9.006952578182217,
+          "difference_method": "central",
+          "points_evaluated": 1860,
+          "poorly_identifiable": false,
+          "rank": 2,
+          "sigma_max": 763.0108607419205,
+          "sigma_min": 84.71354257933834
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": 6.938893903907228e-18,
+        "absolute_yaw_deg": 1.987846675914698e-16,
+        "signed_translation_m": -6.938893903907228e-18,
+        "signed_yaw_deg": 1.987846675914698e-16
+      },
+      "train_observed": {
+        "median_px": [
+          5.2293289141386206,
+          0,
+          0
+        ],
+        "p95_px": [
+          6.372436560461535,
+          0,
+          0
+        ],
+        "rmse_px": [
+          5.144464255525327,
+          2.5352721207474955e-14,
+          0
+        ],
+        "visible": [
+          372,
+          372,
+          372
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          372,
+          372,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          5.744813397273063,
+          0,
+          0
+        ],
+        "p95_px": [
+          6.66066580608003,
+          0,
+          0
+        ],
+        "rmse_px": [
+          5.555216240940573,
+          1.2710574864626037e-14,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          5.744813397273063,
+          0,
+          0
+        ],
+        "p95_px": [
+          6.66066580608003,
+          0,
+          0
+        ],
+        "rmse_px": [
+          5.555216240940573,
+          1.2710574864626037e-14,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": true,
+        "held_out_gate": true,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": true,
+        "passed": true,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": true
+      },
+      "reproducible": true
+    },
+    {
+      "case_id": "E_offgrid",
+      "fixture_identity": "fnv1a64-json-v1-552d84f6b84ce900",
+      "seed": 17,
+      "geometry": "rich",
+      "noise_stddev_px": 0,
+      "outlier_fraction": 0,
+      "nominal_translation_m": [
+        0,
+        0,
+        0
+      ],
+      "hidden": {
+        "translation_camera_x_m": 0.0268,
+        "yaw_camera_y_deg": 0.7329999999999999,
+        "yaw_camera_y_rad": 0.012793263417118434
+      },
+      "recovered": {
+        "translation_camera_x_m": 0.03,
+        "yaw_camera_y_deg": 0.7200000000000002,
+        "yaw_camera_y_rad": 0.012566370614359175
+      },
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.1,
+            "minimum": -0.1
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 2,
+            "minimum": -2
+          }
+        },
+        "loss": "huber",
+        "status": "refinement_limited",
+        "evaluations": 2113,
+        "points_evaluated": 786036,
+        "global_bound_hits": {
+          "translation": false,
+          "yaw": false
+        },
+        "refinement_edge_hit": true,
+        "identifiability": {
+          "available": true,
+          "condition": 8.714076810382862,
+          "difference_method": "central",
+          "points_evaluated": 1860,
+          "poorly_identifiable": false,
+          "rank": 2,
+          "sigma_max": 764.8786892329025,
+          "sigma_min": 87.77506853296796
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": 0.003199999999999998,
+        "absolute_yaw_deg": 0.012999999999999807,
+        "signed_translation_m": 0.003199999999999998,
+        "signed_yaw_deg": -0.012999999999999807
+      },
+      "train_observed": {
+        "median_px": [
+          8.129542617648296,
+          0.056103635449502184,
+          0
+        ],
+        "p95_px": [
+          9.690878931901128,
+          0.1558096152310321,
+          0
+        ],
+        "rmse_px": [
+          8.267430564055696,
+          0.0756817229183495,
+          0
+        ],
+        "visible": [
+          372,
+          372,
+          372
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          372,
+          372,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          7.816061950996291,
+          0.08140513842668445,
+          0
+        ],
+        "p95_px": [
+          9.258993756769259,
+          0.11767812487353847,
+          0
+        ],
+        "rmse_px": [
+          8.008105694217313,
+          0.07888164510386272,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          7.816061950996291,
+          0.08140513842668445,
+          0
+        ],
+        "p95_px": [
+          9.258993756769259,
+          0.11767812487353847,
+          0
+        ],
+        "rmse_px": [
+          8.008105694217313,
+          0.07888164510386272,
+          0
+        ],
+        "visible": [
+          160,
+          160,
+          160
+        ],
+        "invalid": [
+          0,
+          0,
+          0
+        ],
+        "common": [
+          160,
+          160,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": true,
+        "held_out_gate": true,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": false,
+        "passed": false,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": false
+      },
+      "reproducible": true
+    },
+    {
+      "case_id": "E_no_valid_candidate",
+      "fixture_identity": "fnv1a64-json-v1-9fe63031e4fe483b",
+      "seed": 17,
+      "geometry": "rich",
+      "noise_stddev_px": 0,
+      "outlier_fraction": 0,
+      "nominal_translation_m": [
+        0,
+        0,
+        0
+      ],
+      "hidden": {
+        "translation_camera_x_m": -0.04,
+        "yaw_camera_y_deg": 0.7,
+        "yaw_camera_y_rad": 0.012217304763960306
+      },
+      "recovered": null,
+      "search": {
+        "config": {
+          "condition_limit": 10000,
+          "grid_integrality_tolerance": 1e-9,
+          "max_candidates": 100000,
+          "max_point_projections": 100000000,
+          "rank_relative_tolerance": 0.000001,
+          "refinement_half_width": "one_coarse_step",
+          "translation_m": {
+            "coarse_step": 0.005,
+            "fine_step": 0.0005,
+            "maximum": 0.1,
+            "minimum": -0.1
+          },
+          "yaw_deg": {
+            "coarse_step": 0.1,
+            "fine_step": 0.01,
+            "maximum": 174,
+            "minimum": 170
+          }
+        },
+        "loss": "huber",
+        "status": "no_valid_candidate",
+        "evaluations": 1681,
+        "points_evaluated": 625332,
+        "global_bound_hits": {
+          "translation": false,
+          "yaw": false
+        },
+        "refinement_edge_hit": false,
+        "identifiability": {
+          "available": false,
+          "condition": null,
+          "difference_method": "unavailable",
+          "points_evaluated": 0,
+          "poorly_identifiable": true,
+          "rank": 0,
+          "sigma_max": 0,
+          "sigma_min": 0
+        }
+      },
+      "parameter_errors": {
+        "absolute_translation_m": null,
+        "absolute_yaw_deg": null,
+        "signed_translation_m": null,
+        "signed_yaw_deg": null
+      },
+      "train_observed": {
+        "median_px": [
+          5.2071148431154715,
+          null,
+          0
+        ],
+        "p95_px": [
+          6.359571308300834,
+          null,
+          0
+        ],
+        "rmse_px": [
+          5.123263053847747,
+          null,
+          0
+        ],
+        "visible": [
+          372,
+          null,
+          372
+        ],
+        "invalid": [
+          0,
+          null,
+          0
+        ],
+        "common": [
+          372,
+          null,
+          372
+        ]
+      },
+      "held_out_observed": {
+        "median_px": [
+          5.758962603194446,
+          null,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          null,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          null,
+          0
+        ],
+        "visible": [
+          160,
+          null,
+          160
+        ],
+        "invalid": [
+          0,
+          null,
+          0
+        ],
+        "common": [
+          160,
+          null,
+          160
+        ]
+      },
+      "held_out_clean": {
+        "median_px": [
+          5.758962603194446,
+          null,
+          0
+        ],
+        "p95_px": [
+          6.696433655107505,
+          null,
+          0
+        ],
+        "rmse_px": [
+          5.552243229998328,
+          null,
+          0
+        ],
+        "visible": [
+          160,
+          null,
+          160
+        ],
+        "invalid": [
+          0,
+          null,
+          0
+        ],
+        "common": [
+          160,
+          null,
+          160
+        ]
+      },
+      "acceptance": {
+        "full_coverage": false,
+        "held_out_gate": false,
+        "interpretation": "noisy/outlier/diagnostic cases report this strict clean gate without retuning",
+        "parameter_gate": false,
+        "passed": false,
+        "profile": "frozen_noiseless_V1",
+        "search_and_identifiability_gate": false
+      },
+      "reproducible": true
+    }
+  ]
+}
