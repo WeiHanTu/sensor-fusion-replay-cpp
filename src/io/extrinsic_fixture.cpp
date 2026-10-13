@@ -572,15 +572,25 @@ std::vector<geometry::ExtrinsicObservationFrame>
 loadExtrinsicObservationFrames(const ExtrinsicFixture& fixture,
                                const std::span<const std::uint64_t> frame_ids) {
   try {
-    if (frame_ids.empty()) {
-      malformed("selected frame set is empty");
+    if (frame_ids.empty() || frame_ids.size() > kMaximumFrames) {
+      malformed("selected frame set must have 1..1000 frames");
     }
     std::set<std::uint64_t> requested;
-    std::vector<geometry::ExtrinsicObservationFrame> result;
+    std::uint64_t selected_records = 0U;
     for (const std::uint64_t frame_id : frame_ids) {
       if (!requested.insert(frame_id).second) {
         malformed("duplicate selected frame ID");
       }
+      const auto& info = frameInfo(fixture, frame_id);
+      if (info.generation_counts.input_points >
+          static_cast<std::uint64_t>(kMaximumRecords) - selected_records) {
+        malformed("selected input exceeds aggregate 100000 point-record limit");
+      }
+      selected_records += info.generation_counts.input_points;
+    }
+    std::vector<geometry::ExtrinsicObservationFrame> result;
+    result.reserve(frame_ids.size());
+    for (const std::uint64_t frame_id : frame_ids) {
       const auto& info = frameInfo(fixture, frame_id);
       Json points = readJson(safePath(fixture.root, info.points_file));
       Json targets = readJson(safePath(fixture.root, info.observations_file));
@@ -651,16 +661,19 @@ void validateExtrinsicSplit(const ExtrinsicFixture& fixture,
     malformed("split needs at least two train frames and one held-out frame");
   }
   std::set<std::uint64_t> ids;
-  std::set<std::string> training_scenes;
+  std::set<std::string> selected_scenes;
   for (const auto id : training) {
     if (!ids.insert(id).second) {
       malformed("duplicate training frame");
     }
-    training_scenes.insert(frameInfo(fixture, id).scene_identity);
+    if (!selected_scenes.insert(frameInfo(fixture, id).scene_identity).second) {
+      malformed("training frames must have distinct scene content");
+    }
   }
   for (const auto id : validation) {
-    if (!ids.insert(id).second || training_scenes.contains(frameInfo(fixture, id).scene_identity)) {
-      malformed("held-out frame overlaps training ID or scene content");
+    if (!ids.insert(id).second ||
+        !selected_scenes.insert(frameInfo(fixture, id).scene_identity).second) {
+      malformed("held-out frame overlaps selected ID or scene content");
     }
   }
 }

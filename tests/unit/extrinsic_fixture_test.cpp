@@ -172,6 +172,39 @@ TEST_F(ExtrinsicFixtureTest, RejectsSplitOverlapMissingIdsAndDuplicatedSceneCont
   EXPECT_THROW(validateExtrinsicSplit(fixture, train, validation), IoError);
 }
 
+TEST_F(ExtrinsicFixtureTest, RejectsDuplicateSceneContentWithinEitherRole) {
+  generateExtrinsicFixture(dataset_, {});
+  auto fixture = loadExtrinsicFixture(dataset_);
+  fixture.frames[1].scene_identity = fixture.frames[0].scene_identity;
+  const std::vector<std::uint64_t> train{0U, 1U};
+  const std::vector<std::uint64_t> validation{2U};
+  EXPECT_THROW(validateExtrinsicSplit(fixture, train, validation), IoError);
+  fixture = loadExtrinsicFixture(dataset_);
+  auto duplicate = fixture.frames[2];
+  duplicate.frame_id = 3U;
+  fixture.frames.push_back(duplicate);
+  const std::vector<std::uint64_t> duplicated_validation{2U, 3U};
+  EXPECT_THROW(validateExtrinsicSplit(fixture, train, duplicated_validation), IoError);
+}
+
+TEST_F(ExtrinsicFixtureTest, RejectsAggregateSelectedRecordsBeforeLoadingFiles) {
+  generateExtrinsicFixture(dataset_, {});
+  auto fixture = loadExtrinsicFixture(dataset_);
+  const auto prototype = fixture.frames.front();
+  fixture.frames.clear();
+  fixture.frames.reserve(522U);
+  std::vector<std::uint64_t> ids;
+  ids.reserve(522U);
+  for (std::uint64_t id = 0U; id < 522U; ++id) {
+    auto frame = prototype;
+    frame.frame_id = id;
+    fixture.frames.push_back(frame);
+    ids.push_back(id);
+  }
+  // 522 * 192 = 100224 otherwise-valid records, beyond the selected-input cap.
+  EXPECT_THROW(static_cast<void>(loadExtrinsicObservationFrames(fixture, ids)), IoError);
+}
+
 TEST_F(ExtrinsicFixtureTest, RejectsDuplicateJsonKeysAndMalformedSyntax) {
   generateExtrinsicFixture(dataset_, {});
   std::ofstream(dataset_ / "fixture.json") << "{\"schema_name\":1,\"schema_name\":2}";

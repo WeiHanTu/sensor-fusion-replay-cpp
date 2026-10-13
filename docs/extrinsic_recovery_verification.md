@@ -1,6 +1,6 @@
 # Synthetic recovery V1 verification
 
-Measured implementation: `e8491b1e1af67044486d7ef3c8a0357c29ad3685`, clean at
+Measured implementation: `bba58a213d881a162bff086a4cfc5b4ca3d7ae68`, clean at
 Release configuration after the portable guard fix. All 21 reports match the
 previous clean run numerically, excluding commit and timing. The immutable
 `v0.1.0` tag is unchanged. This is an
@@ -18,7 +18,8 @@ additive geometry experiment, not a perception/runtime release.
 | Final visuals | Inspected rich/narrow surfaces, all-invalid surface, residual plot and held-out overlays |
 | Native macOS ASan+UBSan | Failed during existing rigid-transform test discovery, before recovery tests; allocator initialization CHECK in `sanitizer_malloc_mac.inc` |
 | First Ubuntu run on `da261d1` | GCC/Clang runtime passed 133/133; Clang static gate failed on three optional-access diagnostics; unoptimized sanitizer passed 132/133, campaign timed out at 600 seconds |
-| Final supported Ubuntu gates | Pending portable-guard and optimized-sanitizer verification; no cases/checks/deadlines weakened |
+| Ubuntu on `bba58a2` | GCC/Clang and ASan+UBSan all passed 133/133; full Clang static gate passed |
+| Final input-boundary regressions | New duplicate-scene and aggregate-record tests fail before fixes, then pass; 135-test final CI pending |
 
 Fresh local directories were `build/recovery-v1-dev`, `build/recovery-v1-final`
 and `build/recovery-v1-asan`; the compiler was AppleClang 16.0.0.16000026.
@@ -35,7 +36,7 @@ Ordinary GCC/Clang jobs still test unoptimized Debug; Release measurement is
 separate. Optimization is not evidence that a sanitizer check passed.
 
 The full raw run is retained locally under
-`artifacts/extrinsic_recovery/verified_e8491b1/`. The earlier raw `da261d1` run and
+`artifacts/extrinsic_recovery/verified_bba58a2/`. The earlier raw runs and
 failed static-gate logs are also retained rather than overwritten. The
 [public machine-readable extraction](evidence/extrinsic_recovery_v1.json)
 retains all cases, signed/absolute parameter errors, observed/clean metrics,
@@ -61,6 +62,11 @@ and reproducibility replay have separate counters/timing. Raw elapsed times are
 one timed search per case, no explicit warm-up, no percentile calculation;
 they are diagnostics, not a steady-state latency benchmark. Preparation,
 evaluation, rendering and publication are not runtime sojourn.
+Specifically, `search_ms` covers coarse/fine evaluation and selection, excluding
+canonical preparation and final candidate-table materialization. No full-CLI
+latency claim is inferred by summing these partial stages. Visibility here means
+valid positive-depth in-image projection, not physical occlusion or independent
+real-sensor correspondence observability.
 
 The deliberately oversized test-only coarse steps (0.5 deg, 0.025 m) also missed
 the joint optimum at an artificial refinement edge. That failure is retained as

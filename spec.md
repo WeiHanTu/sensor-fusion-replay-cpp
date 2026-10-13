@@ -1076,6 +1076,10 @@ relative paths, missing/duplicate references, and oracle/fixture identity mismat
 Manifest, point/observation files and oracle use versioned canonical-JSON FNV-1a
 content identities for accidental-change detection, not cryptographic authenticity.
 Oracle identity and per-frame target/outlier counts are checked after fitting.
+JSON files are bounded to 16 MiB, nesting depth 32, 1000 manifest frames and
+100000 records per array. Selected input is also capped at 1000 frames and
+100000 original point records in aggregate, preflighted before file loading.
+Different selected IDs must have distinct scene content, not just distinct names.
 
 Required fixture layout (generated into ignored local output):
 

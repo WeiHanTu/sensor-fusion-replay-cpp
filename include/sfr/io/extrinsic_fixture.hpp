@@ -84,6 +84,8 @@ void generateExtrinsicFixture(const std::filesystem::path& output_directory,
 ///
 /// Checks file identities, numeric contracts and original point bindings. Missing,
 /// duplicate or changed bindings fail closed; serialized ordering is irrelevant.
+/// Preflights at most 1000 selected frames and 100000 total original point records
+/// from metadata before opening files; per-file identities/counts are then checked.
 [[nodiscard]] std::vector<geometry::ExtrinsicObservationFrame>
 loadExtrinsicObservationFrames(const ExtrinsicFixture& fixture,
                                std::span<const std::uint64_t> frame_ids);

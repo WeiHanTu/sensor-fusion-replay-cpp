@@ -33,6 +33,8 @@ then error("missing/duplicate/incompatible run reports") else
   nominal_rotation: $ordered[0].model.nominal_transform.rotation,
   performance_scope: {
     explicit_warmup: 0, timed_search_samples_per_case: 1, percentiles: "not_computed",
+    search_ms_scope: "coarse/fine candidate evaluation and selection; canonical preparation and result-table materialization excluded",
+    visibility_definition: "positive-depth in-image projection validity, not physical occlusion or independent real correspondences",
     replay: "separate verification pass excluded from primary search",
     interpretation: "Elapsed diagnostics, not a steady-state latency benchmark"
   },

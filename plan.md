@@ -471,6 +471,17 @@ assertions and both instruments intact, following Clang's usage guidance. No
 case, search grid, recovery gate, warning or runtime check is removed. Reverify
 the entire matrix before closing R7.
 
+Final split audit caught duplicate training scene identities: different IDs
+alone were accepted. A new regression failed before adding the metadata rejection.
+The authored A-E inputs/settings are unchanged; retain all prior results and
+reverify the stricter input contract with final clean CI. A second regression
+also failed on aggregate selected input above 100000 point records; add metadata
+preflight before parsing/allocation rather than relying only on per-file limits.
+The final suite has 135 tests; normal authored campaign inputs are unchanged.
+The optimized `bba58a2` Ubuntu run passed GCC, Clang, full static analysis and
+ASan/UBSan (133/133 each); sanitizer suite finished in 54.84 seconds without
+altering its 600-second campaign deadline. Final stricter-input CI remains open.
+
 ### R7. Verify, publish evidence, and close V1
 
 - [ ] Run dev/Release and supported ASan+UBSan from clean directories; run
