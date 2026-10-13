@@ -358,19 +358,25 @@ is deferred to the completed implementation. File joins belong to R2.
 
 ### R2. Multi-frame authored fixture and input loader
 
-- [ ] Add a dedicated generator and strict schema loader in `sfr_io`, with JSON
+- [x] Add a dedicated generator and strict schema loader in `sfr_io`, with JSON
   privately linked; keep geometry Eigen-only and existing demo behavior intact.
-- [ ] Generate rich train frames 0/1 and independently defined held-out frame 2
+- [x] Generate rich train frames 0/1 and independently defined held-out frame 2
   at the frozen depth/lateral/density distributions. Retain generator counts.
-- [ ] Separate `fixture.json`/keyed observations from harness-only `oracle.json`.
+- [x] Separate `fixture.json`/keyed observations from harness-only `oracle.json`.
   Record content identities, nominal/hidden transforms, full P, seeds/corruption.
-- [ ] Implement reproducible noise/outlier generation and bounds checks; test
+- [x] Implement reproducible noise/outlier generation and bounds checks; test
   realized means, actual outlier counts, shuffled keys, duplicate/missing IDs,
   malformed/duplicate JSON keys, limits, unsafe paths and identity mismatches.
-- [ ] Add fixture provenance README and tiny independent numeric expected cases.
+- [x] Add fixture provenance README and tiny independent numeric expected cases.
 
 Exit gate: deterministic regeneration and strict loading work without KITTI.
 Training loader never opens oracle or held-out files.
+
+R2 verification: dev build and full 105/105 tests passed before the final parser
+case; generator smoke produced the three authored frames locally. Regression
+tests failed before fixes for unrelated-directory overwrite and scene-identity
+validation, then passed. Final parser case and formatting are checked in the
+R2 commit; complete static/sanitizer gates remain R7 work.
 
 ### R3. Auditable bounded search
 

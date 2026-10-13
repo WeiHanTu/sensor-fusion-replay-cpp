@@ -99,6 +99,7 @@ sfr_add_developer_tools(
   include/sfr/geometry/projection.hpp
   include/sfr/geometry/rigid_transform.hpp
   include/sfr/io/io_error.hpp
+  include/sfr/io/extrinsic_fixture.hpp
   include/sfr/io/kitti_calibration.hpp
   include/sfr/io/kitti_io.hpp
   include/sfr/io/timestamp.hpp
@@ -108,8 +109,10 @@ sfr_add_developer_tools(
   include/sfr/viz/sensitivity_artifact.hpp
   apps/analyze_calibration.cpp
   apps/project_kitti.cpp
+  apps/recovery_arguments.hpp
   benchmarks/benchmark_projection.cpp
   examples/generate_synthetic_kitti.cpp
+  examples/generate_extrinsic_fixture.cpp
   src/geometry/calibration_sensitivity.cpp
   src/geometry/extrinsic_recovery.cpp
   src/geometry/frame_graph.cpp
@@ -117,6 +120,7 @@ sfr_add_developer_tools(
   src/geometry/projection.cpp
   src/geometry/rigid_transform.cpp
   src/io/io_error.cpp
+  src/io/extrinsic_fixture.cpp
   src/io/kitti_calibration.cpp
   src/io/kitti_io.cpp
   src/io/timestamp.cpp
@@ -133,6 +137,7 @@ sfr_add_developer_tools(
   tests/unit/calibration_test.cpp
   tests/unit/frame_graph_test.cpp
   tests/unit/kitti_io_test.cpp
+  tests/unit/extrinsic_fixture_test.cpp
   tests/unit/overlay_test.cpp
   tests/unit/panel_test.cpp
   tests/unit/point_cloud_projection_test.cpp

@@ -18,6 +18,8 @@ sfr_add_test(geometry_extrinsic_recovery_test unit/extrinsic_recovery_test.cpp s
 sfr_add_test(io_calibration_test unit/calibration_test.cpp sfr::io)
 sfr_add_test(io_timestamp_test unit/timestamp_test.cpp sfr::io)
 sfr_add_test(io_kitti_test unit/kitti_io_test.cpp sfr::io)
+sfr_add_test(io_extrinsic_fixture_test unit/extrinsic_fixture_test.cpp sfr::io)
+target_link_libraries(io_extrinsic_fixture_test PRIVATE nlohmann_json::nlohmann_json)
 
 sfr_add_test(viz_overlay_test unit/overlay_test.cpp sfr::viz)
 sfr_add_test(viz_panel_test unit/panel_test.cpp sfr::viz)
