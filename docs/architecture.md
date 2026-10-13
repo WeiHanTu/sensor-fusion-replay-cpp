@@ -57,7 +57,8 @@ flowchart TD
   G --> E[Eigen]
   I --> O[OpenCV]
   V --> O
-  V --> J[JSON/build metadata]
+  V --> J[JSON]
+  V --> B[Configure-time build metadata]
   I --> J
 ```
 
@@ -206,7 +207,7 @@ a publication failure can lose the old run. Prefer unique run IDs.
 
 ## Reproduce with authored synthetic input
 
-From repository root, after installing [dependencies](../README.md#prerequisites):
+From repository root, after installing [dependencies](getting_started.md#prerequisites):
 
 ```bash
 cmake --preset dev

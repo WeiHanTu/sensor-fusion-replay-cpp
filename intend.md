@@ -82,6 +82,13 @@ The repository provides loaders, synthetic fixtures, and commands, not KITTI
 data or account automation. Public sample images must be project-owned
 synthetic artifacts unless permission for other material is recorded.
 
+### A new contributor can reproduce the implemented system
+
+The public entry point separates implemented paths from the roadmap and gives a
+small no-KITTI first run. Design, usage, contribution rules and historical
+evidence have distinct roles. Automated navigation/source-hygiene checks prevent
+avoidable drift, but do not prove that documentation is understandable to a human.
+
 ## Delivery scope
 
 ### `v0.1 Geometry` — mandatory first release

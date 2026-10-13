@@ -217,6 +217,11 @@ Before declaring a version complete:
 - Recovery interview material belongs under the ignored `artifacts/` directory.
   Public recovery documentation contains design, experiments, measured evidence,
   and limitations only.
+- Keep the README an implemented-system landing page; detailed usage and
+  historical verification belong in focused docs. Run the offline repository
+  checks when changing documentation, source registration, presets or CI.
+- Record exact fallback dependency/Action commits and a named CI runner release.
+  System package updates remain possible; do not call this a hermetic build.
 
 ## Definition of done
 

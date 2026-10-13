@@ -513,6 +513,40 @@ fixture identities/splits, all A-E reports including failures, complete accounti
 parameter and held-out gates, inspected visuals and known limits. V1 release/tag
 naming is a later delivery decision; no existing capability version is overwritten.
 
+## 4c. Repository delivery maintenance (2026-10-13)
+
+Scope: make the implemented geometry/recovery system understandable and
+reproducible for a new contributor. No perception/runtime features, scientific
+threshold changes, new release tag, SDK packaging, or production claims.
+
+- [x] Audit clean `09eee0f`, operating contracts, README, architecture, presets,
+  target/source ownership, CI and dependency acquisition. Identify stale proposed
+  recovery interfaces, CMake version mismatch and moving CI/dependency refs.
+- [x] Replace the release-log-shaped landing page with scope, two implemented
+  paths, a no-KITTI quick start, results/limitations and focused documentation.
+- [x] Add contributor, issue/PR, security-reporting, dependency and change-log
+  guidance. Keep interview scripts private and historical evidence immutable.
+- [x] Add offline repository checks and independent tests for local Markdown
+  links/anchors, C++ quality-target coverage, toolchain consistency and tracked
+  data hygiene. Python is contributor/CI tooling only, not a runtime dependency.
+- [~] Align the supported minimum with used CMake features (3.28), pin fallback
+  dependency commits and Actions commits, fix CI to Ubuntu 24.04, retain test
+  diagnostics, and exercise the documented Release quick start in CI.
+- [~] Run fresh dev/Release configure/build/tests, format/tidy, repository checks,
+  quick-start commands and rendered-artifact inspection; verify final GCC/Clang
+  and ASan/UBSan CI. Record not-run checks and failures without weakening gates.
+- [ ] Review the complete diff, commit/push narrow changes and leave a clean tree.
+
+Exit gate: executable onboarding and new repository checks pass; the existing
+135-test C++ suite and supported sanitizer/static gates remain intact. Static
+documentation checks are not an unfamiliar engineer's usability evaluation.
+
+Local maintenance verification: fresh dev/Release 135/135 each, format/full 42-TU
+tidy, 15 checker tests, repository navigation and first-run CLI/artifact checks
+pass. Builds used the changed worktree (`git_dirty=true`); they are not new
+performance evidence. Complete fallback/hosted CI and public rendering checks
+remain open. See [maintenance record](docs/repository_maintenance.md).
+
 ## 5. `v0.2 Perception` (5-7 days)
 
 ### 2.1 Deterministic voxel and ROI filtering (1 day)

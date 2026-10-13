@@ -15,8 +15,10 @@ in this file and reflected in `intend.md`, `plan.md`, tests, and release evidenc
 ### 2.1 Platforms and toolchain
 
 - Language: C++20 without compiler-specific language extensions.
-- Build: target-based CMake, minimum version 3.24, with checked-in
+- Build: target-based CMake, minimum version 3.28, with checked-in
   `CMakePresets.json`.
+  This matches the existing FetchContent `EXCLUDE_FROM_ALL` feature (3.28) and
+  preset schema 6 (3.25); the former 3.24 declaration understated requirements.
 - Required CI: Ubuntu with one supported GCC configuration and one supported
   Clang configuration.
 - Required developer platform: macOS with AppleClang, documented but not
@@ -35,7 +37,7 @@ in this file and reflected in `intend.md`, `plan.md`, tests, and release evidenc
 | --- | --- | --- |
 | Eigen3 | Runtime | Geometry/math only; no I/O ownership hidden in Eigen types. |
 | OpenCV core/imgcodecs/imgproc | Runtime | Image loading and rendering; no GUI requirement. |
-| nlohmann_json or equivalent small JSON library | Runtime | Reports only; pin/acquire reproducibly. |
+| nlohmann_json or equivalent small JSON library | Runtime | Fixture parsing and reports; pin/acquire reproducibly. |
 | GoogleTest | Tests | No production dependency. |
 | Google Benchmark | Benchmarks | Not currently required; the audited `v0.1` harness uses `std::chrono::steady_clock`. |
 
@@ -760,7 +762,26 @@ deterministic decisions versus variable run metadata. Public core API comments
 MUST explain frames/units, borrowed or owned state, ordering, failures, and
 relevant allocation costs. Static checks do not establish human usability.
 
-The eventual README MUST include:
+The landing page MUST provide an executable no-KITTI onboarding path before
+detailed historical evidence. Contributor guidance MUST explain quality commands,
+change review, data hygiene and truthful result reporting. Dependency guidance
+MUST distinguish supported minimums, system package versions and exact fallback
+commits; it MUST NOT promise fully offline configuration unless compatible
+dependencies are already installed. Security guidance MUST NOT invent a private
+contact address, supported legacy release policy or response-time guarantee.
+
+Contributor/CI repository checks MAY use Python 3.10+ standard-library tooling;
+Python MUST NOT enter the C++ runtime dependency graph. Checks MUST cover local
+Markdown navigation, explicit C++ format/tidy source registration, minimum CMake
+consistency and tracked dataset/build-output hygiene, with independent checker
+tests. Remote links/diagram rendering/human usability are outside those checks.
+CI MUST use a named Ubuntu release and immutable Action commits, preserve CTest
+failure diagnostics with bounded retention, and execute the documented Release
+synthetic quick start. System packages still update; this is not a hermetic build.
+
+The README and its directly linked canonical guides MUST collectively provide
+the following. Scope/status and the first-run path remain on the landing page;
+detailed procedures and historical evidence use focused docs to avoid drift:
 
 - one-sentence scope and an explicit non-safety disclaimer;
 - dependency, configure, build, test, sanitizer, format, analysis, example, and
@@ -803,7 +824,7 @@ The observable MUST be an explicit authored 3D-to-2D correspondence. Raw images,
 LiDAR points, nominal projected pixels, and visual agreement alone MUST NOT be
 treated as independent correspondence ground truth.
 
-Proposed owned input types (names may change with equivalent semantics):
+Implemented owned input types:
 
 ```text
 ObservedPixel { u_px: double, v_px: double }
@@ -1139,7 +1160,7 @@ write/publication as explicitly recorded; CLI may measure total wall time separa
 
 ### 17.9 Architecture, CLI, and tests
 
-Proposed files/targets:
+Implemented files/targets:
 
 - `include/sfr/geometry/extrinsic_recovery.hpp`,
   `src/geometry/extrinsic_recovery.cpp`: typed inputs, validation, candidate
@@ -1154,7 +1175,7 @@ Proposed files/targets:
 - Public unit/parser/artifact tests and `tests/integration/estimate_extrinsics_cli_test.cpp`;
   fixture README stores authored provenance and independent expected values.
 
-Proposed CLI interface, not yet an executable command:
+Implemented CLI interface:
 
 ```text
 estimate_extrinsics --dataset-root <authored-fixture-root>

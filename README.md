@@ -1,248 +1,127 @@
 # sensor-fusion-replay-cpp
 
-A C++20-first offline camera/LiDAR replay project for inspectable geometry,
-runtime, testing, and performance evidence.
+[![CI](https://github.com/WeiHanTu/sensor-fusion-replay-cpp/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/WeiHanTu/sensor-fusion-replay-cpp/actions/workflows/ci.yml)
 
-> Status: `v0.1 Geometry` verification complete. This is not a production,
-> real-time, or safety system.
+C++20 offline camera–LiDAR geometry and controlled synthetic extrinsic recovery.
+Explicit frames, strict input validation, reproducible artifacts and auditable
+tests—not a production, real-time or safety system.
 
-The product contract is in [`intend.md`](intend.md), the normative architecture
-and acceptance gates are in [`spec.md`](spec.md), and ordered work is in
-[`plan.md`](plan.md).
+## What works today
 
-The release results below are historical. Later source changes need their own
-verification record; the presence of CI configuration does not prove current CI
-is green.
+| Path | Implemented behavior | Evidence boundary |
+| --- | --- | --- |
+| One-frame projection | KITTI Raw synced/rectified loading, full 3x4 projection, depth overlay, rejection accounting and staged JSON/PNG output | Synthetic numeric/integration tests; one historical private KITTI smoke run |
+| Calibration sensitivity | Left-applied camera-y yaw and camera-x translation comparisons | Change relative to supplied calibration, not calibration accuracy |
+| Synthetic extrinsic recovery | Bounded two-parameter search, L2/Huber loss, training-only selection, held-out evaluation and identifiability diagnostics | Project-authored, explicitly keyed 3D-to-2D correspondences only |
+
+`v0.1.0` is the immutable geometry baseline. Recovery is an additive experiment.
+Perception (`v0.2`) and queues/synchronization/backpressure (`v0.3`) are **not
+implemented**. The repository name does not imply state-estimation sensor fusion.
 
 ## Architecture
 
-The implemented `v0.1` path is synchronous one-frame processing:
-
 ```mermaid
-flowchart TD
-  A[Local image/cloud + calibration] --> B[Strict loading]
-  B --> C[Transform + full 3x4 projection]
-  C --> D[Classify/count + depth overlay]
-  D --> E[Staged PNG/JSON publication]
+flowchart LR
+  K[Local synced image/cloud + calibration] --> P[Transform / project / count]
+  P --> V[Depth overlay + staged reports]
+  T[Authored training correspondences + nominal model] --> S[Bounded yaw / translation search]
+  S --> F[Frozen estimate]
+  F --> E[Held-out evaluation + loss / residual plots]
+  H[Authored held-out scene + oracle] --> E
 ```
 
-The [architecture document](docs/architecture.md) describes execution and library
-dependencies, ownership, failure/publication contracts, and invariant-to-test
-mapping. Geometry is Eigen-only; I/O and visualization use OpenCV. There are no
-runtime queues or timestamp synchronizer yet. The
-[frame tree](docs/frame_conventions.md#frame-tree) separately explains calibrated
-geometry and unresolved world/vehicle edges.
+Geometry is Eigen-only. I/O and rendering use OpenCV; JSON stays outside geometry.
+No oracle or held-out input enters parameter selection. See
+[architecture and source/test maps](docs/architecture.md) and
+[frame conventions](docs/frame_conventions.md).
 
-Post-release reviewability changes and their fresh checks are recorded in
-[`docs/reviewability_verification.md`](docs/reviewability_verification.md).
+## Quick start — no KITTI account or data
 
-## Capability status
+On Ubuntu 24.04, install the system dependencies:
 
-| Capability | Status | Evidence |
-| --- | --- | --- |
-| C++20/CMake quality skeleton | Locally verified | Warnings-as-errors build, format and clang-tidy |
-| Frame-labelled SE(3) transforms | Locally verified | Independent unit tests |
-| Deterministic frame graph | Locally verified | Forward/inverse/path-invariant tests |
-| Rectified 3x4 projection primitive | Locally verified | Hand-computed projection/boundary tests |
-| Strict KITTI calibration/data loading | Locally verified on synthetic inputs | Typed parser/I/O negative tests |
-| Point-cloud projection and rejection accounting | Locally verified on synthetic inputs | Hand-computed and integration tests |
-| Depth-colored z-buffer overlay | Locally verified on synthetic inputs | Deterministic pixel tests |
-| Staged JSON/JSONL run publication | Locally verified on synthetic inputs | Schema/accounting/overwrite tests; not crash-durable or transactional overwrite |
-| `project_kitti` CLI | Locally verified on synthetic inputs | End-to-end process and exit-code tests |
-| Calibration sensitivity | Locally verified on synthetic inputs | Hand-computed sign/axis tests, JSON checks, and inspected nine-panel output |
-| Projection microbenchmark | Locally verified on authored synthetic input | Exact per-iteration accounting, CLI/schema tests, and cross-toolchain smoke runs |
-| Authored synthetic demo | Locally verified | Staged fixture generator and loader/overwrite/ownership tests |
-| Bounded synthetic extrinsic recovery | Verified on declared authored fixtures | [Design/commands](docs/extrinsic_recovery.md), [exact-commit verification](docs/extrinsic_recovery_verification.md), [all-case evidence](docs/evidence/extrinsic_recovery_v1.json) |
-| Geometric perception | Planned (`v0.2`) | None |
-| Replay/backpressure metrics | Planned (`v0.3`) | None |
+```bash
+sudo apt-get update
+sudo apt-get install --yes cmake g++ libeigen3-dev libopencv-dev \
+  nlohmann-json3-dev libgtest-dev
+```
 
-The historical `v0.1` baseline verification covered 79/79 public tests in macOS debug and
-a fresh Release build with AppleClang 16 and OpenCV 5.0. The same 79/79 tests
-passed with GCC 13, Clang 18, and Clang 18 ASan+UBSan in an Ubuntu 24.04
-container built from exact commit `9ef8765`. Format-check passed; the
-clang-tidy target completed with no actionable project diagnostics. The README
-commands also passed from a separate clean clone. Hosted GitHub Actions passed
-GCC, Clang, and ASan+UBSan on release-candidate commit `d868970`; see the
-[`v0.1` verification record](docs/v0.1_verification.md). Git tags and GitHub
-Releases are the authority for publication state. Project-authored code and
-documentation use Apache-2.0.
+From the repository root:
 
-## Controlled synthetic extrinsic recovery
+```bash
+cmake --preset release
+cmake --build --preset release --parallel
+ctest --preset release --output-on-failure
+./build/release/generate_synthetic_kitti --output-dir artifacts/quickstart_kitti
+./build/release/project_kitti \
+  --dataset-root artifacts/quickstart_kitti --drive synthetic_drive_sync \
+  --frame 0 --output-dir artifacts/quickstart_projection
+./build/release/generate_extrinsic_fixture \
+  --output-dir artifacts/quickstart_extrinsic --hidden-yaw-deg 0.7 --hidden-tx-m -0.04
+./build/release/estimate_extrinsics \
+  --dataset-root artifacts/quickstart_extrinsic --train-frames 0,1 --validation-frames 2 \
+  --parameters yaw_camera_y,translation_camera_x --loss huber \
+  --output-dir artifacts/quickstart_recovery --run-id joint
+```
+
+The CLIs print their output directories. Projection produces `run_summary.json`,
+`frames.jsonl` and a depth overlay. Recovery produces `report.json`, candidate
+and keyed residual JSON, overlays and loss/residual plots. Check
+`acceptance.passed` as well as the exit code: a completed search can miss the
+scientific gate. Existing fixtures/runs are refused; use new paths for a rerun.
+
+All generated data above are project-authored and ignored by Git. First
+configuration may fetch pinned test dependencies. Required CMake is **3.28+**;
+see [setup, macOS, troubleshooting and private KITTI usage](docs/getting_started.md).
+
+![Project-authored synthetic camera–LiDAR depth overlay](docs/images/synthetic_projection.png)
+
+Color encodes rectified-camera depth. This is a reproducible pipeline demonstration,
+not KITTI imagery or calibration ground truth. The sensitivity comparison and its
+[provenance/reproduction commands](docs/images/README.md) are available separately.
+
+## Recovery results and limits
 
 A project-authored synthetic experiment recovers bounded camera-yaw and
 camera-x-translation corrections from known 3D-to-2D correspondences and
 evaluates them on held-out authored frames.
 
-Two authored frames (372 points) are fitted; a third distinct frame (160 points)
-is loaded after the estimate is frozen. V1 uses deterministic coarse-to-fine
-search, squared L2/Huber loss, explicit visibility accounting and local SVD
-diagnostics. It does not extract correspondences from arbitrary images.
+Two distinct training scenes contain 372 observations; the held-out scene has 160.
+All 21 frozen A–E cases, including failures, are retained in the
+[machine-readable evidence](docs/evidence/extrinsic_recovery_v1.json).
 
-| Frozen experiment | Result |
+| Experiment | Measured result |
 | --- | --- |
-| Seven clean on-grid cases | All half-step parameter and held-out gates pass |
-| 10% outlier setting (37/372 actual) | Clean held-out RMSE: L2 4.095 px, Huber 0.194 px; both miss strict clean parameter accuracy |
-| Narrow geometry | Scaled condition about 380386; not accepted as identifiable |
-| Off-grid truth | `refinement_limited`, not successful recovery; retained in evidence |
+| Seven clean on-grid cases | All half-fine-step parameter and held-out gates pass |
+| 37 bad training correspondences | Clean held-out RMSE: L2 4.095 px, Huber 0.194 px; both miss strict clean parameter accuracy |
+| Narrow geometry | Scaled condition approximately 380386; not accepted as identifiable |
+| Restricted bounds / off-grid truth | Bound-limited / refinement-limited results, not successful recovery |
 
-The [verification record](docs/extrinsic_recovery_verification.md) ties results to
-clean source `e876725`: 135/135 macOS dev/Release tests and 135/135 in each Ubuntu
-GCC, Clang and ASan+UBSan job, with format/full static checks. Native macOS
-sanitizer initialization still fails before tests and is documented separately.
-Antithetic-noise results are not general i.i.d. noise robustness. None of this
-verifies physical/KITTI calibration, HIL, sim-to-real or production use.
+The [exact-commit verification](docs/extrinsic_recovery_verification.md) records
+clean source `e876725`, 135/135 C++ checks on macOS dev/Release and each Ubuntu
+GCC, Clang and ASan/UBSan job. These counts are historical evidence, not a promise
+about a later checkout; the CI badge links to current runs.
 
-![Authored synthetic clean-target residual comparison](docs/assets/extrinsic_recovery/huber_residuals.png)
+Antithetic-noise results are not general i.i.d. noise robustness. This does not
+verify physical/KITTI calibration, calibration from arbitrary images, HIL,
+sim-to-real or online calibration. Native macOS sanitizer initialization fails
+on the recorded host; Ubuntu is the verified sanitizer platform.
 
-## Prerequisites
+## Development and documentation
 
-Required tools and libraries are CMake 3.24+, a C++20 compiler, Eigen 3.4+,
-OpenCV 4.5+ or 5.x, and nlohmann/json 3.11+. GoogleTest 1.15.2 is fetched at
-configure time when a compatible system target is unavailable.
+Use [CONTRIBUTING.md](CONTRIBUTING.md) for dev/sanitizer/format/tidy and offline
+repository checks. Design and evidence are separate:
 
-Ubuntu 24.04:
+- [Documentation index](docs/README.md): usage, architecture and verification.
+- [Recovery experiment](docs/extrinsic_recovery.md): model, search, A–E campaign and failure semantics.
+- [Projection benchmark](docs/benchmark_walkthrough.md): optimized commands, measured scope and historical report—not end-to-end latency.
+- [Dependencies and reproducibility](docs/dependencies.md): minimums, fallback commits and build limitations.
+- [Change log](CHANGELOG.md) and [security reporting](SECURITY.md).
+- Product intent: [intend.md](intend.md); behavior/gates: [spec.md](spec.md); roadmap: [plan.md](plan.md).
 
-```bash
-sudo apt-get update
-sudo apt-get install --yes \
-  cmake clang-format clang-tidy libeigen3-dev libgtest-dev \
-  libopencv-dev nlohmann-json3-dev
-```
+## License and data
 
-macOS with Homebrew:
-
-```bash
-brew install cmake eigen googletest llvm nlohmann-json opencv
-```
-
-## Verified development commands
-
-```bash
-cmake --preset dev
-cmake --build --preset dev --parallel
-ctest --preset dev --output-on-failure
-cmake --build --preset dev --target format-check
-cmake --build --preset dev --target clang-tidy
-```
-
-Create a project-owned KITTI-shaped demo fixture and run both geometry CLIs:
-
-```bash
-./build/dev/generate_synthetic_kitti \
-  --output-dir artifacts/synthetic_kitti \
-  --overwrite
-./build/dev/project_kitti \
-  --dataset-root artifacts/synthetic_kitti \
-  --drive synthetic_drive_sync \
-  --frame 0 \
-  --output-dir artifacts/synthetic_projection
-./build/dev/analyze_calibration \
-  --dataset-root artifacts/synthetic_kitti \
-  --drive synthetic_drive_sync \
-  --frame 0 \
-  --output-dir artifacts/synthetic_sensitivity
-```
-
-The generated daily root, image, point cloud, calibration, and timestamps are
-authored for this repository and contain no KITTI data. Their purpose is a
-reproducible public demonstration, not real-data evidence. Maintainers regenerate
-the two checked-in README images from a release build with
-`./examples/generate_public_artifacts.sh build/release docs/images`.
-
-## Public synthetic geometry evidence
-
-![Authored synthetic camera-LiDAR depth overlay](docs/images/synthetic_projection.png)
-
-The overlay above is generated from a project-authored road-like image and
-project-authored 3D geometry. Color encodes clamped rectified-camera depth; it
-is a reproducible pipeline demonstration, not KITTI evidence or calibration
-ground truth.
-
-![Authored synthetic calibration sensitivity grid](docs/images/synthetic_calibration_sensitivity.png)
-
-The grid holds the synthetic scene fixed while applying the required camera
-`+y` yaw and camera `+x` translation perturbations. Read the
-[`frame tree and projection conventions`](docs/frame_conventions.md) before
-interpreting the signs or treating `image_02` as an SE(3) frame.
-
-Run the authored projection microbenchmark from an optimized build:
-
-```bash
-cmake --preset release
-cmake --build --preset release --parallel
-./build/release/benchmark_projection \
-  --output-json artifacts/benchmarks/projection_benchmark_current.json \
-  --overwrite
-```
-
-The default run measures 100 iterations of 100,000 deterministic finite points
-after 10 warm-up iterations. It times only SE(3) transformation, rectified
-projection, classification, and output-vector construction. It does not measure
-KITTI decoding, visualization, report serialization, queues, replay pacing, or
-end-to-end latency. Formal JSON output is refused for a non-smoke run if the
-tree was dirty when CMake configured the build. See
-[`docs/benchmark_walkthrough.md`](docs/benchmark_walkthrough.md) for the fixture,
-percentile, accounting, and evidence rules.
-
-The retained Apple M4 Pro reference report for clean implementation commit
-`185e287` records geometry-only p50/p95/p99 latency of
-`0.568/0.648/0.668 ms` and aggregate throughput of
-`171.3 million points/s` for this exact authored workload. These are
-single-host measurements, not an end-to-end or real-time claim. Inspect the
-[`machine-readable report`](docs/results/projection_benchmark_apple_m4_pro.json)
-and the historical [`v0.1` verification record](docs/v0.1_verification.md)
-before quoting them.
-
-Project one frame from an authorized local KITTI Raw synced drive:
-
-```bash
-./build/dev/project_kitti \
-  --dataset-root /path/to/2011_09_26 \
-  --drive 2011_09_26_drive_0005_sync \
-  --frame 0 \
-  --output-dir artifacts/projection
-```
-
-The command creates a unique child run directory containing
-`run_summary.json`, `frames.jsonl`, and `overlays/<frame>.png`. Run
-`./build/dev/project_kitti --help` for validated defaults and optional flags.
-This command shape is tested with authored synthetic inputs. A clean Release
-build also consumed frame 0 of an authorized local
-`2011_09_26_drive_0005_sync` copy: all 123,397 finite input points were
-accounted for, and the private overlay was opened for a visual sanity check.
-The KITTI input and derived image remain local and uncommitted.
-
-Run the fixed calibration-sensitivity suite on the same kind of private input:
-
-```bash
-./build/dev/analyze_calibration \
-  --dataset-root /path/to/2011_09_26 \
-  --drive 2011_09_26_drive_0005_sync \
-  --frame 0 \
-  --output-dir artifacts/sensitivity
-```
-
-It writes a baseline, four camera-`+y` yaw panels, four camera-`+x`
-translation panels, a combined comparison, and a JSON report. Perturbations are
-left-applied in `camera_rect_00`; the report gives common-visible-set median/p95
-pixel displacement plus appeared/disappeared counts. Both the public synthetic
-comparison and the private frame-0 comparison were opened and inspected. The
-private Release run contained one baseline plus all eight required
-perturbations; its KITTI-derived images remain local and uncommitted. The
-reported `50*tan(1 deg)` value is an analytic illustration, not a measured
-calibration error or pixel-accuracy claim.
-
-The `asan-ubsan` preset is intended for the Ubuntu CI toolchain. AppleClang 16's
-ASan runtime aborts during test discovery on the current macOS 26.6 host; the
-same tests pass under Clang 18 ASan+UBSan in Ubuntu 24.04. This host limitation
-must not be presented as a native sanitizer pass.
-
-No KITTI data is distributed by this repository. Obtain authorized data
-separately from the [KITTI Raw Data](https://www.cvlibs.net/datasets/kitti/raw_data.php)
-page and keep it outside version control.
-
-## License
-
-Project-authored code and documentation are licensed under the
-[Apache License 2.0](LICENSE). KITTI data is not included, redistributed, or
-relicensed by this project.
+Project-authored code and documentation use [Apache-2.0](LICENSE). Dependencies
+retain their own licenses. KITTI data is not included, redistributed or relicensed.
+Obtain authorized data separately from [KITTI Raw Data](https://www.cvlibs.net/datasets/kitti/raw_data.php).
+Do not upload KITTI files, derived screenshots, credentials or private dataset paths
+to issues, pull requests or public artifacts.

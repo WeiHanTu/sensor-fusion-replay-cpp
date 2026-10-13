@@ -3,6 +3,9 @@
 /out/
 /cmake-build-*/
 /compile_commands.json
+/CMakeUserPresets.json
+__pycache__/
+*.pyc
 .cache/
 .clangd/
 

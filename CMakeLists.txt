@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.28)
 
 project(
   sensor_fusion_replay
@@ -25,8 +25,7 @@ if(NOT TARGET Eigen3::Eigen)
   FetchContent_Declare(
     eigen
     GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
-    GIT_TAG 3.4.0
-    GIT_SHALLOW TRUE
+    GIT_TAG 3147391d946bb4b6c68edd901f2add6ac1f31f8c # Eigen 3.4.0
     SOURCE_SUBDIR _sfr_header_only
     EXCLUDE_FROM_ALL)
   FetchContent_MakeAvailable(eigen)
@@ -54,8 +53,7 @@ if(NOT TARGET nlohmann_json::nlohmann_json)
   FetchContent_Declare(
     nlohmann_json
     GIT_REPOSITORY https://github.com/nlohmann/json.git
-    GIT_TAG v3.11.3
-    GIT_SHALLOW TRUE
+    GIT_TAG 9cca280a4d0ccf0c08f47a99aa71d1b0e52f8d03 # nlohmann/json 3.11.3
     EXCLUDE_FROM_ALL)
   FetchContent_MakeAvailable(nlohmann_json)
 endif()
@@ -79,8 +77,7 @@ if(SFR_BUILD_TESTS)
     FetchContent_Declare(
       googletest
       GIT_REPOSITORY https://github.com/google/googletest.git
-      GIT_TAG v1.15.2
-      GIT_SHALLOW TRUE
+      GIT_TAG b514bdc898e2951020cbdca1304b75f5950d1f59 # GoogleTest 1.15.2
       EXCLUDE_FROM_ALL)
     FetchContent_MakeAvailable(googletest)
   endif()

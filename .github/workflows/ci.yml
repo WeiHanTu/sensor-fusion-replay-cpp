@@ -7,67 +7,146 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  repository:
+    name: Repository contracts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Test repository checker
+        run: python3 -m unittest discover -s tools/tests -v
+      - name: Check navigation, source coverage and repository contracts
+        run: python3 tools/check_repository.py
+
   build-test:
-    name: ${{ matrix.compiler }} debug
-    runs-on: ubuntu-latest
+    name: ${{ matrix.compiler }} ${{ matrix.configuration }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        compiler: [gcc, clang]
         include:
           - compiler: gcc
-            cc: gcc
-            cxx: g++
+            configuration: debug
+            preset: dev
+            cc: gcc-13
+            cxx: g++-13
           - compiler: clang
-            cc: clang
-            cxx: clang++
+            configuration: debug
+            preset: dev
+            cc: clang-18
+            cxx: clang++-18
+          - compiler: gcc
+            configuration: release
+            preset: release
+            cc: gcc-13
+            cxx: g++-13
     env:
       CC: ${{ matrix.cc }}
       CXX: ${{ matrix.cxx }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
       - name: Install dependencies and developer tools
         run: |
           sudo apt-get update
-          sudo apt-get install --yes \
-            clang-format \
-            clang-tidy \
-            libeigen3-dev \
-            libgtest-dev \
-            libopencv-dev \
-            nlohmann-json3-dev
+          sudo apt-get install --yes cmake g++-13 clang-18 \
+            clang-format clang-tidy libeigen3-dev libgtest-dev \
+            libopencv-dev nlohmann-json3-dev
       - name: Configure
-        run: cmake --preset dev
+        run: cmake --preset ${{ matrix.preset }}
       - name: Build
-        run: cmake --build --preset dev --parallel 2
+        run: cmake --build --preset ${{ matrix.preset }} --parallel 2
       - name: Test
-        run: ctest --preset dev --output-on-failure
+        run: ctest --preset ${{ matrix.preset }} --output-on-failure --output-junit build/${{ matrix.preset }}/test-results.xml
       - name: Check formatting
-        run: cmake --build --preset dev --target format-check
+        run: cmake --build --preset ${{ matrix.preset }} --target format-check
       - name: Run clang-tidy
         if: matrix.compiler == 'clang'
-        run: cmake --build --preset dev --target clang-tidy
+        run: cmake --build --preset ${{ matrix.preset }} --target clang-tidy
+      - name: README Release quick start
+        if: matrix.preset == 'release'
+        run: |
+          ./build/release/generate_synthetic_kitti --output-dir artifacts/quickstart_kitti
+          ./build/release/project_kitti \
+            --dataset-root artifacts/quickstart_kitti --drive synthetic_drive_sync \
+            --frame 0 --output-dir artifacts/quickstart_projection
+          ./build/release/generate_extrinsic_fixture \
+            --output-dir artifacts/quickstart_extrinsic --hidden-yaw-deg 0.7 --hidden-tx-m -0.04
+          ./build/release/estimate_extrinsics \
+            --dataset-root artifacts/quickstart_extrinsic --train-frames 0,1 --validation-frames 2 \
+            --parameters yaw_camera_y,translation_camera_x --loss huber \
+            --output-dir artifacts/quickstart_recovery --run-id joint
+      - name: Check quick-start report acceptance and clean provenance
+        if: matrix.preset == 'release'
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('artifacts/quickstart_recovery/joint/report.json').read_text())
+          assert report['status'] == 'complete'
+          assert report['acceptance']['passed'] is True
+          assert report['build']['git_dirty'] is False
+          assert report['split']['consumed_train_ids'] == [0, 1]
+          assert report['split']['validation_frame_ids'] == [2]
+          assert report['split']['held_out_loaded_after_search'] is True
+          PY
+      - name: Retain public synthetic test diagnostics
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ${{ matrix.compiler }}-${{ matrix.preset }}-diagnostics
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            build/${{ matrix.preset }}/test-results.xml
+            build/${{ matrix.preset }}/Testing/Temporary/LastTest.log
+            build/${{ matrix.preset }}/Testing/Temporary/LastTestsFailed.log
+            build/${{ matrix.preset }}/campaign-test/smoke/campaign.json
+            build/${{ matrix.preset }}/campaign-test/smoke/runs/*/report.json
+            artifacts/quickstart_recovery/joint/report.json
+            artifacts/quickstart_projection/*/run_summary.json
 
   asan-ubsan:
     name: ASan and UBSan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     env:
-      CC: clang
-      CXX: clang++
+      CC: clang-18
+      CXX: clang++-18
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install --yes \
-            libeigen3-dev \
-            libgtest-dev \
-            libopencv-dev \
-            nlohmann-json3-dev
+          sudo apt-get install --yes cmake clang-18 libeigen3-dev libgtest-dev \
+            libopencv-dev nlohmann-json3-dev
       - name: Configure
         run: cmake --preset asan-ubsan
       - name: Build
         run: cmake --build --preset asan-ubsan --parallel 2
       - name: Test
-        run: ctest --preset asan-ubsan --output-on-failure
+        run: ctest --preset asan-ubsan --output-on-failure --output-junit build/asan-ubsan/test-results.xml
+      - name: Retain public synthetic sanitizer diagnostics
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: asan-ubsan-diagnostics
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            build/asan-ubsan/test-results.xml
+            build/asan-ubsan/Testing/Temporary/LastTest.log
+            build/asan-ubsan/Testing/Temporary/LastTestsFailed.log
+            build/asan-ubsan/campaign-test/smoke/campaign.json
+            build/asan-ubsan/campaign-test/smoke/runs/*/report.json
