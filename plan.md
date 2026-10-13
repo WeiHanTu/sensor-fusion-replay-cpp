@@ -464,6 +464,13 @@ the local version. Replace those with portable optional equality/stable guarded
 references; do not suppress checks. Final Ubuntu/static/sanitizer gates remain
 open. Native macOS sanitizer initialization failed before recovery tests.
 
+The first unoptimized Ubuntu sanitizer run passed 132/133 tests; the complete
+campaign exceeded its existing 600-second deadline. Preserve that failure and
+deadline. Use target-scoped `-O1` for sanitizer builds, with Debug symbols,
+assertions and both instruments intact, following Clang's usage guidance. No
+case, search grid, recovery gate, warning or runtime check is removed. Reverify
+the entire matrix before closing R7.
+
 ### R7. Verify, publish evidence, and close V1
 
 - [ ] Run dev/Release and supported ASan+UBSan from clean directories; run

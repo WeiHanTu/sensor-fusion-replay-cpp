@@ -1,7 +1,9 @@
 # Synthetic recovery V1 verification
 
-Measured implementation: `da261d1816aefe115d2e9bb733f5bc6ec15791f4`, clean at
-Release configuration. The immutable `v0.1.0` tag is unchanged. This is an
+Measured implementation: `e8491b1e1af67044486d7ef3c8a0357c29ad3685`, clean at
+Release configuration after the portable guard fix. All 21 reports match the
+previous clean run numerically, excluding commit and timing. The immutable
+`v0.1.0` tag is unchanged. This is an
 additive geometry experiment, not a perception/runtime release.
 
 ## Checks
@@ -15,17 +17,26 @@ additive geometry experiment, not a perception/runtime release.
 | Repeated search on identical inputs | Equal canonical keys/memberships/losses/counts and status in all 21 cases |
 | Final visuals | Inspected rich/narrow surfaces, all-invalid surface, residual plot and held-out overlays |
 | Native macOS ASan+UBSan | Failed during existing rigid-transform test discovery, before recovery tests; allocator initialization CHECK in `sanitizer_malloc_mac.inc` |
-| First Ubuntu run on `da261d1` | GCC and Clang runtime tests passed 133/133; Clang static gate failed on three optional-access diagnostics; sanitizer job still pending |
-| Final supported Ubuntu gates | Pending verification of the portable optional guards; no checks disabled |
+| First Ubuntu run on `da261d1` | GCC/Clang runtime passed 133/133; Clang static gate failed on three optional-access diagnostics; unoptimized sanitizer passed 132/133, campaign timed out at 600 seconds |
+| Final supported Ubuntu gates | Pending portable-guard and optimized-sanitizer verification; no cases/checks/deadlines weakened |
 
-Fresh local directories were `build/recovery-v1-dev`, `build/recovery-v1-release`
+Fresh local directories were `build/recovery-v1-dev`, `build/recovery-v1-final`
 and `build/recovery-v1-asan`; the compiler was AppleClang 16.0.0.16000026.
 Release provenance records Apple M4 Pro, arm64, Darwin 25.6.0, and
 `git_dirty=false`. The native sanitizer failure is not called a passing run;
 the supported Ubuntu sanitizer gate must pass independently.
 
+The first unoptimized Ubuntu sanitizer run is retained as a failed run, not a
+success: 132 tests passed, and the full campaign was killed at its existing
+600-second limit. Sanitizer targets now use `-O1`, while preserving Debug
+symbols/assertions, ASan/UBSan, frame pointers, the full matrix and deadline.
+This follows [Clang's ASan usage guidance](https://clang.llvm.org/docs/AddressSanitizer.html).
+Ordinary GCC/Clang jobs still test unoptimized Debug; Release measurement is
+separate. Optimization is not evidence that a sanitizer check passed.
+
 The full raw run is retained locally under
-`artifacts/extrinsic_recovery/verified_da261d1/`. The
+`artifacts/extrinsic_recovery/verified_e8491b1/`. The earlier raw `da261d1` run and
+failed static-gate logs are also retained rather than overwritten. The
 [public machine-readable extraction](evidence/extrinsic_recovery_v1.json)
 retains all cases, signed/absolute parameter errors, observed/clean metrics,
 visibility, conditioning and failure statuses. Array model order is explicitly

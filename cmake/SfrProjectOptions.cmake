@@ -18,9 +18,10 @@ function(sfr_configure_target target_name)
     if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
       message(FATAL_ERROR "ASan/UBSan preset requires a Clang or GCC-compatible compiler")
     endif()
+    # Keep Debug symbols/assertions; ASan recommends optimization for usable speed.
     target_compile_options(
       ${target_name}
-      PRIVATE -fsanitize=address,undefined -fno-omit-frame-pointer)
+      PRIVATE -O1 -fsanitize=address,undefined -fno-omit-frame-pointer)
     target_link_options(
       ${target_name}
       PRIVATE -fsanitize=address,undefined -fno-omit-frame-pointer)

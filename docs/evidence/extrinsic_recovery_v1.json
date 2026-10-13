@@ -4,7 +4,7 @@
   "build": {
     "build_type": "Release",
     "compiler": "AppleClang 16.0.0.16000026",
-    "git_commit": "da261d1816aefe115d2e9bb733f5bc6ec15791f4",
+    "git_commit": "e8491b1e1af67044486d7ef3c8a0357c29ad3685",
     "git_dirty": false
   },
   "host": {

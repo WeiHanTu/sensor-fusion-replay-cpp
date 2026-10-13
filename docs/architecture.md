@@ -97,7 +97,7 @@ flowchart TD
   O --> T[Training keyed 3D/UV observations]
   O --> H[Held-out scene + oracle sidecar]
   T --> S[Coarse grid then one fine rectangle]
-  F --> S
+  F -->|nominal calibration only| S
   S --> R[Frozen estimate + full candidate table]
   R --> E[Post-fit observed/clean evaluation]
   H --> E

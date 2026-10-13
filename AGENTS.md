@@ -158,6 +158,9 @@ visualization, or CLI code.
   are opt-in and cannot be required by CI.
 - Run sanitizer tests for memory and undefined behavior. Add ThreadSanitizer
   before accepting `v0.3`.
+- Sanitizer targets use `-O1` with the Debug preset's symbols/assertions and
+  ASan/UBSan instrumentation intact. Do not define `NDEBUG`, suppress findings,
+  remove campaign cases, or relax acceptance thresholds to fix sanitizer timeouts.
 
 ## Required verification
 

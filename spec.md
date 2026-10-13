@@ -24,6 +24,10 @@ in this file and reflected in `intend.md`, `plan.md`, tests, and release evidenc
 - Required warnings: `-Wall -Wextra -Wpedantic -Werror` for project targets.
 - Required dynamic checks: ASan+UBSan through `v0.2`; ASan+UBSan and TSan for
   `v0.3` concurrency code. Sanitizer configurations are separate.
+  Project sanitizer targets compile at `-O1`; the Debug preset retains symbols
+  and assertions (no `NDEBUG`). Instrumentation, test cases, deadlines and
+  acceptance gates remain unchanged. Unoptimized Debug is still tested by the
+  GCC/Clang development jobs.
 
 ### 2.2 Dependencies
 

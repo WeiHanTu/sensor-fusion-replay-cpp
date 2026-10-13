@@ -87,7 +87,9 @@ synthetic artifacts unless permission for other material is recorded.
 ### `v0.1 Geometry` — mandatory first release
 
 - C++20, target-based CMake, presets, warnings-as-errors, formatting, static
-  analysis, GoogleTest, ASan, UBSan, and Ubuntu CI.
+  analysis, GoogleTest, ASan, UBSan, and Ubuntu CI. Sanitizer builds retain full
+  tests/instrumentation/assertions with modest optimization; they are not used
+  for release-performance claims.
 - `SE(3)` rigid transforms with validation, inverse, composition, and batch point
   application.
 - Explicit frame graph and documented frame tree:
