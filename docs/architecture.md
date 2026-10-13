@@ -10,7 +10,7 @@ reporting are not nearest-timestamp synchronization.
 
 The additive synthetic recovery experiment now uses three authored scenes,
 explicit keyed UV correspondences and bounded two-parameter search. Its code
-is implemented; current acceptance/verification status is recorded in
+and declared synthetic gates are verified; exact acceptance evidence is recorded in
 [the experiment document](extrinsic_recovery.md). No raw-image correspondence
 extractor or physical/KITTI calibration estimator exists.
 

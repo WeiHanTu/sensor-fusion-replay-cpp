@@ -1,9 +1,9 @@
 # Controlled Synthetic Extrinsic Parameter Recovery
 
-Design approved 2026-10-12. Core, fixture, CLI/report and campaign code are now
-implemented; final clean-commit verification/evidence is in progress. Draft dirty
-worktree results are not the published acceptance record.
-This document explains the design for review before implementation. Requirements
+Design approved 2026-10-12; implemented and verified on the declared authored
+fixtures at `e876725`. See [the exact-commit record](extrinsic_recovery_verification.md).
+Draft dirty runs are not the published acceptance record.
+This document explains the implemented model and its limitations. Requirements
 are in [spec §17](../spec.md#17-controlled-synthetic-extrinsic-recovery-v1);
 ordered work is in [plan §4b](../plan.md#4b-synthetic-extrinsic-recovery-v1-design-review-2026-10-12).
 
@@ -186,7 +186,9 @@ identity and frame definitions. V1 estimates no other DoF.
 ## Frozen campaign and acceptance
 
 The exact cases and gates are frozen in [spec §17.7](../spec.md#177-frozen-experiment-campaign-and-gates).
-There are no measured values yet:
+Measured values and retained failures are in the
+[verification record](extrinsic_recovery_verification.md) and
+[machine-readable evidence](evidence/extrinsic_recovery_v1.json):
 
 - A: zero, both yaw signs, both translation signs and two joint clean corrections.
   Parameter errors must be <=0.005 deg / 0.00025 m. Nonzero cases need >=90%
@@ -233,17 +235,25 @@ those stages timed separately. Variable timings/run metadata are not promised
 byte-identical outputs. Scientific failure can produce a completed diagnostic
 run with exit 4, distinct from parse/config/output errors.
 
-Implementation proceeds through typed observations/loss, multi-frame fixture
+Implementation followed typed observations/loss, multi-frame fixture
 and strict I/O, grid search, held-out evaluation/diagnostics, staged visualization
 and CLI, frozen campaign, then clean build/test/sanitizer/Release evidence.
-The planned CLI and file locations are in
-[spec §17.9](../spec.md#179-architecture-cli-and-tests); commands are not published
-as runnable until executed. Geometry stays Eigen-only; existing OpenCV and JSON
+The implemented CLI and file locations are in
+[spec §17.9](../spec.md#179-architecture-cli-and-tests); entry-point commands above
+were executed on the measured source. Geometry stays Eigen-only; existing OpenCV and JSON
 handle images/reports. No nonlinear solver dependency is needed for V1.
 
 ## Evidence boundary
 
-Only after the specified gates pass may README state:
+Rich and narrow training geometry use the same parameter bounds and hidden
+correction. The narrow surface exposes the coupled yaw/translation valley;
+its on-grid minimum does not establish reliable identification.
+
+![Rich authored geometry loss surface](assets/extrinsic_recovery/rich_loss_surface.png)
+
+![Narrow authored geometry loss surface](assets/extrinsic_recovery/narrow_loss_surface.png)
+
+The declared gates passed on the recorded source. The verified claim is:
 
 > A project-authored synthetic experiment recovers bounded camera-yaw and
 > camera-x-translation corrections from known 3D-to-2D correspondences and

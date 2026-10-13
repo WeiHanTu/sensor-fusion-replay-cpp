@@ -97,7 +97,7 @@ Required CMake targets:
 Apps MUST contain composition and argument/error handling only. Core algorithms
 MUST be callable from tests without launching a process.
 
-The requested synthetic extrinsic-recovery extension has additional proposed
+The requested synthetic extrinsic-recovery extension has additional implemented
 files/targets in Section 17. It reuses these library boundaries and does not
 activate perception, runtime, or ROS targets.
 
@@ -787,12 +787,13 @@ The eventual README MUST include:
 
 ## 17. Controlled synthetic extrinsic recovery V1
 
-Status: design approved on 2026-10-12; implementation and final verification
-are in progress. This section is
+Status: design approved on 2026-10-12; implemented and verified on declared
+authored synthetic fixtures at `e876725`. See
+[the verification record](docs/extrinsic_recovery_verification.md). This section is
 the requested additive geometry experiment contract. It does not retag
 `v0.1.0`, rename `v0.2 Perception`, or add dynamics/MuJoCo dependencies.
 The owner approved the written observable/convention/split/search/output design
-before implementation. Passing draft runs are not published release evidence.
+before implementation. Draft runs remain distinct from the clean recorded evidence.
 Rationale and review navigation are in
 [docs/extrinsic_recovery.md](docs/extrinsic_recovery.md).
 

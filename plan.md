@@ -2,7 +2,7 @@
 
 ## 1. Current state
 
-Status reconciled on 2026-10-12:
+Status reconciled on 2026-10-13:
 
 - `v0.1.0` tags commit `88da6dd`; the repository has been published. This tag is
   an immutable historical baseline, not acceptance of later changes.
@@ -16,10 +16,11 @@ Status reconciled on 2026-10-12:
   it measures authored synthetic geometry, not dataset/end-to-end performance.
 - Public visuals are project-owned synthetic data. KITTI inputs and derived
   images remain private. Original code/documentation use Apache-2.0.
-- Synthetic extrinsic recovery V1 has approved design and implemented core,
-  authored fixture, CLI/artifact and campaign paths. Final clean-commit evidence
-  and hosted CI remain open until recorded below. This additive geometry extension
-  has separate gates in `spec.md` Section 17; it is not a physical/KITTI estimator.
+- Synthetic extrinsic recovery V1 is implemented and verified on the declared
+  authored fixtures at `e876725`: 135/135 local dev/Release and in each supported
+  Ubuntu compiler/sanitizer job. See the [exact-commit record](docs/extrinsic_recovery_verification.md).
+  This additive geometry extension has separate gates in `spec.md` Section 17;
+  it is not a physical/KITTI estimator.
 
 Status vocabulary:
 
@@ -336,7 +337,7 @@ Normative contract: `spec.md` Section 17. Design:
 - [x] Owner approved the shown design on 2026-10-12; implementation may begin.
 
 The planning checkpoint `a1df6a5` changed documentation only. Approval is now
-recorded; R1-R7 remain incomplete until their stated verification passes.
+recorded; the milestones below now record implementation and final verification.
 
 ### R1. Typed correspondence and candidate contracts
 
@@ -409,8 +410,8 @@ empty/invalid coverage remains visible; rank-one geometry cannot claim acceptanc
 Core R3/R4 checkpoint: 21 geometry recovery tests pass, including independent
 analytic signed targets, reduced exhaustive reference, repeated-axis rank one,
 unweighted percentile/RMSE checks, null/invalid metrics and Huber-vs-L2 outliers.
-The broader fixture campaign, refinement-edge case and full verification remain
-open; no published recovery result is claimed at this checkpoint.
+The broader fixture campaign, refinement-edge case and full verification were
+open at that historical checkpoint; final closure is recorded under R7.
 
 ### R5. Reports, visualization, and CLI
 
@@ -480,24 +481,32 @@ preflight before parsing/allocation rather than relying only on per-file limits.
 The final suite has 135 tests; normal authored campaign inputs are unchanged.
 The optimized `bba58a2` Ubuntu run passed GCC, Clang, full static analysis and
 ASan/UBSan (133/133 each); sanitizer suite finished in 54.84 seconds without
-altering its 600-second campaign deadline. Final stricter-input CI remains open.
+altering its 600-second campaign deadline. The subsequent `e876725` run passed
+the complete 135-test suite in all three jobs, including full Clang static checks.
 
 ### R7. Verify, publish evidence, and close V1
 
-- [ ] Run dev/Release and supported ASan+UBSan from clean directories; run
+- [x] Run dev/Release and supported ASan+UBSan from clean directories; run
   format-check/full clang-tidy; preserve all existing checks and Ubuntu CI.
-- [ ] Reconfigure a clean committed Release source for A-E reports so embedded
+- [x] Reconfigure a clean committed Release source for A-E reports so embedded
   commit/dirty provenance matches the measured implementation.
-- [ ] Capture search/evaluation/render/write timing boundaries and point counts;
+- [x] Capture search/evaluation/render/write timing boundaries and point counts;
   deterministic decisions are distinct from variable wall time/build/run metadata.
-- [ ] Inspect final visuals; audit schema/links/full diff for data, secrets,
+- [x] Inspect final visuals; audit schema/links/full diff for data, secrets,
   private paths, generated bulk output or changes to old release evidence.
-- [ ] Add measured synthetic-only results and architecture/source/test navigation
+- [x] Add measured synthetic-only results and architecture/source/test navigation
   to README/docs only after verification. Preserve the old release tag.
-- [ ] Prepare the requested English/Traditional-Chinese 30-second explanation
+- [x] Prepare the requested English/Traditional-Chinese 30-second explanation
   under ignored `artifacts/private_walkthrough/` after results exist; keep it out
   of public tracked documents.
-- [ ] Commit/push narrow R1-R7 slices and verify CI at their actual commits.
+- [x] Commit/push narrow R1-R7 slices and verify CI at their actual commits.
+
+R7 closed 2026-10-13: clean measured source `e876725`, 21 retained A-E cases,
+all required campaign gates, 135/135 macOS dev/Release tests, 135/135 Ubuntu GCC,
+Clang and ASan/UBSan, format/full 42-TU static checks, inspected visuals and
+reproducible public extraction. Raw runs and private bilingual notes stay ignored.
+Native macOS sanitizer initialization failure remains recorded; only the
+supported Ubuntu sanitizer run is claimed passing. No old tag or threshold moved.
 
 Completion evidence: exact source/CI commit, toolchain/host/configuration,
 fixture identities/splits, all A-E reports including failures, complete accounting,

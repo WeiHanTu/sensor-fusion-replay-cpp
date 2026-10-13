@@ -52,11 +52,11 @@ Post-release reviewability changes and their fresh checks are recorded in
 | Calibration sensitivity | Locally verified on synthetic inputs | Hand-computed sign/axis tests, JSON checks, and inspected nine-panel output |
 | Projection microbenchmark | Locally verified on authored synthetic input | Exact per-iteration accounting, CLI/schema tests, and cross-toolchain smoke runs |
 | Authored synthetic demo | Locally verified | Staged fixture generator and loader/overwrite/ownership tests |
-| Bounded synthetic extrinsic recovery | Implemented; final acceptance record in progress | [Observable, search, held-out design and commands](docs/extrinsic_recovery.md); authored known correspondences only |
+| Bounded synthetic extrinsic recovery | Verified on declared authored fixtures | [Design/commands](docs/extrinsic_recovery.md), [exact-commit verification](docs/extrinsic_recovery_verification.md), [all-case evidence](docs/evidence/extrinsic_recovery_v1.json) |
 | Geometric perception | Planned (`v0.2`) | None |
 | Replay/backpressure metrics | Planned (`v0.3`) | None |
 
-“Locally verified” currently means 79/79 public tests passed in macOS debug and
+The historical `v0.1` baseline verification covered 79/79 public tests in macOS debug and
 a fresh Release build with AppleClang 16 and OpenCV 5.0. The same 79/79 tests
 passed with GCC 13, Clang 18, and Clang 18 ASan+UBSan in an Ubuntu 24.04
 container built from exact commit `9ef8765`. Format-check passed; the
@@ -66,6 +66,33 @@ GCC, Clang, and ASan+UBSan on release-candidate commit `d868970`; see the
 [`v0.1` verification record](docs/v0.1_verification.md). Git tags and GitHub
 Releases are the authority for publication state. Project-authored code and
 documentation use Apache-2.0.
+
+## Controlled synthetic extrinsic recovery
+
+A project-authored synthetic experiment recovers bounded camera-yaw and
+camera-x-translation corrections from known 3D-to-2D correspondences and
+evaluates them on held-out authored frames.
+
+Two authored frames (372 points) are fitted; a third distinct frame (160 points)
+is loaded after the estimate is frozen. V1 uses deterministic coarse-to-fine
+search, squared L2/Huber loss, explicit visibility accounting and local SVD
+diagnostics. It does not extract correspondences from arbitrary images.
+
+| Frozen experiment | Result |
+| --- | --- |
+| Seven clean on-grid cases | All half-step parameter and held-out gates pass |
+| 10% outlier setting (37/372 actual) | Clean held-out RMSE: L2 4.095 px, Huber 0.194 px; both miss strict clean parameter accuracy |
+| Narrow geometry | Scaled condition about 380386; not accepted as identifiable |
+| Off-grid truth | `refinement_limited`, not successful recovery; retained in evidence |
+
+The [verification record](docs/extrinsic_recovery_verification.md) ties results to
+clean source `e876725`: 135/135 macOS dev/Release tests and 135/135 in each Ubuntu
+GCC, Clang and ASan+UBSan job, with format/full static checks. Native macOS
+sanitizer initialization still fails before tests and is documented separately.
+Antithetic-noise results are not general i.i.d. noise robustness. None of this
+verifies physical/KITTI calibration, HIL, sim-to-real or production use.
+
+![Authored synthetic clean-target residual comparison](docs/assets/extrinsic_recovery/huber_residuals.png)
 
 ## Prerequisites
 

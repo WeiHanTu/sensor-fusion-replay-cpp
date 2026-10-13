@@ -1,7 +1,8 @@
 # Synthetic recovery V1 verification
 
-Measured implementation: `bba58a213d881a162bff086a4cfc5b4ca3d7ae68`, clean at
-Release configuration after the portable guard fix. All 21 reports match the
+Verified 2026-10-13. Measured implementation:
+`e8767256c359f1eab17f1e62694a4cc4b47332a6`, clean at
+Release configuration after the guard fixes. All 21 reports match the
 previous clean run numerically, excluding commit and timing. The immutable
 `v0.1.0` tag is unchanged. This is an
 additive geometry experiment, not a perception/runtime release.
@@ -10,8 +11,8 @@ additive geometry experiment, not a perception/runtime release.
 
 | Check | Result |
 | --- | --- |
-| Fresh macOS dev tree, final full CTest | 133/133 passed |
-| Fresh clean-commit macOS Release tree, full CTest | 133/133 passed |
+| Fresh macOS dev tree, final full CTest | 135/135 passed |
+| Fresh clean-commit macOS Release tree, full CTest | 135/135 passed |
 | Format-check and full 42-TU clang-tidy | Passed; no actionable project diagnostics |
 | Frozen Release A-E campaign | 21 cases retained; required gates passed |
 | Repeated search on identical inputs | Equal canonical keys/memberships/losses/counts and status in all 21 cases |
@@ -19,7 +20,13 @@ additive geometry experiment, not a perception/runtime release.
 | Native macOS ASan+UBSan | Failed during existing rigid-transform test discovery, before recovery tests; allocator initialization CHECK in `sanitizer_malloc_mac.inc` |
 | First Ubuntu run on `da261d1` | GCC/Clang runtime passed 133/133; Clang static gate failed on three optional-access diagnostics; unoptimized sanitizer passed 132/133, campaign timed out at 600 seconds |
 | Ubuntu on `bba58a2` | GCC/Clang and ASan+UBSan all passed 133/133; full Clang static gate passed |
-| Final input-boundary regressions | New duplicate-scene and aggregate-record tests fail before fixes, then pass; 135-test final CI pending |
+| Final input-boundary regressions | Duplicate scenes within either role and aggregate-record cap: regressions fail before fixes, then pass |
+| Final Ubuntu on `e876725` | GCC 13.3.0, Clang 18.1.3 and ASan+UBSan pass 135/135; format/full Clang static checks pass |
+
+Hosted results: [completed exact-commit CI](https://github.com/WeiHanTu/sensor-fusion-replay-cpp/actions/runs/38359928994).
+The supported sanitizer job ran the same full suite with Debug symbols/assertions
+and `-O1`; its test step completed in 81.54 seconds. This is a CI diagnostic,
+not an algorithm latency benchmark. The 600-second campaign deadline is unchanged.
 
 Fresh local directories were `build/recovery-v1-dev`, `build/recovery-v1-final`
 and `build/recovery-v1-asan`; the compiler was AppleClang 16.0.0.16000026.
@@ -36,7 +43,7 @@ Ordinary GCC/Clang jobs still test unoptimized Debug; Release measurement is
 separate. Optimization is not evidence that a sanitizer check passed.
 
 The full raw run is retained locally under
-`artifacts/extrinsic_recovery/verified_bba58a2/`. The earlier raw runs and
+`artifacts/extrinsic_recovery/verified_e876725/`. The earlier raw runs and
 failed static-gate logs are also retained rather than overwritten. The
 [public machine-readable extraction](evidence/extrinsic_recovery_v1.json)
 retains all cases, signed/absolute parameter errors, observed/clean metrics,

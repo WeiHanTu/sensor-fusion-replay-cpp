@@ -110,7 +110,8 @@ synthetic artifacts unless permission for other material is recorded.
 
 ### Synthetic extrinsic recovery V1 — requested geometry extension
 
-Status: approved design implemented; final verification/evidence in progress.
+Status: implemented and verified on the declared authored synthetic fixtures;
+see [the exact-commit record](docs/extrinsic_recovery_verification.md).
 This is separate from the `v0.2` and
 `v0.3` capability releases and uses the existing geometry/libraries.
 
