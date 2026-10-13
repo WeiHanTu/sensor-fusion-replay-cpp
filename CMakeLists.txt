@@ -93,6 +93,7 @@ sfr_add_developer_tools(
   FILES
   include/sfr/core/point_types.hpp
   include/sfr/geometry/calibration_sensitivity.hpp
+  include/sfr/geometry/extrinsic_recovery.hpp
   include/sfr/geometry/frame_graph.hpp
   include/sfr/geometry/point_cloud_projection.hpp
   include/sfr/geometry/projection.hpp
@@ -110,6 +111,7 @@ sfr_add_developer_tools(
   benchmarks/benchmark_projection.cpp
   examples/generate_synthetic_kitti.cpp
   src/geometry/calibration_sensitivity.cpp
+  src/geometry/extrinsic_recovery.cpp
   src/geometry/frame_graph.cpp
   src/geometry/point_cloud_projection.cpp
   src/geometry/projection.cpp
@@ -127,6 +129,7 @@ sfr_add_developer_tools(
   tests/integration/generate_synthetic_kitti_cli_test.cpp
   tests/integration/project_kitti_cli_test.cpp
   tests/unit/calibration_sensitivity_test.cpp
+  tests/unit/extrinsic_recovery_test.cpp
   tests/unit/calibration_test.cpp
   tests/unit/frame_graph_test.cpp
   tests/unit/kitti_io_test.cpp

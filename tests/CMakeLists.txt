@@ -13,6 +13,7 @@ sfr_add_test(geometry_projection_test unit/projection_test.cpp sfr::geometry)
 sfr_add_test(geometry_point_cloud_projection_test unit/point_cloud_projection_test.cpp sfr::geometry)
 sfr_add_test(geometry_calibration_sensitivity_test unit/calibration_sensitivity_test.cpp
              sfr::geometry)
+sfr_add_test(geometry_extrinsic_recovery_test unit/extrinsic_recovery_test.cpp sfr::geometry)
 
 sfr_add_test(io_calibration_test unit/calibration_test.cpp sfr::io)
 sfr_add_test(io_timestamp_test unit/timestamp_test.cpp sfr::io)

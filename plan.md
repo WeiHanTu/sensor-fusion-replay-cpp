@@ -333,26 +333,28 @@ Normative contract: `spec.md` Section 17. Design:
   edited documents; review documentation-only scope and `git diff --check`.
   Build/tests/sanitizers, new CLI commands and diagram rendering are not run for
   this planning checkpoint; no new implementation or measured result exists.
-- [ ] Owner reviews the shown design before implementation begins.
+- [x] Owner approved the shown design on 2026-10-12; implementation may begin.
 
-This turn changes planning documentation only. No application command or recovery
-result is marked verified. Capture documentation checks and commit the planning
-checkpoint; pause after presenting the design. Do not generate results or add
-implementation under the assumption that submitting a plan is approval.
+The planning checkpoint `a1df6a5` changed documentation only. Approval is now
+recorded; R1-R7 remain incomplete until their stated verification passes.
 
 ### R1. Typed correspondence and candidate contracts
 
-- [ ] Add UV-only observations, stable frame/source IDs and two-parameter values
+- [x] Add UV-only observations, stable frame/source IDs and two-parameter values
   with public `///` contracts to `sfr_geometry`.
-- [ ] Validate finite points/pixels/weights and keyed joins. Document/validate
+- [x] Validate finite points/pixels/weights and keyed bindings. Document/validate
   span-index remapping when reusing `projectPointCloud`.
-- [ ] Implement yaw-then-camera-x translation using existing sensitivity methods;
+- [x] Implement yaw-then-camera-x translation using existing sensitivity methods;
   add independently derived sign/composition tests with non-identity nominal.
-- [ ] Implement weighted L2/Huber and full candidate visibility/numeric accounting.
+- [x] Implement weighted L2/Huber and full candidate visibility/numeric accounting.
   Test explicit zero weights, invalid inputs, overflow and rejected candidates.
 
 Exit gate: hand-derived reprojection/loss values and all accounting branches pass.
 The estimator API has no hidden/oracle/held-out fields or access to the filesystem.
+
+R1 verification: dev build, nine new hand-derived/contract tests and full 94/94
+CTest passed; format-check and diff checks passed. Full tidy/sanitizer verification
+is deferred to the completed implementation. File joins belong to R2.
 
 ### R2. Multi-frame authored fixture and input loader
 

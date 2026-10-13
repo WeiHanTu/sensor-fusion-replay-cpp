@@ -1,6 +1,7 @@
 add_library(
   sfr_geometry
   calibration_sensitivity.cpp
+  extrinsic_recovery.cpp
   frame_graph.cpp
   point_cloud_projection.cpp
   projection.cpp
