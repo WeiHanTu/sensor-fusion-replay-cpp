@@ -1,5 +1,6 @@
 add_library(
   sfr_viz
+  extrinsic_recovery_artifact.cpp
   overlay.cpp
   panel.cpp
   projection_artifact.cpp

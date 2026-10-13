@@ -70,3 +70,14 @@ target_compile_definitions(
 add_dependencies(cli_generate_synthetic_kitti_test generate_synthetic_kitti)
 
 add_test(NAME cli_generate_synthetic_kitti_help COMMAND generate_synthetic_kitti --help)
+
+sfr_add_test(cli_estimate_extrinsics_test integration/estimate_extrinsics_cli_test.cpp sfr::io)
+target_link_libraries(cli_estimate_extrinsics_test PRIVATE nlohmann_json::nlohmann_json opencv_imgcodecs)
+target_compile_definitions(cli_estimate_extrinsics_test PRIVATE SFR_ESTIMATE_EXTRINSICS_EXE="$<TARGET_FILE:estimate_extrinsics>")
+add_dependencies(cli_estimate_extrinsics_test estimate_extrinsics)
+add_test(NAME cli_estimate_extrinsics_help COMMAND estimate_extrinsics --help)
+add_test(NAME cli_generate_extrinsic_fixture_help COMMAND generate_extrinsic_fixture --help)
+add_test(NAME cli_run_extrinsic_campaign_help COMMAND run_extrinsic_campaign --help)
+add_test(NAME extrinsic_campaign_smoke COMMAND run_extrinsic_campaign
+         --output-dir "${CMAKE_BINARY_DIR}/campaign-test" --run-id smoke --overwrite)
+set_tests_properties(extrinsic_campaign_smoke PROPERTIES TIMEOUT 600)

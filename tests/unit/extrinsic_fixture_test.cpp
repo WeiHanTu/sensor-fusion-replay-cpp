@@ -230,5 +230,14 @@ TEST_F(ExtrinsicFixtureTest, RejectsUnsupportedVersionUnsafePathsAndOversizedCou
   EXPECT_THROW(static_cast<void>(loadExtrinsicFixture(dataset_)), IoError);
 }
 
+TEST_F(ExtrinsicFixtureTest, RejectsMutatedCleanOracleTargets) {
+  generateExtrinsicFixture(dataset_, {});
+  const auto fixture = loadExtrinsicFixture(dataset_);
+  auto oracle = read(dataset_ / "oracle.json");
+  oracle["pixels"][0]["u_px"] = 1.0;
+  write(dataset_ / "oracle.json", oracle);
+  EXPECT_THROW(static_cast<void>(loadExtrinsicOracle(fixture)), IoError);
+}
+
 } // namespace
 } // namespace sfr::io

@@ -11,6 +11,13 @@
 namespace sfr::geometry {
 namespace {
 
+template <typename T> [[nodiscard]] const T& require(const std::optional<T>& value) {
+  if (!value.has_value()) {
+    throw std::runtime_error("test expected a present optional value");
+  }
+  return value.value();
+}
+
 [[nodiscard]] RectifiedProjection camera() {
   Matrix34d matrix;
   matrix << 100.0, 0.0, 50.0, 0.0, 0.0, 100.0, 50.0, 0.0, 0.0, 0.0, 1.0, 0.0;
@@ -36,10 +43,12 @@ TEST(ExtrinsicRecoveryTest, ComputesHandDerivedWeightedRadialL2AndHuber) {
   // Radial residual sqrt(3^2+4^2)=5; L2=25, Huber=2*(5-1)=8.
   ASSERT_TRUE(l2.loss_sum.has_value());
   ASSERT_TRUE(huber.loss_sum.has_value());
-  EXPECT_DOUBLE_EQ(l2.loss_sum.value(), 50.0);
-  EXPECT_DOUBLE_EQ(l2.loss_mean.value(), 25.0);
-  EXPECT_DOUBLE_EQ(huber.loss_sum.value(), 16.0);
-  EXPECT_DOUBLE_EQ(huber.loss_mean.value(), 8.0);
+  ASSERT_TRUE(l2.loss_mean.has_value());
+  ASSERT_TRUE(huber.loss_mean.has_value());
+  EXPECT_DOUBLE_EQ(require(l2.loss_sum), 50.0);
+  EXPECT_DOUBLE_EQ(require(l2.loss_mean), 25.0);
+  EXPECT_DOUBLE_EQ(require(huber.loss_sum), 16.0);
+  EXPECT_DOUBLE_EQ(require(huber.loss_mean), 8.0);
 }
 
 TEST(ExtrinsicRecoveryTest, AppliesYawThenCameraTranslationWithNonIdentityNominal) {
@@ -74,7 +83,7 @@ TEST(ExtrinsicRecoveryTest, ZeroWeightMaskIsExplicitAndDoesNotRejectVisibleActiv
   frames[0].observations.push_back({3U, {0.0, 0.0, -1.0, 0.5F}, {50.0, 50.0}, 0.0});
   const auto result = evaluateExtrinsicCandidate(nominal(), camera(), frames, {});
   ASSERT_TRUE(result.loss_sum.has_value());
-  EXPECT_DOUBLE_EQ(result.loss_sum.value(), 8.0);
+  EXPECT_DOUBLE_EQ(require(result.loss_sum), 8.0);
   EXPECT_EQ(result.zero_weight, 1U);
   EXPECT_EQ(result.projection_counts.behind_or_too_near, 1U);
 }
@@ -169,9 +178,9 @@ TEST(ExtrinsicRecoveryTest, RecoversZeroSignedAxisOnlyAndJointAnalyticTargets) {
     const auto result = searchExtrinsicCorrection(
         nominal(), camera(), recoveryFrames(truth.yaw_camera_y_rad, truth.translation_camera_x_m));
     ASSERT_TRUE(result.best.has_value());
-    EXPECT_NEAR(result.best.value().yaw_camera_y_rad, truth.yaw_camera_y_rad,
+    EXPECT_NEAR(require(result.best).yaw_camera_y_rad, truth.yaw_camera_y_rad,
                 0.005 * std::numbers::pi / 180.0 + 1e-12);
-    EXPECT_NEAR(result.best.value().translation_camera_x_m, truth.translation_camera_x_m,
+    EXPECT_NEAR(require(result.best).translation_camera_x_m, truth.translation_camera_x_m,
                 0.00025 + 1e-12);
     EXPECT_EQ(result.status, RecoverySearchStatus::kGridComplete);
     EXPECT_EQ(result.consumed_frame_ids, (std::vector<std::uint64_t>{0U, 1U}));
@@ -259,36 +268,59 @@ TEST(ExtrinsicRecoveryTest, ReportsGlobalBoundInsteadOfSuccessfulRecovery) {
 
 TEST(ExtrinsicRecoveryTest, MatchesReducedExhaustiveFineGridReferenceAndDeduplicates) {
   ExtrinsicSearchConfig config;
+  // Frozen production steps, reduced bounds/analytic fixtures for reference cost.
+  config.yaw = {-std::numbers::pi / 180.0, std::numbers::pi / 180.0, 0.1 * std::numbers::pi / 180.0,
+                0.01 * std::numbers::pi / 180.0};
+  config.translation = {-0.05, 0.05, 0.005, 0.0005};
+  config.loss.kind = RecoveryLoss::kSquaredL2;
+  const std::vector<ExtrinsicCorrection> cases{{0.0, 0.0},
+                                               {0.7 * std::numbers::pi / 180.0, 0.0},
+                                               {-0.7 * std::numbers::pi / 180.0, 0.0},
+                                               {0.0, 0.04},
+                                               {0.0, -0.04},
+                                               {0.7 * std::numbers::pi / 180.0, -0.04},
+                                               {-0.6 * std::numbers::pi / 180.0, 0.035}};
+  for (const auto& truth : cases) {
+    const auto frames = recoveryFrames(truth.yaw_camera_y_rad, truth.translation_camera_x_m);
+    const auto result = searchExtrinsicCorrection(nominal(), camera(), frames, config);
+    ExtrinsicCandidateEvaluation exhaustive;
+    for (int yaw = 0; yaw <= 200; ++yaw) {
+      for (int tx = 0; tx <= 200; ++tx) {
+        const auto candidate = evaluateExtrinsicCandidate(
+            nominal(), camera(), frames,
+            {config.yaw.minimum + yaw * config.yaw.fine_step,
+             config.translation.minimum + tx * config.translation.fine_step},
+            config.loss);
+        if (betterExtrinsicCandidate(candidate, exhaustive)) {
+          exhaustive = candidate;
+        }
+      }
+    }
+    ASSERT_TRUE(result.best.has_value());
+    EXPECT_EQ(result.loss_sum, exhaustive.loss_sum);
+    EXPECT_DOUBLE_EQ(require(result.best).yaw_camera_y_rad, exhaustive.correction.yaw_camera_y_rad);
+    EXPECT_DOUBLE_EQ(require(result.best).translation_camera_x_m,
+                     exhaustive.correction.translation_camera_x_m);
+    std::uint64_t shared = 0U;
+    for (const auto& row : result.candidates) {
+      shared += row.coarse && row.fine ? 1U : 0U;
+    }
+    EXPECT_GT(shared, 0U);
+    EXPECT_LT(result.candidates.size(), 441U + 441U);
+  }
+}
+
+TEST(ExtrinsicRecoveryTest, CoarseParameterCouplingCanStopAtArtificialRefinementEdge) {
+  ExtrinsicSearchConfig config;
   config.yaw = {-std::numbers::pi / 180.0, std::numbers::pi / 180.0, 0.5 * std::numbers::pi / 180.0,
                 0.1 * std::numbers::pi / 180.0};
   config.translation = {-0.05, 0.05, 0.025, 0.005};
   config.loss.kind = RecoveryLoss::kSquaredL2;
-  const auto frames = recoveryFrames(0.4 * std::numbers::pi / 180.0, 0.015);
+  const auto frames = recoveryFrames(0.7 * std::numbers::pi / 180.0, -0.04);
   const auto result = searchExtrinsicCorrection(nominal(), camera(), frames, config);
-  ExtrinsicCandidateEvaluation exhaustive;
-  for (int yaw = 0; yaw <= 20; ++yaw) {
-    for (int tx = 0; tx <= 20; ++tx) {
-      const auto candidate = evaluateExtrinsicCandidate(
-          nominal(), camera(), frames,
-          {config.yaw.minimum + yaw * config.yaw.fine_step,
-           config.translation.minimum + tx * config.translation.fine_step},
-          config.loss);
-      if (betterExtrinsicCandidate(candidate, exhaustive)) {
-        exhaustive = candidate;
-      }
-    }
-  }
-  ASSERT_TRUE(result.best.has_value());
-  EXPECT_EQ(result.loss_sum, exhaustive.loss_sum);
-  EXPECT_DOUBLE_EQ(result.best.value().yaw_camera_y_rad, exhaustive.correction.yaw_camera_y_rad);
-  EXPECT_DOUBLE_EQ(result.best.value().translation_camera_x_m,
-                   exhaustive.correction.translation_camera_x_m);
-  std::uint64_t shared = 0U;
-  for (const auto& row : result.candidates) {
-    shared += row.coarse && row.fine ? 1U : 0U;
-  }
-  EXPECT_GT(shared, 0U);
-  EXPECT_LT(result.candidates.size(), 25U + 121U);
+  EXPECT_EQ(result.status, RecoverySearchStatus::kRefinementLimited);
+  EXPECT_TRUE(result.refinement_edge_hit);
+  EXPECT_GT(require(result.loss_sum), 0.01);
 }
 
 TEST(ExtrinsicRecoveryTest, RepeatedAxisHasRankOneAndCannotClaimIdentifiability) {
@@ -322,9 +354,12 @@ TEST(ExtrinsicRecoveryTest, EvaluationUsesUnweightedRetainedRecordsAndNearestRan
   EXPECT_EQ(result.nominal.pooled.counts.visible_points, 2U);
   EXPECT_EQ(result.nominal.pooled.zero_weight, 1U);
   EXPECT_EQ(result.nominal.pooled.common_visible, 2U);
-  EXPECT_DOUBLE_EQ(result.nominal.pooled.median_px.value(), 0.0);
-  EXPECT_DOUBLE_EQ(result.nominal.pooled.p95_px.value(), 5.0);
-  EXPECT_NEAR(result.nominal.pooled.rmse_px.value(), std::sqrt(12.5), 1e-12);
+  ASSERT_TRUE(result.nominal.pooled.median_px.has_value());
+  ASSERT_TRUE(result.nominal.pooled.p95_px.has_value());
+  ASSERT_TRUE(result.nominal.pooled.rmse_px.has_value());
+  EXPECT_DOUBLE_EQ(require(result.nominal.pooled.median_px), 0.0);
+  EXPECT_DOUBLE_EQ(require(result.nominal.pooled.p95_px), 5.0);
+  EXPECT_NEAR(require(result.nominal.pooled.rmse_px), std::sqrt(12.5), 1e-12);
   EXPECT_EQ(result.points_evaluated, 6U);
 }
 
@@ -373,8 +408,23 @@ TEST(ExtrinsicRecoveryTest, HuberImprovesCleanResidualsOverL2OnAuthoredOutliers)
       compareExtrinsicCorrections(nominal(), camera(), clean, huber.best, {yaw, -0.04});
   ASSERT_TRUE(l2_eval.recovered.has_value());
   ASSERT_TRUE(huber_eval.recovered.has_value());
-  EXPECT_LT(huber_eval.recovered.value().pooled.rmse_px.value(),
-            l2_eval.recovered.value().pooled.rmse_px.value());
+  ASSERT_TRUE(require(huber_eval.recovered).pooled.rmse_px.has_value());
+  ASSERT_TRUE(require(l2_eval.recovered).pooled.rmse_px.has_value());
+  EXPECT_LT(require(require(huber_eval.recovered).pooled.rmse_px),
+            require(require(l2_eval.recovered).pooled.rmse_px));
+}
+
+TEST(ExtrinsicRecoveryTest, AcceptanceKeepsZeroTruthAndPoorIdentifiabilityDistinct) {
+  const auto frames = recoveryFrames(0.0, 0.0);
+  auto result = searchExtrinsicCorrection(nominal(), camera(), frames);
+  const auto comparison = compareExtrinsicCorrections(nominal(), camera(), frames, result.best, {});
+  const auto good = assessExtrinsicRecovery(result, {}, {}, comparison);
+  EXPECT_TRUE(good.passed);
+  result.identifiability.poorly_identifiable = true;
+  const auto limited = assessExtrinsicRecovery(result, {}, {}, comparison);
+  EXPECT_FALSE(limited.passed);
+  EXPECT_TRUE(limited.parameter_gate);
+  EXPECT_TRUE(limited.held_out_gate);
 }
 
 } // namespace

@@ -351,7 +351,6 @@ searchExtrinsicCorrection(const RigidTransform& nominal, const RectifiedProjecti
       !std::isfinite(config.condition_limit) || config.condition_limit <= 1.0) {
     invalidRecovery("search needs two training frames and valid diagnostic thresholds");
   }
-  const auto prepared = prepareObservations(training, projection);
   static_cast<void>(applyExtrinsicCorrection(nominal, {}));
   const auto coarse_count =
       static_cast<std::uint64_t>(yaw.maximum / yaw.coarse_stride + 1) *
@@ -362,10 +361,18 @@ searchExtrinsicCorrection(const RigidTransform& nominal, const RectifiedProjecti
           std::min(translation.maximum + 1, 2 * translation.coarse_stride + 1));
   // Upper bound includes cached intersections: conservative refusal is explicit.
   const auto maximum_attempts = coarse_count + fine_count;
+  std::uint64_t observations = 0U;
+  for (const auto& frame : training) {
+    if (frame.observations.size() > config.max_point_projections - observations) {
+      invalidRecovery("observation count exceeds point-projection budget");
+    }
+    observations += frame.observations.size();
+  }
   if (maximum_attempts > config.max_candidates ||
-      prepared.points.size() > config.max_point_projections / maximum_attempts) {
+      observations > config.max_point_projections / maximum_attempts) {
     invalidRecovery("configured search exceeds candidate or point-projection budget");
   }
+  const auto prepared = prepareObservations(training, projection);
   ExtrinsicSearchResult result;
   result.consumed_frame_ids = prepared.frame_ids;
   result.total_weight = prepared.total_weight;
@@ -378,9 +385,9 @@ searchExtrinsicCorrection(const RigidTransform& nominal, const RectifiedProjecti
       auto evaluation = evaluatePrepared(
           prepared, applyExtrinsicCorrection(nominal, correctionAt(config, key.first, key.second)),
           projection, correctionAt(config, key.first, key.second), config.loss);
-      found = rows.emplace(key, RecoveryCandidateRow{key.first, key.second, false, false,
-                                                     std::move(evaluation)})
-                  .first;
+      found =
+          rows.emplace(key, RecoveryCandidateRow{key.first, key.second, false, false, evaluation})
+              .first;
       result.points_evaluated += prepared.points.size();
     }
     found->second.coarse = found->second.coarse || coarse;
@@ -427,7 +434,7 @@ searchExtrinsicCorrection(const RigidTransform& nominal, const RectifiedProjecti
   result.search_duration = std::chrono::steady_clock::now() - start;
   for (auto& [key, row] : rows) {
     static_cast<void>(key);
-    result.candidates.push_back(std::move(row));
+    result.candidates.push_back(row);
   }
   if (result.best.has_value()) {
     const auto diagnostic_start = std::chrono::steady_clock::now();
@@ -499,12 +506,13 @@ void summarize(RecoveryResidualMetrics& metrics, std::vector<double> errors) {
     const auto& observation = prepared.observations[index];
     auto& metrics = frame_metrics[observation.frame_id];
     metrics.frame_id = observation.frame_id;
-    RecoveryResidual residual{observation.frame_id, observation.source_index,
-                              observation.weight,   ProjectionStatus::kVisible,
-                              visible[index],       std::nullopt};
-    if (visible[index].has_value()) {
-      residual.radial_error_px = std::hypot(observation.target.u_px - visible[index].value().u_px,
-                                            observation.target.v_px - visible[index].value().v_px);
+    RecoveryResidual residual{observation.frame_id, observation.source_index,   observation.weight,
+                              observation.target,   ProjectionStatus::kVisible, visible[index],
+                              std::nullopt};
+    const auto& pixel = visible[index];
+    if (pixel.has_value()) {
+      residual.radial_error_px = std::hypot(observation.target.u_px - pixel.value().u_px,
+                                            observation.target.v_px - pixel.value().v_px);
       pooled_errors.push_back(residual.radial_error_px.value());
       frame_errors[observation.frame_id].push_back(residual.radial_error_px.value());
     } else {
@@ -602,7 +610,9 @@ RecoveryAcceptance assessExtrinsicRecovery(const ExtrinsicSearchResult& result,
       full(validation.nominal) && full(validation.recovered.value()) && full(validation.oracle);
   const auto& corrected = validation.recovered.value().pooled;
   const auto& baseline = validation.nominal.pooled;
-  if (gate.full_coverage) {
+  if (gate.full_coverage && corrected.rmse_px.has_value() && corrected.median_px.has_value() &&
+      corrected.p95_px.has_value() && baseline.median_px.has_value() &&
+      baseline.p95_px.has_value() && baseline.rmse_px.has_value()) {
     if (hidden.yaw_camera_y_rad == 0.0 && hidden.translation_camera_x_m == 0.0) {
       gate.held_out_gate = corrected.rmse_px.value() <= 1e-9;
     } else {

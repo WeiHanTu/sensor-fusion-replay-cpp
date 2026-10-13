@@ -52,7 +52,7 @@ Post-release reviewability changes and their fresh checks are recorded in
 | Calibration sensitivity | Locally verified on synthetic inputs | Hand-computed sign/axis tests, JSON checks, and inspected nine-panel output |
 | Projection microbenchmark | Locally verified on authored synthetic input | Exact per-iteration accounting, CLI/schema tests, and cross-toolchain smoke runs |
 | Authored synthetic demo | Locally verified | Staged fixture generator and loader/overwrite/ownership tests |
-| Bounded synthetic extrinsic recovery | Design proposed; implementation pending | [Observation/search/held-out design](docs/extrinsic_recovery.md); no recovery results yet |
+| Bounded synthetic extrinsic recovery | Implemented; final acceptance record in progress | [Observable, search, held-out design and commands](docs/extrinsic_recovery.md); authored known correspondences only |
 | Geometric perception | Planned (`v0.2`) | None |
 | Replay/backpressure metrics | Planned (`v0.3`) | None |
 

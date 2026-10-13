@@ -25,7 +25,7 @@ namespace {
 
 using Json = nlohmann::json;
 using geometry::ObservedPixel;
-constexpr std::uintmax_t kMaximumJsonBytes = 16U * 1024U * 1024U;
+constexpr std::uintmax_t kMaximumJsonBytes = std::uintmax_t{16U} * 1024U * 1024U;
 constexpr std::size_t kMaximumRecords = 100'000U;
 constexpr std::size_t kMaximumFrames = 1'000U;
 constexpr std::string_view kFixtureVersion = "1.0.0";
@@ -349,6 +349,7 @@ void generateExtrinsicFixture(const std::filesystem::path& output_directory,
       }
       FixtureRandom random(config.seed + frame_id * 0x9e3779b97f4a7c15ULL);
       std::vector<std::pair<std::uint64_t, std::uint64_t>> ranked;
+      ranked.reserve(projected.visible_points.size());
       for (const auto& point : projected.visible_points) {
         ranked.emplace_back(random.next(), point.source_index);
       }
@@ -454,15 +455,16 @@ void generateExtrinsicFixture(const std::filesystem::path& output_directory,
     const std::string identity = fingerprint(manifest);
     manifest["content_identity"] = identity;
     writeJson(temporary / "fixture.json", manifest);
-    writeJson(temporary / "oracle.json",
-              {{"schema_name", "sfr.extrinsic_oracle"},
-               {"schema_version", kFixtureVersion},
-               {"fixture_identity", identity},
-               {"hidden_parameters",
-                {{"yaw_camera_y_rad", config.hidden.yaw_camera_y_rad},
-                 {"translation_camera_x_m", config.hidden.translation_camera_x_m}}},
-               {"hidden_transform", matrixJson(hidden)},
-               {"pixels", oracle_pixels}});
+    Json oracle{{"schema_name", "sfr.extrinsic_oracle"},
+                {"schema_version", kFixtureVersion},
+                {"fixture_identity", identity},
+                {"hidden_parameters",
+                 {{"yaw_camera_y_rad", config.hidden.yaw_camera_y_rad},
+                  {"translation_camera_x_m", config.hidden.translation_camera_x_m}}},
+                {"hidden_transform", matrixJson(hidden)},
+                {"pixels", oracle_pixels}};
+    oracle["content_identity"] = fingerprint(oracle);
+    writeJson(temporary / "oracle.json", oracle);
     if (std::filesystem::exists(output)) {
       std::filesystem::remove_all(output);
     }
@@ -671,8 +673,13 @@ cv::Mat loadExtrinsicFixtureImage(const ExtrinsicFixture& fixture, const std::ui
 
 ExtrinsicOracle loadExtrinsicOracle(const ExtrinsicFixture& fixture) {
   try {
-    const Json value = readJson(safePath(fixture.root, "oracle.json"));
+    Json value = readJson(safePath(fixture.root, "oracle.json"));
     schema(value, "sfr.extrinsic_oracle");
+    const auto oracle_identity = text(value.at("content_identity"));
+    value.erase("content_identity");
+    if (fingerprint(value) != oracle_identity) {
+      malformed("oracle content identity mismatch");
+    }
     if (value.at("fixture_identity") != fixture.content_identity) {
       malformed("oracle belongs to a different fixture");
     }
@@ -689,6 +696,8 @@ ExtrinsicOracle loadExtrinsicOracle(const ExtrinsicFixture& fixture) {
     }
     boundedArray(value.at("pixels"));
     std::set<std::pair<std::uint64_t, std::uint64_t>> keys;
+    std::map<std::uint64_t, std::uint64_t> frame_counts;
+    std::map<std::uint64_t, std::uint64_t> outlier_counts;
     for (const Json& pixel : value.at("pixels")) {
       const auto frame_id = unsignedNumber(pixel.at("frame_id"));
       const auto source_id = unsignedNumber(pixel.at("source_index"));
@@ -700,6 +709,14 @@ ExtrinsicOracle loadExtrinsicOracle(const ExtrinsicFixture& fixture) {
         malformed("invalid/duplicate oracle target");
       }
       oracle.pixels.push_back({frame_id, source_id, uv, pixel.at("training_outlier").get<bool>()});
+      ++frame_counts[frame_id];
+      outlier_counts[frame_id] += pixel.at("training_outlier").get<bool>() ? 1U : 0U;
+    }
+    for (const auto& frame : fixture.frames) {
+      if (frame_counts[frame.frame_id] != frame.generation_counts.visible_points ||
+          outlier_counts[frame.frame_id] != frame.outlier_count) {
+        malformed("oracle coverage/outlier counts disagree with manifest");
+      }
     }
     return oracle;
   } catch (const Json::exception& error) {

@@ -173,6 +173,7 @@ struct RecoveryResidual final {
   std::uint64_t frame_id;
   std::uint64_t source_index;
   double weight;
+  ObservedPixel target;
   ProjectionStatus status;
   std::optional<ObservedPixel> predicted;
   std::optional<double> radial_error_px;

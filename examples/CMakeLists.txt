@@ -12,3 +12,9 @@ target_include_directories(generate_extrinsic_fixture PRIVATE "${PROJECT_SOURCE_
 target_link_libraries(generate_extrinsic_fixture PRIVATE sfr::io)
 set_target_properties(generate_extrinsic_fixture PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 sfr_configure_target(generate_extrinsic_fixture)
+
+add_executable(run_extrinsic_campaign run_extrinsic_campaign.cpp)
+target_include_directories(run_extrinsic_campaign PRIVATE "${PROJECT_SOURCE_DIR}/apps")
+target_link_libraries(run_extrinsic_campaign PRIVATE sfr::io sfr::viz nlohmann_json::nlohmann_json)
+set_target_properties(run_extrinsic_campaign PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+sfr_configure_target(run_extrinsic_campaign)

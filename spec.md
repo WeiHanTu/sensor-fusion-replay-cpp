@@ -783,10 +783,12 @@ The eventual README MUST include:
 
 ## 17. Controlled synthetic extrinsic recovery V1
 
-Status: proposed on 2026-10-12; implementation has not started. This section is
+Status: design approved on 2026-10-12; implementation and final verification
+are in progress. This section is
 the requested additive geometry experiment contract. It does not retag
 `v0.1.0`, rename `v0.2 Perception`, or add dynamics/MuJoCo dependencies.
-Implementation starts only after the written design has been shown to the owner.
+The owner approved the written observable/convention/split/search/output design
+before implementation. Passing draft runs are not published release evidence.
 Rationale and review navigation are in
 [docs/extrinsic_recovery.md](docs/extrinsic_recovery.md).
 
@@ -961,8 +963,10 @@ steps. Coarse/fine ratios and bound spans on the coarse lattice MUST be integral
 within a documented `1e-9` dimensionless validation tolerance. Enumerate integer
 ticks anchored at the lower bounds, derive coordinates by multiplication, and
 never accumulate floating step values. Invalid/overflowing settings fail before
-allocation. Configured default limits are 100,000 unique candidates and
+allocation. Configured default limits are 100,000 candidates and
 100,000,000 point projections per search; reject a request exceeding either.
+Preflight conservatively budgets coarse plus maximum fine attempts before
+deduplication; reported evaluations/projections count only actual unique visits.
 
 Evaluate the complete coarse grid, select its best valid candidate, then evaluate
 a fine rectangle of +/- one coarse step around it, clipped to global bounds.
@@ -1065,6 +1069,9 @@ Use new schema names `sfr.extrinsic_fixture`, `sfr.extrinsic_oracle`, and
 schema meanings remain unchanged. Parsers reject duplicate JSON keys, unsupported
 versions, non-finite/wrong-type values, unknown mandatory semantics, unsafe
 relative paths, missing/duplicate references, and oracle/fixture identity mismatch.
+Manifest, point/observation files and oracle use versioned canonical-JSON FNV-1a
+content identities for accidental-change detection, not cryptographic authenticity.
+Oracle identity and per-frame target/outlier counts are checked after fitting.
 
 Required fixture layout (generated into ignored local output):
 

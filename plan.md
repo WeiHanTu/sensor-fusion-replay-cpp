@@ -16,10 +16,10 @@ Status reconciled on 2026-10-12:
   it measures authored synthetic geometry, not dataset/end-to-end performance.
 - Public visuals are project-owned synthetic data. KITTI inputs and derived
   images remain private. Original code/documentation use Apache-2.0.
-- Current inspected HEAD is `bedcce2`, the public API contract documentation
-  commit. It is not an extrinsic estimator. The new synthetic extrinsic-recovery
-  V1 is at written-design review; no recovery code/results are implemented.
-  This requested geometry extension has separate gates in `spec.md` Section 17.
+- Synthetic extrinsic recovery V1 has approved design and implemented core,
+  authored fixture, CLI/artifact and campaign paths. Final clean-commit evidence
+  and hosted CI remain open until recorded below. This additive geometry extension
+  has separate gates in `spec.md` Section 17; it is not a physical/KITTI estimator.
 
 Status vocabulary:
 
@@ -385,7 +385,7 @@ R2 commit; complete static/sanitizer gates remain R7 work.
   shared ticks; preserve every attempted row with status/loss/counts.
 - [x] Apply deterministic loss/parameter tie ordering. Return search completion,
   per-axis bound hit, local-edge hit and no-valid-candidate statuses distinctly.
-- [ ] Test zero, +/- yaw, +/- translation and joint recovery, exact ties, invalid
+- [x] Test zero, +/- yaw, +/- translation and joint recovery, exact ties, invalid
   grids/budgets, all-invalid visibility, global/local edge handling, and a
   reduced exhaustive fine-grid reference. Record off-grid limitations.
 
@@ -414,38 +414,48 @@ open; no published recovery result is claimed at this checkpoint.
 
 ### R5. Reports, visualization, and CLI
 
-- [ ] Add `estimate_extrinsics` parsing/composition with existing exit categories
+- [x] Add `estimate_extrinsics` parsing/composition with existing exit categories
   and all documented configurable bounds/steps/loss defaults.
-- [ ] Add staged `sfr_viz` output: report, complete candidate surface, keyed
+- [x] Add staged `sfr_viz` output: report, complete candidate surface, keyed
   residuals, per-frame nominal/recovered/oracle overlays and two plots.
-- [ ] Reuse build provenance, RAII staging ownership and documented overwrite
+- [x] Reuse build provenance, RAII staging ownership and documented overwrite
   behavior. Refuse output inside fixture; preserve existing temporary directories.
-- [ ] Test required report fields, finite/null semantics, accounting, explicit
+- [x] Test required report fields, finite/null semantics, accounting, explicit
   failed-fit reports, overwrite/path/staging rules, help and every exit category.
-- [ ] Execute synthetic CLI cases and inspect images, axes, labels and plotted
+- [x] Execute synthetic CLI cases and inspect images, axes, labels and plotted
   invalid cells rather than relying on file existence.
 
 Exit gate: schemas and visuals expose observation origins, held-out evidence,
 search/identifiability/acceptance distinctions and timing/publication boundaries.
 
+R5 development verification: eight CLI/schema/exit-category checks passed, along
+with the 21 core tests. The frozen off-grid edge regression and final clean build
+are included in R7. Loss/residual plots were inspected; rejected cells now use
+black/red crosses instead of a color that could resemble high valid loss.
+
 ### R6. Frozen A-E experiment campaign
 
-- [ ] Add a small C++ campaign driver under `examples/` that composes the same
+- [x] Add a small C++ campaign driver under `examples/` that composes the same
   generator/search/evaluation/report APIs; algorithms remain in libraries.
-- [ ] A: run every declared clean case and check parameter half-step and >=90%
+- [x] A: run every declared clean case and check parameter half-step and >=90%
   held-out reduction gates; handle the zero case with absolute residual tolerance.
-- [ ] B: run all five fixed seeds; aggregate median/min/max signed/absolute errors
+- [x] B: run all five fixed seeds; aggregate median/min/max signed/absolute errors
   and held-out metrics without excluding poor seeds.
-- [ ] C: run paired L2/Huber on identical corrupted training data; compare
+- [x] C: run paired L2/Huber on identical corrupted training data; compare
   normalized parameter error and clean held-out RMSE while retaining raw metrics.
-- [ ] D: plot rich/narrow surfaces, include exact rank-one test and show
+- [x] D: plot rich/narrow surfaces, include exact rank-one test and show
   identifiability diagnostics/held-out failure behavior.
-- [ ] E: vary predeclared bounds and nominal offset; retain bound-limited,
+- [x] E: vary predeclared bounds and nominal offset; retain bound-limited,
   no-valid-candidate and off-grid target pass/miss outcomes.
 
 Exit gate: all required campaign evidence is present; a missed required gate
 blocks the verified claim. Preserve failure results and explain them before any
 explicit design revision. Held-out results do not choose parameters or settings.
+
+R6 development run retained 21 cases (including supplemental all-invalid search),
+all required campaign gates passed. C exact-recovery misses, D poor conditioning,
+E bound hits and E off-grid refinement-edge miss were preserved. This draft was
+a dirty Release build, not the clean measured/public evidence required by R7.
 
 ### R7. Verify, publish evidence, and close V1
 

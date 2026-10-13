@@ -41,8 +41,9 @@ public:
   }
   [[nodiscard]] bool help() const { return flags_.contains("--help"); }
   [[nodiscard]] bool overwrite() const { return flags_.contains("--overwrite"); }
-  [[nodiscard]] std::string value(const std::string& key, const std::string& fallback = "") const {
-    const auto found = values_.find(key);
+  [[nodiscard]] std::string value(const std::string_view key,
+                                  const std::string& fallback = "") const {
+    const auto found = values_.find(std::string(key));
     return found == values_.end() ? fallback : found->second;
   }
   [[nodiscard]] std::string required(const std::string& key) const {
@@ -83,7 +84,7 @@ public:
     const auto found = values_.find(key);
     return found == values_.end() ? fallback : parseUnsigned(found->second);
   }
-  [[nodiscard]] std::vector<std::uint64_t> ids(const std::string& key,
+  [[nodiscard]] std::vector<std::uint64_t> ids(const std::string_view key,
                                                const std::string& fallback) const {
     const std::string text = value(key, fallback);
     std::vector<std::uint64_t> result;

@@ -104,15 +104,19 @@ sfr_add_developer_tools(
   include/sfr/io/kitti_io.hpp
   include/sfr/io/timestamp.hpp
   include/sfr/viz/overlay.hpp
+  include/sfr/viz/extrinsic_recovery_artifact.hpp
   include/sfr/viz/panel.hpp
   include/sfr/viz/projection_artifact.hpp
   include/sfr/viz/sensitivity_artifact.hpp
   apps/analyze_calibration.cpp
   apps/project_kitti.cpp
   apps/recovery_arguments.hpp
+  apps/recovery_workflow.hpp
+  apps/estimate_extrinsics.cpp
   benchmarks/benchmark_projection.cpp
   examples/generate_synthetic_kitti.cpp
   examples/generate_extrinsic_fixture.cpp
+  examples/run_extrinsic_campaign.cpp
   src/geometry/calibration_sensitivity.cpp
   src/geometry/extrinsic_recovery.cpp
   src/geometry/frame_graph.cpp
@@ -125,10 +129,12 @@ sfr_add_developer_tools(
   src/io/kitti_io.cpp
   src/io/timestamp.cpp
   src/viz/overlay.cpp
+  src/viz/extrinsic_recovery_artifact.cpp
   src/viz/panel.cpp
   src/viz/projection_artifact.cpp
   src/viz/sensitivity_artifact.cpp
   tests/integration/analyze_calibration_cli_test.cpp
+  tests/integration/estimate_extrinsics_cli_test.cpp
   tests/integration/benchmark_projection_cli_test.cpp
   tests/integration/generate_synthetic_kitti_cli_test.cpp
   tests/integration/project_kitti_cli_test.cpp

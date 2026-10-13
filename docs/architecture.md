@@ -8,6 +8,12 @@ publishes machine-readable reports. `analyze_calibration` runs the same geometry
 with controlled perturbations. Numeric frame-ID pairing and timestamp-delta
 reporting are not nearest-timestamp synchronization.
 
+The additive synthetic recovery experiment now uses three authored scenes,
+explicit keyed UV correspondences and bounded two-parameter search. Its code
+is implemented; current acceptance/verification status is recorded in
+[the experiment document](extrinsic_recovery.md). No raw-image correspondence
+extractor or physical/KITTI calibration estimator exists.
+
 Perception (`v0.2`) and queues, synchronization, scheduling, and fault injection
 (`v0.3`) are planned, not implemented. This is not a state-estimation fusion,
 real-time, production, or safety system. Requirements are in
@@ -52,6 +58,7 @@ flowchart TD
   I --> O[OpenCV]
   V --> O
   V --> J[JSON/build metadata]
+  I --> J
 ```
 
 Target definitions: [geometry](../src/geometry/CMakeLists.txt),
@@ -81,6 +88,42 @@ u = q.x / q.z; v = q.y / q.z
 its fourth column; replacing it with the left `3x3` changes the geometry.
 `image_02` is a projection domain, not an SE(3) frame. See the separate
 [frame tree](frame_conventions.md#frame-tree); world/vehicle edges are unresolved.
+
+## Synthetic recovery: fit versus evaluation boundary
+
+```mermaid
+flowchart TD
+  F[Authored points + nominal calibration] --> O[Hidden correction generator]
+  O --> T[Training keyed 3D/UV observations]
+  O --> H[Held-out scene + oracle sidecar]
+  T --> S[Coarse grid then one fine rectangle]
+  F --> S
+  S --> R[Frozen estimate + full candidate table]
+  R --> E[Post-fit observed/clean evaluation]
+  H --> E
+  E --> A[Staged JSON + overlays + loss/residual plots]
+```
+
+There is no oracle/held-out arrow into search. The generator and evaluation
+harness know truth; `searchExtrinsicCorrection` cannot accept it. All candidates
+reuse `Delta_camera * T_nominal`, yaw first then camera-x translation. Invisible
+active observations reject a candidate; no residual is silently dropped.
+
+| Boundary | Source | Contract / tests |
+| --- | --- | --- |
+| Authored input | [extrinsic_fixture.cpp](../src/io/extrinsic_fixture.cpp) | Explicit frame/source joins, canonical identities, safe paths, independent scenes, separate oracle; [fixture tests](../tests/unit/extrinsic_fixture_test.cpp) |
+| Search/math | [extrinsic_recovery.cpp](../src/geometry/extrinsic_recovery.cpp) | Integer grids, compensated weighted loss, exact ties, accounting, local scaled SVD; [analytic/core tests](../tests/unit/extrinsic_recovery_test.cpp) |
+| Lifecycle composition | [recovery_workflow.hpp](../apps/recovery_workflow.hpp) | Fit and reproducibility replay precede oracle/held-out loading; no filesystem access in geometry |
+| Publication | [extrinsic_recovery_artifact.cpp](../src/viz/extrinsic_recovery_artifact.cpp) | Complete versus accepted, null failed fit, conditional visibility, exclusive stage; [CLI/report tests](../tests/integration/estimate_extrinsics_cli_test.cpp) |
+| Frozen campaign | [run_extrinsic_campaign.cpp](../examples/run_extrinsic_campaign.cpp) | A-E settings fixed before results; C paired same fixture, all noise seeds and diagnostic misses retained |
+
+Search owns a canonical copy of observations and a map of candidate rows.
+Preparation is O(N log N); each candidate projects O(N) points and allocates
+projection/visibility storage. V1 intentionally optimizes auditability, not
+allocation-free real-time throughput. Evaluation owns per-key residuals and
+unweighted pooled/per-frame summaries; oracle clean targets are evaluation-only.
+The two SVD columns scale by parameter spans, so conditioning is configuration-
+dependent and local, not uncertainty or confidence.
 
 ## Ownership and allocation
 

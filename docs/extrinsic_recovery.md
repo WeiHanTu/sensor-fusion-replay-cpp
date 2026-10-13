@@ -1,9 +1,40 @@
 # Controlled Synthetic Extrinsic Parameter Recovery
 
-Design proposed 2026-10-12. There is no estimator or recovery evidence yet.
+Design approved 2026-10-12. Core, fixture, CLI/report and campaign code are now
+implemented; final clean-commit verification/evidence is in progress. Draft dirty
+worktree results are not the published acceptance record.
 This document explains the design for review before implementation. Requirements
 are in [spec §17](../spec.md#17-controlled-synthetic-extrinsic-recovery-v1);
 ordered work is in [plan §4b](../plan.md#4b-synthetic-extrinsic-recovery-v1-design-review-2026-10-12).
+
+## Implemented entry points
+
+`generate_extrinsic_fixture` authors three scenes and keyed point/pixel JSON,
+`estimate_extrinsics` fits training frames before opening oracle/held-out data,
+and `run_extrinsic_campaign` executes the frozen A-E matrix. See
+[architecture/source/test navigation](architecture.md#synthetic-recovery-fit-versus-evaluation-boundary).
+The estimator remains Eigen-only; JSON/codecs are outside geometry.
+
+```bash
+cmake --preset release
+cmake --build --preset release --parallel
+./build/release/generate_extrinsic_fixture \
+  --output-dir artifacts/synthetic_extrinsic_fixture \
+  --hidden-yaw-deg 0.7 --hidden-tx-m -0.04
+./build/release/estimate_extrinsics \
+  --dataset-root artifacts/synthetic_extrinsic_fixture \
+  --train-frames 0,1 --validation-frames 2 \
+  --parameters yaw_camera_y,translation_camera_x --loss huber \
+  --output-dir artifacts/extrinsic_recovery --run-id joint
+./build/release/run_extrinsic_campaign \
+  --output-dir artifacts/extrinsic_recovery --run-id campaign
+```
+
+Existing exact fixtures/runs are refused; only deliberate replacement uses
+`--overwrite`. Stages owned elsewhere are always preserved. CLI exit categories
+are 0 valid completed grid (check acceptance separately), 2 configuration,
+3 input, 4 search/identifiability limitation after a report, and 5 output.
+Campaign exit 4 retains required-gate failures rather than manufacturing success.
 
 ## Observable and access boundary
 
