@@ -2,7 +2,7 @@
 
 ## 1. Current state
 
-Status reconciled on 2026-10-06:
+Status reconciled on 2026-10-12:
 
 - `v0.1.0` tags commit `88da6dd`; the repository has been published. This tag is
   an immutable historical baseline, not acceptance of later changes.
@@ -16,6 +16,10 @@ Status reconciled on 2026-10-06:
   it measures authored synthetic geometry, not dataset/end-to-end performance.
 - Public visuals are project-owned synthetic data. KITTI inputs and derived
   images remain private. Original code/documentation use Apache-2.0.
+- Current inspected HEAD is `bedcce2`, the public API contract documentation
+  commit. It is not an extrinsic estimator. The new synthetic extrinsic-recovery
+  V1 is at written-design review; no recovery code/results are implemented.
+  This requested geometry extension has separate gates in `spec.md` Section 17.
 
 Status vocabulary:
 
@@ -307,6 +311,149 @@ tag and do not claim `v0.1` complete.
 
 Use narrow documentation, API-comment, and individual fix commits. Preserve
 `v0.1.0`; this maintenance work does not implement `v0.2` or retag a release.
+
+## 4b. Synthetic extrinsic recovery V1 (design review, 2026-10-12)
+
+The owner requested this additive geometry experiment before new perception or
+runtime work. It uses the released geometry foundation and does not renumber
+`v0.2`/`v0.3`, move `v0.1.0`, or import the separate MuJoCo/dynamics project.
+Normative contract: `spec.md` Section 17. Design:
+[docs/extrinsic_recovery.md](docs/extrinsic_recovery.md).
+
+### R0. Inspect, write, and review before code
+
+- [x] Inspect clean Git state/HEAD, operating documents, public headers,
+  projection/sensitivity implementations, authored fixture generator, existing
+  test declarations and relevant numeric/artifact cases, target boundaries,
+  configure-time provenance and CI. Source inspection is not a fresh test run.
+- [x] Write observable, yaw-then-translation convention, train/held-out boundary,
+  weighted L2/Huber, invalid-candidate policy, integer grids/ties, fixture/run
+  schema, identifiability limits, A-E cases, and fixed acceptance gates.
+- [x] Check 31 local links/anchors and balanced fenced blocks across the six
+  edited documents; review documentation-only scope and `git diff --check`.
+  Build/tests/sanitizers, new CLI commands and diagram rendering are not run for
+  this planning checkpoint; no new implementation or measured result exists.
+- [ ] Owner reviews the shown design before implementation begins.
+
+This turn changes planning documentation only. No application command or recovery
+result is marked verified. Capture documentation checks and commit the planning
+checkpoint; pause after presenting the design. Do not generate results or add
+implementation under the assumption that submitting a plan is approval.
+
+### R1. Typed correspondence and candidate contracts
+
+- [ ] Add UV-only observations, stable frame/source IDs and two-parameter values
+  with public `///` contracts to `sfr_geometry`.
+- [ ] Validate finite points/pixels/weights and keyed joins. Document/validate
+  span-index remapping when reusing `projectPointCloud`.
+- [ ] Implement yaw-then-camera-x translation using existing sensitivity methods;
+  add independently derived sign/composition tests with non-identity nominal.
+- [ ] Implement weighted L2/Huber and full candidate visibility/numeric accounting.
+  Test explicit zero weights, invalid inputs, overflow and rejected candidates.
+
+Exit gate: hand-derived reprojection/loss values and all accounting branches pass.
+The estimator API has no hidden/oracle/held-out fields or access to the filesystem.
+
+### R2. Multi-frame authored fixture and input loader
+
+- [ ] Add a dedicated generator and strict schema loader in `sfr_io`, with JSON
+  privately linked; keep geometry Eigen-only and existing demo behavior intact.
+- [ ] Generate rich train frames 0/1 and independently defined held-out frame 2
+  at the frozen depth/lateral/density distributions. Retain generator counts.
+- [ ] Separate `fixture.json`/keyed observations from harness-only `oracle.json`.
+  Record content identities, nominal/hidden transforms, full P, seeds/corruption.
+- [ ] Implement reproducible noise/outlier generation and bounds checks; test
+  realized means, actual outlier counts, shuffled keys, duplicate/missing IDs,
+  malformed/duplicate JSON keys, limits, unsafe paths and identity mismatches.
+- [ ] Add fixture provenance README and tiny independent numeric expected cases.
+
+Exit gate: deterministic regeneration and strict loading work without KITTI.
+Training loader never opens oracle or held-out files.
+
+### R3. Auditable bounded search
+
+- [ ] Validate/configure integer coarse/fine ticks, resource budgets and loss.
+- [ ] Evaluate the full coarse grid then its fixed local fine rectangle, deduping
+  shared ticks; preserve every attempted row with status/loss/counts.
+- [ ] Apply deterministic loss/parameter tie ordering. Return search completion,
+  per-axis bound hit, local-edge hit and no-valid-candidate statuses distinctly.
+- [ ] Test zero, +/- yaw, +/- translation and joint recovery, exact ties, invalid
+  grids/budgets, all-invalid visibility, global/local edge handling, and a
+  reduced exhaustive fine-grid reference. Record off-grid limitations.
+
+Exit gate: frozen rich noiseless parameter gates pass; finite search completion
+is never labeled continuous convergence or universal half-step accuracy.
+
+### R4. Frozen-result evaluation and observability
+
+- [ ] Freeze result/candidate table/consumed training IDs before evaluation.
+- [ ] Load oracle and held-out data after selection and check disjoint roles and
+  identities. Mutating evaluation data cannot change search output.
+- [ ] Produce per-frame/pooled nominal, recovered and oracle radial-error median,
+  p95/RMSE with visibility/common/mask counts, observed and clean-target tables.
+- [ ] Implement training-only scaled Jacobian/SVD diagnostics with explicit
+  finite-difference method and numerical thresholds; test exact rank one and
+  narrow coverage. No confidence interval or additional estimated DoF.
+
+Exit gate: independent held-out metrics agree with hand-computable fixtures and
+empty/invalid coverage remains visible; rank-one geometry cannot claim acceptance.
+
+### R5. Reports, visualization, and CLI
+
+- [ ] Add `estimate_extrinsics` parsing/composition with existing exit categories
+  and all documented configurable bounds/steps/loss defaults.
+- [ ] Add staged `sfr_viz` output: report, complete candidate surface, keyed
+  residuals, per-frame nominal/recovered/oracle overlays and two plots.
+- [ ] Reuse build provenance, RAII staging ownership and documented overwrite
+  behavior. Refuse output inside fixture; preserve existing temporary directories.
+- [ ] Test required report fields, finite/null semantics, accounting, explicit
+  failed-fit reports, overwrite/path/staging rules, help and every exit category.
+- [ ] Execute synthetic CLI cases and inspect images, axes, labels and plotted
+  invalid cells rather than relying on file existence.
+
+Exit gate: schemas and visuals expose observation origins, held-out evidence,
+search/identifiability/acceptance distinctions and timing/publication boundaries.
+
+### R6. Frozen A-E experiment campaign
+
+- [ ] Add a small C++ campaign driver under `examples/` that composes the same
+  generator/search/evaluation/report APIs; algorithms remain in libraries.
+- [ ] A: run every declared clean case and check parameter half-step and >=90%
+  held-out reduction gates; handle the zero case with absolute residual tolerance.
+- [ ] B: run all five fixed seeds; aggregate median/min/max signed/absolute errors
+  and held-out metrics without excluding poor seeds.
+- [ ] C: run paired L2/Huber on identical corrupted training data; compare
+  normalized parameter error and clean held-out RMSE while retaining raw metrics.
+- [ ] D: plot rich/narrow surfaces, include exact rank-one test and show
+  identifiability diagnostics/held-out failure behavior.
+- [ ] E: vary predeclared bounds and nominal offset; retain bound-limited,
+  no-valid-candidate and off-grid target pass/miss outcomes.
+
+Exit gate: all required campaign evidence is present; a missed required gate
+blocks the verified claim. Preserve failure results and explain them before any
+explicit design revision. Held-out results do not choose parameters or settings.
+
+### R7. Verify, publish evidence, and close V1
+
+- [ ] Run dev/Release and supported ASan+UBSan from clean directories; run
+  format-check/full clang-tidy; preserve all existing checks and Ubuntu CI.
+- [ ] Reconfigure a clean committed Release source for A-E reports so embedded
+  commit/dirty provenance matches the measured implementation.
+- [ ] Capture search/evaluation/render/write timing boundaries and point counts;
+  deterministic decisions are distinct from variable wall time/build/run metadata.
+- [ ] Inspect final visuals; audit schema/links/full diff for data, secrets,
+  private paths, generated bulk output or changes to old release evidence.
+- [ ] Add measured synthetic-only results and architecture/source/test navigation
+  to README/docs only after verification. Preserve the old release tag.
+- [ ] Prepare the requested English/Traditional-Chinese 30-second explanation
+  under ignored `artifacts/private_walkthrough/` after results exist; keep it out
+  of public tracked documents.
+- [ ] Commit/push narrow R1-R7 slices and verify CI at their actual commits.
+
+Completion evidence: exact source/CI commit, toolchain/host/configuration,
+fixture identities/splits, all A-E reports including failures, complete accounting,
+parameter and held-out gates, inspected visuals and known limits. V1 release/tag
+naming is a later delivery decision; no existing capability version is overwritten.
 
 ## 5. `v0.2 Perception` (5-7 days)
 

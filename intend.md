@@ -39,6 +39,9 @@ The critical workflows are:
   camera/LiDAR overlay plus a machine-readable projection report.
 - Generate baseline-versus-perturbed calibration comparisons for known yaw and
   lateral-translation perturbations.
+- Recover bounded camera +y yaw and camera +x translation corrections from
+  explicitly authored synthetic correspondences; evaluate frozen parameters on
+  completely held-out authored frames and expose geometry/noise/outlier limits.
 - Run deterministic filtering, ground removal, clustering, and nearest-corridor
   proximity analysis without claiming semantic perception.
 - Replay paired streams at controlled rates and show what happens when input is
@@ -103,6 +106,30 @@ synthetic artifacts unless permission for other material is recorded.
 - A reproducible release-build projection benchmark with p50/p95/p99 and full
   provenance.
 
+### Synthetic extrinsic recovery V1 — requested geometry extension
+
+Status: design review, not implemented. This is separate from the `v0.2` and
+`v0.3` capability releases and uses the existing geometry/libraries.
+
+The observable is a stored correspondence between an authored LiDAR-frame 3D
+point and a synthetic target `(u,v)` pixel, keyed by frame/source identity. A
+fixture generator creates targets with a hidden, left-applied camera correction.
+The estimator receives the nominal transform and training observations; an
+evaluation harness retains hidden parameters and held-out frames.
+
+V1 estimates two parameters only, using configurable bounded coarse-to-fine
+search and squared L2/Huber reprojection loss. At least two geometrically distinct
+training frames and a third held-out frame are required. Candidate visibility,
+weights, numeric failure, search bounds, and identifiability are explicit.
+The primary evidence combines signed/absolute parameter errors with held-out
+reprojection improvement. Training loss or an overlay alone cannot establish
+recovery. Noiseless, noise, outlier, geometry, and bounds campaigns must preserve
+failed cases alongside successes. Detailed gates are in `spec.md` Section 17;
+the design rationale is in [docs/extrinsic_recovery.md](docs/extrinsic_recovery.md).
+
+No MuJoCo/dynamics code, full 6-DoF solver, correspondence extraction from raw
+images, KITTI recovery, HIL, or sim-to-real claim belongs in this extension.
+
 ### `v0.2 Perception` — mandatory second release
 
 - Deterministic voxel centroid filtering.
@@ -143,6 +170,9 @@ The project succeeds when all of the following are true:
 - Public architecture documentation supports technical discussion by mapping
   data flow, ownership, failure handling, and invariants to implementation/tests.
   Interview scripts and timed rehearsal notes remain local, not public artifacts.
+- Recovery V1 meets its predeclared synthetic gates using stored correspondences,
+  an estimator without oracle/held-out access, complete candidate accounting,
+  and held-out metrics; weak geometry and bound-pinned results remain visible.
 - Every input frame accepted by the replay runtime is accounted for exactly once
   as processed or as one explicit terminal failure/drop reason.
 - Queue occupancy never exceeds configured capacity, and closure cannot strand
@@ -167,12 +197,17 @@ When implemented and verified, this repository may support claims such as:
   injection and reported p50/p95/p99 with complete frame accounting.”
 - “Implemented deterministic geometric filtering/clustering and corridor
   clearance reporting.”
+- “A project-authored synthetic experiment recovers bounded camera-yaw and
+  camera-x-translation corrections from known 3D-to-2D correspondences and
+  evaluates them on held-out authored frames.” Only after Section 17 passes.
 
 It does not support claims of:
 
 - Production deployment, real-time operating-system behavior, hard real-time
   guarantees, or automotive safety certification.
-- Sensor calibration estimation or proof that KITTI calibration is accurate.
+- Physical sensor calibration, KITTI extrinsic recovery, or proof that KITTI
+  calibration is accurate. Controlled synthetic parameter recovery is the sole
+  estimation exception; it is not calibration from arbitrary camera images.
 - Semantic object detection, tracking, prediction, SLAM, localization, or sensor
   fusion in the state-estimation sense.
 - Physical robot/heavy-machinery validation, sim-to-real transfer, collision
@@ -183,6 +218,7 @@ It does not support claims of:
 ## Non-goals through `v0.3`
 
 - Online calibration or bundle adjustment.
+- Full 6-DoF extrinsic recovery, HIL, and MuJoCo/dynamics system identification.
 - Camera undistortion for unsynced/unrectified KITTI data.
 - GPS/IMU ingestion, world-pose estimation, motion compensation, or mapping.
 - Neural networks, YOLO, TensorRT, CUDA, OpenCL, or GPU optimization.

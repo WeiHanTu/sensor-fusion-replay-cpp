@@ -35,6 +35,12 @@ change and every reference is updated.
 
 - Finish and tag one version before starting the next: `v0.1 Geometry`, then
   `v0.2 Perception`, then `v0.3 Runtime`.
+- The requested synthetic extrinsic-recovery V1 is an additive geometry
+  experiment after `v0.1.0`, with its own gates in `spec.md` Section 17. It does
+  not complete or renumber perception/runtime releases. Review its written
+  observation, split, objective, search, and output design before implementation.
+- Keep MuJoCo and dynamics system identification in their separate project.
+  Recovery V1 estimates only camera +y yaw and camera +x translation.
 - `v0.4 ROS 2` is parked. Do not add ROS 2, rosbag, tf2, CUDA, TensorRT, a neural
   detector, or a GUI before all `v0.3` gates pass.
 - Eigen and OpenCV are the only required runtime dependencies through `v0.1`.
@@ -55,6 +61,16 @@ change and every reference is updated.
 - A visual overlay is a sanity check, not calibration ground truth.
 - Calibration sensitivity reports change relative to the supplied calibration;
   they do not estimate calibration accuracy.
+- Synthetic extrinsic recovery uses explicit authored 3D-to-2D correspondences.
+  The estimator receives training observations, nominal geometry, and search
+  configuration only. Hidden correction, clean/oracle pixels, corruption labels,
+  and held-out frames are evaluation inputs and cannot influence selection.
+- Ordinary projected KITTI pixels are not independent observations. Recovery
+  evidence does not establish real/KITTI calibration, HIL, or sim-to-real results.
+- Every recovery candidate accounts for the fixed observation set. Invisible
+  positive-weight points reject the candidate; zero weights are explicit masks.
+  Grid completion, identifiability, bound hits, and recovery acceptance are
+  separate results. Do not tune gates after observing a failure.
 - Performance numbers must include commit, build type, compiler, hardware/OS,
   configuration, warm-up, sample count, and percentile definition.
 - Never invent benchmark values or copy stale values into the README. Generate
@@ -195,6 +211,9 @@ Before declaring a version complete:
 - Public documents explain the engineering system, not interview scripts.
   Rehearsal notes remain local and ignored. Record fresh verification separately
   from historical release evidence; static navigation is not human usability proof.
+- Recovery interview material belongs under the ignored `artifacts/` directory.
+  Public recovery documentation contains design, experiments, measured evidence,
+  and limitations only.
 
 ## Definition of done
 

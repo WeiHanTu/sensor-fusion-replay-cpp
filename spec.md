@@ -93,6 +93,10 @@ Required CMake targets:
 Apps MUST contain composition and argument/error handling only. Core algorithms
 MUST be callable from tests without launching a process.
 
+The requested synthetic extrinsic-recovery extension has additional proposed
+files/targets in Section 17. It reuses these library boundaries and does not
+activate perception, runtime, or ROS targets.
+
 ## 4. Coordinate and geometry contract
 
 ### 4.1 Naming and units
@@ -217,6 +221,10 @@ illustration, not measured KITTI error and not a pixel reprojection guarantee.
 ### 5.1 Supported KITTI layout
 
 Only a KITTI Raw synced/rectified drive is supported through `v0.3`:
+
+This restriction applies to the KITTI replay CLIs. The separate Section 17
+experiment accepts only its authored synthetic correspondence schema; it MUST
+NOT infer observations from this KITTI layout.
 
 ```text
 <dataset-root>/
@@ -772,3 +780,401 @@ The eventual README MUST include:
   public reports.
 - Fuzzing calibration, timestamp, and LiDAR parsers is recommended after `v0.3`,
   but not a release gate through `v0.3`.
+
+## 17. Controlled synthetic extrinsic recovery V1
+
+Status: proposed on 2026-10-12; implementation has not started. This section is
+the requested additive geometry experiment contract. It does not retag
+`v0.1.0`, rename `v0.2 Perception`, or add dynamics/MuJoCo dependencies.
+Implementation starts only after the written design has been shown to the owner.
+Rationale and review navigation are in
+[docs/extrinsic_recovery.md](docs/extrinsic_recovery.md).
+
+### 17.1 Observable and estimator boundary
+
+The observable MUST be an explicit authored 3D-to-2D correspondence. Raw images,
+LiDAR points, nominal projected pixels, and visual agreement alone MUST NOT be
+treated as independent correspondence ground truth.
+
+Proposed owned input types (names may change with equivalent semantics):
+
+```text
+ObservedPixel { u_px: double, v_px: double }
+ExtrinsicObservation {
+  source_index: uint64
+  point_lidar: core::PointXYZI
+  observed_pixel: ObservedPixel
+  weight: double = 1.0
+}
+ExtrinsicObservationFrame {
+  frame_id: uint64
+  observations: vector<ExtrinsicObservation>
+}
+ExtrinsicCorrection {
+  yaw_camera_y_rad: double
+  translation_camera_x_m: double
+}
+```
+
+`ImageProjection` contains camera depth. The target type MUST contain only `(u,v)`
+so hidden camera depth cannot leak to the estimator. Depth from a candidate
+projection remains internal geometry output. IDs are fixed-width in serialized
+schemas, and `(frame_id, source_index)` is the stable observation key.
+
+Each source index MUST bind exactly one authored point within its frame. Input
+loading explicitly joins keyed point and observation records, rejects duplicate
+IDs, missing references, and point-binding mismatches, and sorts by frame/source
+ID before accumulation. Array position alone MUST NOT establish correspondence.
+When `projectPointCloud` returns an input-span index, a validated explicit
+span-index-to-source-ID map translates it back; loader compaction is not identity.
+
+All point coordinates/reflectance and target pixels MUST be finite. Target pixels
+MUST be within the declared image. Weight defaults to 1.0 when absent; a supplied
+weight MUST be finite and non-negative. Zero weight is an explicit mask, counted
+separately. Training MUST contain at least two frames with positive active weight
+in each and finite positive total weight. Malformed observations fail closed.
+
+The search API accepts only nominal transform, projection, training frames, and
+search/loss configuration. It MUST NOT accept hidden parameters/transform,
+oracle pixels/depth, noise/outlier labels, validation frames, or evaluation gates.
+The harness freezes and records the result before loading held-out observations
+and oracle data. Disjoint frame IDs, per-frame content identities, and exact
+consumed training IDs are recorded. This is an auditable software boundary, not
+a cryptographic secret or double-blind experiment.
+
+### 17.2 Parameter convention
+
+```text
+theta = [yaw_camera_y_rad, translation_camera_x_m]
+Delta_camera(theta) = [ R_y(yaw), (translation_x, 0, 0)^T; 0, 1 ]
+T_candidate_camera_rect_00_lidar
+  = Delta_camera(theta) * T_nominal_camera_rect_00_lidar
+
+T_candidate = leftApplyCameraXTranslation(
+                leftApplyCameraYaw(T_nominal, yaw), translation_x)
+```
+
+Yaw is about camera +y in radians; translation is along camera +x in meters.
+Apply yaw first, translation second. Reversing these calls rotates the
+translation vector and is a different model. Nominal endpoints MUST be `lidar`
+to `camera_rect_00`. Retain the complete `3x4` projection matrix and current
+depth/bounds/status contracts. No additional degree of freedom is estimated.
+
+### 17.3 Authored fixture and split
+
+Use a dedicated fixture `sfr_extrinsic_authored_v1`; preserve the existing
+one-frame KITTI-shaped demo and its golden outputs. This new multi-frame fixture
+contains JSON point/correspondence records and authored images, not KITTI files.
+The generator uses hidden `Delta_camera` to project authored 3D points, retains
+visible observations, then applies optional deterministic pixel corruption.
+Generator accounting reports authored, hidden-visible/retained, and rejected
+counts by existing projection reasons. Retained targets stay fixed for fitting.
+
+Default nominal rotation maps camera x=-lidar y, camera y=-lidar z,
+camera z=lidar x; nominal translation is zero. Projection is authored:
+`P = [[520,0,480,-52],[0,520,270,0],[0,0,1,0]]`, image `960x540`,
+`z_min=0.1 m`. The nonzero fourth column exercises the full matrix. Point
+definitions are stated in nominal camera coordinates and converted into LiDAR
+coordinates using this documented mapping.
+
+Predeclared rich scenes (counts below are authored points before visibility):
+
+| Frame | Role | Camera depths (m) | Lateral x/z coverage | Structure / density |
+| --- | --- | --- | --- | --- |
+| 0 | Train | 6, 10, 18, 30 | [-0.40, +0.40] | Four depth planes; 12 lateral x 4 vertical samples; 192 points |
+| 1 | Train | 8, 15, 25 | [-0.32, +0.44] | Offset vertical panels; 10 lateral x 6 vertical samples; 180 points |
+| 2 | Held out | 7, 12, 22, 40, 50 | [-0.45, +0.30] | Alternating stepped structures; 8 lateral x 4 vertical samples; 160 points |
+
+Vertical y/z samples are respectively `[-0.18,-0.06,0.06,0.18]`,
+`[-0.20,-0.12,-0.04,0.04,0.12,0.20]`, and
+`[-0.16,-0.02,0.08,0.21]`. The default rich geometry has visibility margins;
+visibility stress cases use separate fixtures, not post-fit filtering.
+No random point split substitutes for frame 2. Additional splits are explicit
+configurations; duplicates, overlap, missing IDs, empty roles, or identical
+scene-content reuse across roles MUST be rejected.
+
+`fixture.json` contains schema/version, authored provenance, generator version,
+seed, frame paths/content identities, nominal transform, full P/dimensions,
+noise/outlier settings, and generation counts. Point/observation files store
+double coordinates to avoid float32 quantization confounding exact-recovery gates.
+`oracle.json` separately holds hidden parameters/transform and clean targets,
+corruption labels, and the associated fixture identity. The estimator loader
+does not read that file. The harness checks its identity after fitting.
+
+Noise is zero-mean pixel noise with a documented deterministic integer PRNG and
+mapping. Default noise campaign uses bounded uniform per-coordinate noise with
+theoretical standard deviation `1 px` and paired antithetic draws per frame;
+the realized sample mean is also reported. Do not rely on implementation-defined
+`std::*_distribution` output. Corruption that leaves image bounds is a fixture
+generation failure; do not clamp, discard, or resample observations silently.
+
+### 17.4 Loss and candidate accounting
+
+For each positive-weight observation, `r_i = observed_uv_i - predicted_uv_i`
+and `s_i = hypot(r_u, r_v)` in pixels:
+
+```text
+L2:       rho(s) = s^2
+Huber:    rho(s) = 0.5*s^2                      if s <= delta_px
+                   delta_px*(s-0.5*delta_px)     otherwise
+loss_sum(theta) = sum_i weight_i * rho(s_i)
+loss_mean(theta) = loss_sum / sum_i weight_i
+```
+
+`delta_px` is finite, positive configuration; default `2 px`. No adaptive delta,
+weight tuning, or outlier rejection using oracle labels is allowed. L2 and Huber
+loss values use different scaling and MUST NOT be compared as accuracy metrics.
+The fixed weighted sum selects candidates; weights default to 1.0 and do not
+equalize frame density. Report both sum and mean plus effective total weight.
+
+Evaluate every observation for every candidate, including explicit zero-weight
+masks. If any positive-weight observation is non-visible, reject the whole
+candidate. Record all visibility reasons; do not stop counting after the first
+invalid point. Non-finite residual/loss arithmetic also rejects the candidate
+with a distinct numeric-failure flag. Rejected candidates have `loss=null` in
+JSON, never an omitted row or serialized infinity. All-invalid search returns
+`no_valid_candidate` with no fabricated parameter estimate.
+
+For every candidate, checked counters MUST satisfy:
+
+```text
+observations = visible + non_finite + behind_or_too_near
+             + non_positive_homogeneous_depth + outside_image
+observations = positive_weight + zero_weight
+positive_weight = positive_weight_visible + positive_weight_invalid
+```
+
+The search also accounts for attempted/valid/rejected evaluations and points
+evaluated. Masking is explicit input configuration, never candidate-dependent.
+
+### 17.5 Deterministic coarse-to-fine search
+
+| Configuration | Yaw (degrees at CLI/report boundary) | Translation x (m) |
+| --- | --- | --- |
+| Global inclusive bounds | [-2.0, +2.0] | [-0.10, +0.10] |
+| Coarse step | 0.10 | 0.005 |
+| Fine step | 0.01 | 0.0005 |
+| Refinement half-width | One coarse step | One coarse step |
+
+All values are configuration. Fine steps are positive and no larger than coarse
+steps. Coarse/fine ratios and bound spans on the coarse lattice MUST be integral
+within a documented `1e-9` dimensionless validation tolerance. Enumerate integer
+ticks anchored at the lower bounds, derive coordinates by multiplication, and
+never accumulate floating step values. Invalid/overflowing settings fail before
+allocation. Configured default limits are 100,000 unique candidates and
+100,000,000 point projections per search; reject a request exceeding either.
+
+Evaluate the complete coarse grid, select its best valid candidate, then evaluate
+a fine rectangle of +/- one coarse step around it, clipped to global bounds.
+Cache duplicate tick pairs; report unique evaluations and stage membership. The
+defaults visit 1,681 coarse points and at most 441 fine-grid locations. Every
+candidate uses training only. Candidate records sort by yaw tick then translation
+tick; accumulation sorts by frame/source ID and uses compensated summation.
+
+Order valid candidates by finite `loss_sum`, then absolute yaw, absolute
+translation, signed yaw, signed translation. Use exact computed loss equality
+for tie-breaking; no epsilon comparator that breaks strict ordering.
+
+Return correction, loss, consumed training IDs, counts, all evaluated grid rows,
+and separate flags: `global_bound_hit`, `refinement_edge_hit`, and numerical
+identifiability diagnostics. Status is `grid_complete`, `bound_limited`,
+`refinement_limited`, or `no_valid_candidate` (global-bound status takes precedence
+over refinement-edge status). Exhausting this finite search is not continuous
+optimization convergence or proof of the global fine-grid minimum.
+
+Rich noiseless campaign cases must additionally match a test-only exhaustive
+fine-grid reference optimum under the same comparator. Reference checks are
+outside the timed production search and use reduced fixtures where needed.
+If the best fine candidate touches an artificial local window edge, return
+`refinement_limited`; V1 does not silently widen/restart or claim convergence.
+
+### 17.6 Identifiability and evaluation
+
+Yaw changes horizontal projection roughly with focal length; camera-x translation
+scales roughly with inverse depth. Repeated points at one depth/near the optical
+axis can give a valley of equivalent or near-equivalent corrections. Nominal
+intrinsics, unestimated extrinsic axes, correspondence accuracy, and frame
+definitions are assumed correct. Only this two-parameter model is tested.
+
+Training-only diagnostics use the weighted 2D residual Jacobian at the selected
+candidate, finite differences at the configured fine steps, and Eigen singular
+values. Scale Jacobian columns by their respective global parameter spans
+(yaw in radians, translation in meters). State central/one-sided differencing
+and mark diagnostics unavailable if valid perturbations cannot be evaluated.
+Numerical rank uses `sigma_j > 1e-6 * sigma_max`; rank < 2 or scaled condition
+number > `1e4` is `poorly_identifiable`. These frozen diagnostic defaults are
+configurable and recorded. They are local sensitivity diagnostics, not statistical
+confidence or proof of unique calibration. An unavailable diagnostic cannot
+support a positive identifiability claim. Plot evaluated loss surfaces as well.
+
+Report nominal, recovered, and oracle residual metrics separately for train and
+held out, pooled and per frame: nearest-rank median/p95 of radial pixel error,
+RMSE `sqrt(mean(s_i^2))`, visible/invalid counts and reasons, and the common set
+across all three transforms. Also report metrics against clean oracle targets
+in a separately labeled evaluation table. Oracle parameters are disclosed only
+after selection and are never treated as observed depth or a fitting prior.
+
+Primary residual metrics are unweighted over all retained observations, including
+injected outliers and zero-weight records. Report the explicit weight mask
+separately; any active-only secondary table states its own counts. If coverage is
+incomplete, visible-only metrics are labeled conditional, empty series are `null`,
+and full-coverage recovery acceptance fails. Comparison on a smaller common set
+alone cannot pass.
+Candidate residuals, loss tables, and held-out vectors retain stable keys.
+
+Parameter errors are recovered minus hidden: signed/absolute yaw degrees and
+translation meters. Report per-axis/global bound flags. Time search with
+`steady_clock`, excluding fixture generation/loading, oracle/held-out evaluation,
+rendering, and publication; time those separately. Report unique candidates,
+point projections, toolchain/host, and whether deterministic replay was checked.
+Cross-toolchain floating results are tolerance comparisons, not a byte-identity
+promise. Timings, run IDs, and host/build metadata are variable.
+
+### 17.7 Frozen experiment campaign and gates
+
+| Experiment | Predeclared configuration | Required evidence / gate |
+| --- | --- | --- |
+| A: Clean | Rich split 0,1 / 2; L2; theta `(0,0)`, `(+/-0.70 deg,0)`, `(0,+/-0.040 m)`, `(+0.70 deg,-0.040 m)`, `(-0.60 deg,+0.035 m)` | Each parameter error <= half fine step; no bound/local-edge hit; all counts/visibility valid |
+| B: Noise | Rich joint `(+0.70 deg,-0.040 m)`; 1 px noise; seeds 17,29,43,71,101; Huber 2 px; no outliers | Per-seed signed/absolute errors and held-out metrics; median and min/max errors across every seed; failures retained |
+| C: Outliers | Same joint correction; no pixel noise; seed 17; 10% of retained training observations, per-frame `floor(0.10*N)`; pixel offset `(+40,-30)`; paired L2/Huber inputs | Huber has lower clean held-out RMSE and lower normalized parameter error than L2 on the predeclared rich fixture; observed/outlier-inclusive metrics also reported |
+| D: Geometry | Same correction/counts; rich versus training depth 20 m, x/z in [-0.005,+0.005], y/z=0; exact repeated-axis fixture as rank-one unit case; rich frame 2 held out | Show 2D loss surfaces, singular values, conditioning and parameter errors; exact degeneracy flags poor identifiability, never claimed successful recovery |
+| E: Bounds/nominal | Restrict each bound separately around joint truth `(+0.70 deg,-0.040 m)`: yaw [-0.50,+0.50] deg or tx [-0.020,+0.020] m; nominal translation variant `(0.12,-0.04,0.20) m`; off-grid truth `(+0.733 deg,+0.0268 m)` | Preserve bound/failure statuses; verify left-application with non-identity nominal; report off-grid half-step target pass/miss without post-hoc changes |
+
+For nonzero A cases, frozen held-out median, p95 and RMSE must each improve by
+at least 90% relative to nominal, on complete coverage. For zero correction,
+expect zero within numeric tolerance and held-out RMSE <= `1e-9 px`; ratio
+improvement is undefined and serialized `null`. Parameter half-step tolerances
+are `0.005 deg` and `0.00025 m`, with only `1e-12` unit-specific comparison slack.
+C's normalized error is `sqrt((yaw_error_deg/4)^2 + (tx_error_m/0.20)^2)` under
+the default spans. Held-out data in C stays uncorrupted; no oracle inlier labels
+are used for optimization. D's near-degenerate recovery is diagnostic evidence,
+not required to meet A's recovery gate. E's off-grid half-step result is always
+reported; an off-grid miss prevents claiming that bound as a general guarantee.
+
+Finite grid resolution by itself does not guarantee half-step error in each
+parameter for coupled, off-grid, noisy, or degenerate data. Acceptance above is
+fixture-specific. B/D/E have no invented success threshold for expected degradation;
+all must produce finite/explicit-null metrics, honest statuses, and exact counts.
+Any missed required gate blocks the verified V1 claim; changing a gate needs an
+explicit spec revision explaining new evidence, not just a convenient threshold.
+
+### 17.8 Fixture/run schema and artifacts
+
+Use new schema names `sfr.extrinsic_fixture`, `sfr.extrinsic_oracle`, and
+`sfr.extrinsic_recovery`, initially version `1.0.0`. Existing projection/sensitivity
+schema meanings remain unchanged. Parsers reject duplicate JSON keys, unsupported
+versions, non-finite/wrong-type values, unknown mandatory semantics, unsafe
+relative paths, missing/duplicate references, and oracle/fixture identity mismatch.
+
+Required fixture layout (generated into ignored local output):
+
+```text
+<dataset-root>/fixture.json
+<dataset-root>/oracle.json                 # harness only, opened after selection
+<dataset-root>/frames/<id>/points.json
+<dataset-root>/frames/<id>/observations.json
+<dataset-root>/frames/<id>/image.png        # authored background/target display
+```
+
+Recovery reports MUST contain these groups:
+
+- `schema_name`, `schema_version`, `status`, `run_id`, `claim_boundary`.
+- `build {git_commit, git_dirty, build_type, compiler}` and
+  `host {os, arch, cpu}` using existing configure-time provenance.
+- `fixture {id, version, content_identity, generator_version, seed,
+  provenance, noise, outliers, generation_counts}`.
+- `model {parameter_order, units, application, nominal_transform,
+  nominal_correction, hidden_parameters, hidden_transform, recovered_parameters,
+  recovered_transform, projection_matrix, dimensions, z_min}`. Nominal correction
+  is `(0,0)` relative to its own supplied transform; it is not a decomposition of
+  that transform into two assumed absolute extrinsic coordinates.
+- `split {train_frame_ids, validation_frame_ids, consumed_train_ids,
+  frame_content_identities, disjoint_checked, held_out_loaded_after_search}`.
+- `search {config, loss_name, huber_delta_px, loss_sum, loss_mean,
+  total_weight, best_parameters, result_status, global_bound_hits,
+  refinement_edge_hit, evaluations, points_evaluated, identifiability}`.
+- `parameter_errors`, `metrics {train, validation}` with per-frame and pooled
+  nominal/recovered/oracle tables, observed and clean-target tables, common sets,
+  explicit masks, visibility reasons and metric sample counts.
+- `timing {clock, search_ms, evaluation_ms, rendering_ms, staging_write_ms,
+  publication_scope}`, `reproducibility`, `accounting`, `acceptance`, `artifacts`.
+
+Full attempted candidate rows go to `loss_surface.json`: integer ticks, physical
+parameters, coarse/fine membership, finite loss or `null`, rejection reason,
+weights and projection counts. Plot coarse and fine regions separately with
+axis units, loss family/delta, visibility mask, and selected estimate; never
+interpolate missing rejected cells as good fits. Oracle annotation is harness
+output only. Residual plot uses fixed identities and visibly marks invalid data.
+
+Publish a unique staged run with `report.json`, `loss_surface.json`,
+`residuals.json`, `loss_surface.png`, `residual_comparison.png`, and
+`overlays/<frame_id>/{nominal,recovered,oracle}.png` for every selected frame.
+When no estimate exists, report its absence and mark recovered artifacts
+unavailable; still preserve the failure report and surface. Paths are relative.
+`status=complete` means checked outputs closed before publication, separately
+from `acceptance.passed`. Report completed-but-unaccepted experiments honestly.
+
+Reuse the staged sibling/RAII ownership convention and existing output-error
+categories. Reject existing nonempty exact runs unless overwrite is explicit;
+preexisting staging is never removed. Preserve the documented remove-then-rename
+overwrite risk and absence of crash durability. Output targets must not resolve
+inside the input fixture. Timings embedded in the report exclude final report
+write/publication as explicitly recorded; CLI may measure total wall time separately.
+
+### 17.9 Architecture, CLI, and tests
+
+Proposed files/targets:
+
+- `include/sfr/geometry/extrinsic_recovery.hpp`,
+  `src/geometry/extrinsic_recovery.cpp`: typed inputs, validation, candidate
+  evaluation/search, residual metrics and diagnostics; Eigen-only `sfr_geometry`.
+- `include/sfr/io/extrinsic_fixture.hpp`, `src/io/extrinsic_fixture.cpp`:
+  authored fixture generation/loading, keyed joins, oracle loading and identities.
+  JSON joins `sfr_io` privately; geometry stays independent of JSON/OpenCV.
+- `include/sfr/viz/extrinsic_recovery_artifact.hpp`,
+  `src/viz/extrinsic_recovery_artifact.cpp`: OpenCV plots/overlays and staged reports.
+- `apps/estimate_extrinsics.cpp`, `examples/generate_extrinsic_fixture.cpp`,
+  and a C++ campaign driver under `examples/`: argument parsing/composition.
+- Public unit/parser/artifact tests and `tests/integration/estimate_extrinsics_cli_test.cpp`;
+  fixture README stores authored provenance and independent expected values.
+
+Proposed CLI interface, not yet an executable command:
+
+```text
+estimate_extrinsics --dataset-root <authored-fixture-root>
+  --train-frames 0,1 --validation-frames 2
+  --parameters yaw_camera_y,translation_camera_x
+  --loss huber --huber-delta-px 2
+  --yaw-min-deg -2 --yaw-max-deg 2 --yaw-coarse-step-deg 0.10 --yaw-fine-step-deg 0.01
+  --tx-min-m -0.10 --tx-max-m 0.10 --tx-coarse-step-m 0.005 --tx-fine-step-m 0.0005
+  --output-dir <ignored-output-root> [--run-id <safe-id>] [--overwrite]
+```
+
+Help documents defaults, fixed V1 parameter set and scientific failure statuses.
+Exit categories remain 0/2/3/4/5. Bound/refinement limitation, no valid candidate,
+or poor/unavailable identifiability returns 4 after publishing a diagnostic run;
+valid grid completion returns 0 even when oracle evaluation reports a missed
+acceptance gate. The campaign driver checks acceptance fields explicitly. Input
+and configuration errors return 3/2 before publishing; output failure returns 5.
+
+Required tests cover zero/positive/negative/axis-only/joint recovery; non-identity
+nominal and independent composition/sign arithmetic; deterministic ties; invalid
+grids/resource limits; non-finite observations/weights; duplicate/missing IDs and
+shuffled keyed records; complete candidate visibility/numeric accounting;
+bound/local-edge/all-invalid results; fixed-seed noise; authored Huber versus L2;
+rank-one/weak geometry; and exhaustive-reference comparison. Leakage tests alter
+held-out pixels/IDs and oracle values while keeping train/nominal/config fixed:
+the selected parameters and candidate table MUST remain unchanged; overlapping
+split/input-integrity violations MUST fail.
+
+Schema/artifact/CLI tests cover required fields, checked counts, scientific
+failure reports, publication/overwrite/staging ownership, unsafe paths, malformed
+fixtures, unsupported parameters, help, and every exit category. Independent
+hand-derived pixel/loss cases are required: a generator and estimator sharing a
+projection implementation alone cannot detect a shared sign/frame mistake.
+
+V1 completion requires all existing/new tests, clean GCC/Clang CI, ASan/UBSan,
+format/tidy, inspected generated visuals, and retained clean-commit Release A-E
+reports with every required gate and failure accounted for. No absolute CI
+wall-time gate is added. Full 6-DoF, nonlinear solvers, real-data objectives,
+MuJoCo/dynamics, and interview material in public files remain outside V1.
