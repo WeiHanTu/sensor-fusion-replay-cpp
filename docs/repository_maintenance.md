@@ -36,7 +36,7 @@ applied (`git_dirty=true`), not a clean-commit performance measurement. AppleCla
 | Fresh dev configure/build/CTest | 135/135 passed (`build/professional-dev`) |
 | Fresh Release configure/build/CTest | 135/135 passed (`build/professional-release`) |
 | format-check/full 42-TU clang-tidy | Passed; no actionable project diagnostics |
-| Checker tests and repository contracts | 15/15 passed; 25 Markdown files checked |
+| Checker tests and repository contracts | 16/16 passed; 25 Markdown files checked |
 | Workflow YAML and preset parsing | Passed locally; hosted execution is separate |
 | Forced dependency fallback | Exact Eigen 3.4.0/JSON 3.11.3 commits acquired and built; benchmark smoke and accepted recovery passed with tests disabled; zero upstream CTest entries |
 | Synthetic first-run CLIs | Passed with the fresh Release binaries; report complete and accepted, train 0/1 and held-out 2 |
@@ -47,6 +47,11 @@ The checker detects the original baseline's CMake mismatch. A new checker
 regression first failed for a document symlink outside the checkout, then passed
 after rejection was moved before reading the document. This protects the tool's
 local read boundary, not the C++ parsers or a general security claim.
+CI artifact auditing also exposed a JUnit relative-path error: the first run
+wrote XML into a nested build path, while uploading logs/reports but missing XML.
+A new path-contract regression failed before correction, then passed. CTest now
+uses the binary-directory-relative basename, with a required nonempty-file check
+before publication. The first run is not claimed to have complete diagnostics.
 Raw build/CTest/static logs and first-run reports remain under ignored `artifacts/`.
 Fresh local checks are not inferred from the baseline's earlier passing CI.
 

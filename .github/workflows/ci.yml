@@ -66,7 +66,9 @@ jobs:
       - name: Build
         run: cmake --build --preset ${{ matrix.preset }} --parallel 2
       - name: Test
-        run: ctest --preset ${{ matrix.preset }} --output-on-failure --output-junit build/${{ matrix.preset }}/test-results.xml
+        run: ctest --preset ${{ matrix.preset }} --output-on-failure --output-junit test-results.xml
+      - name: Require structured test diagnostics
+        run: test -s build/${{ matrix.preset }}/test-results.xml
       - name: Check formatting
         run: cmake --build --preset ${{ matrix.preset }} --target format-check
       - name: Run clang-tidy
@@ -136,7 +138,9 @@ jobs:
       - name: Build
         run: cmake --build --preset asan-ubsan --parallel 2
       - name: Test
-        run: ctest --preset asan-ubsan --output-on-failure --output-junit build/asan-ubsan/test-results.xml
+        run: ctest --preset asan-ubsan --output-on-failure --output-junit test-results.xml
+      - name: Require structured sanitizer diagnostics
+        run: test -s build/asan-ubsan/test-results.xml
       - name: Retain public synthetic sanitizer diagnostics
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7

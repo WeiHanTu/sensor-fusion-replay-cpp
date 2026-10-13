@@ -542,7 +542,7 @@ Exit gate: executable onboarding and new repository checks pass; the existing
 documentation checks are not an unfamiliar engineer's usability evaluation.
 
 Local maintenance verification: fresh dev/Release 135/135 each, format/full 42-TU
-tidy, 15 checker tests, repository navigation and first-run CLI/artifact checks
+tidy, 16 checker tests, repository navigation and first-run CLI/artifact checks
 pass. Builds used the changed worktree (`git_dirty=true`); they are not new
 performance evidence. Complete fallback/hosted CI and public rendering checks
 remain open. See [maintenance record](docs/repository_maintenance.md).

@@ -140,6 +140,9 @@ def check_build_contract(cmake, presets, workflow):
     for runner in re.findall(r"runs-on:\s*([^\s#]+)", workflow):
         if runner != "ubuntu-24.04":
             errors.append(f"unreviewed CI runner: {runner}")
+    for output in re.findall(r"--output-junit\s+(\S+)", workflow):
+        if output != "test-results.xml":
+            errors.append("CTest JUnit path must be test-results.xml, relative to its binary directory")
     return errors
 
 

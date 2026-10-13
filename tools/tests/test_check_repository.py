@@ -104,6 +104,15 @@ class ContractTests(unittest.TestCase):
         errors = CHECKER.check_build_contract(cmake, presets, "runs-on: ubuntu-24.04")
         self.assertEqual(3, len(errors))
 
+    def test_junit_path_is_relative_to_ctest_binary_directory(self):
+        cmake = "cmake_minimum_required(VERSION 3.28)"
+        presets = {"version": 6, "cmakeMinimumRequired": {"major": 3, "minor": 28}}
+        workflow = "runs-on: ubuntu-24.04\nrun: ctest --preset dev --output-junit build/dev/test-results.xml"
+        self.assertEqual(["CTest JUnit path must be test-results.xml, relative to its binary directory"],
+                         CHECKER.check_build_contract(cmake, presets, workflow))
+        self.assertEqual([], CHECKER.check_build_contract(
+            cmake, presets, workflow.replace("build/dev/test-results.xml", "test-results.xml")))
+
     def test_data_hygiene_preserves_only_authored_calibration_exception(self):
         forbidden = ["build/a", "artifacts/x.json", "data/a", "datasets/a", "a.zip",
                      "data_drive_01_sync/a", "calib_cam_to_cam.txt", "timestamps.txt",
