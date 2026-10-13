@@ -39,4 +39,5 @@ Immutable tag at `88da6dd`: validated transforms/frame graph, strict KITTI loadi
 rectified projection/accounting, depth overlays, sensitivity, synthetic demo,
 projection microbenchmark and build/test/static/sanitizer gates.
 See [historical verification](docs/v0.1_verification.md) and
-[published release](https://github.com/WeiHanTu/sensor-fusion-replay-cpp/releases/tag/v0.1.0).
+[tagged source](https://github.com/WeiHanTu/sensor-fusion-replay-cpp/tree/v0.1.0).
+No GitHub Release entry is implied by the tag.

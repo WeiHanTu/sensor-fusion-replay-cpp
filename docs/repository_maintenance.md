@@ -41,7 +41,10 @@ applied (`git_dirty=true`), not a clean-commit performance measurement. AppleCla
 | Forced dependency fallback | Exact Eigen 3.4.0/JSON 3.11.3 commits acquired and built; benchmark smoke and accepted recovery passed with tests disabled; zero upstream CTest entries |
 | Synthetic first-run CLIs | Passed with the fresh Release binaries; report complete and accepted, train 0/1 and held-out 2 |
 | Artifact inspection | Projection PNG, recovery loss surface and recovered held-out overlay opened and inspected |
-| Hosted CI / GitHub README rendering | Pending the pushed implementation |
+| Hosted CI at `75e3ab9` | All five jobs passed; GCC Debug/Release, Clang Debug and ASan/UBSan each 135/135; checker 16/16; format/full Clang static gate passed |
+| README Release workflow in CI | Exact four synthetic CLI commands executed; report accepted with clean commit provenance and held-out boundary checked |
+| Published diagnostics | All four downloaded C++ job artifacts contain JUnit XML with 135 tests and zero failures; logs and authored reports retained for 14 days |
+| GitHub presentation | Two-path Mermaid diagram, quick-start layout and About description/topics inspected publicly; not human usability proof |
 
 The checker detects the original baseline's CMake mismatch. A new checker
 regression first failed for a document symlink outside the checkout, then passed
@@ -54,6 +57,16 @@ uses the binary-directory-relative basename, with a required nonempty-file check
 before publication. The first run is not claimed to have complete diagnostics.
 Raw build/CTest/static logs and first-run reports remain under ignored `artifacts/`.
 Fresh local checks are not inferred from the baseline's earlier passing CI.
+
+Final implemented infrastructure:
+`75e3ab9227caf41687ef32dedc5bbfbf45698316`;
+[completed exact-commit CI](https://github.com/WeiHanTu/sensor-fusion-replay-cpp/actions/runs/38367494150).
+The first `b5d0c03` run also passed its C++/static/checker gates, but its published
+artifact lacked JUnit; that distinction remains above. The later documentation
+closure does not relabel itself as the implementation tested in this run.
+The immutable `v0.1.0` tag is unchanged; no GitHub Release entry exists or was
+created by this maintenance. Public metadata changes affected only description
+and topics, not visibility, permissions or branch protection.
 
 Native macOS sanitizer initialization was not retried for this infrastructure-only
 change; the recorded limitation remains. Supported Ubuntu sanitizer CI is required.

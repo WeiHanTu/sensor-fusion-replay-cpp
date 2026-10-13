@@ -529,13 +529,13 @@ threshold changes, new release tag, SDK packaging, or production claims.
 - [x] Add offline repository checks and independent tests for local Markdown
   links/anchors, C++ quality-target coverage, toolchain consistency and tracked
   data hygiene. Python is contributor/CI tooling only, not a runtime dependency.
-- [~] Align the supported minimum with used CMake features (3.28), pin fallback
+- [x] Align the supported minimum with used CMake features (3.28), pin fallback
   dependency commits and Actions commits, fix CI to Ubuntu 24.04, retain test
   diagnostics, and exercise the documented Release quick start in CI.
-- [~] Run fresh dev/Release configure/build/tests, format/tidy, repository checks,
+- [x] Run fresh dev/Release configure/build/tests, format/tidy, repository checks,
   quick-start commands and rendered-artifact inspection; verify final GCC/Clang
   and ASan/UBSan CI. Record not-run checks and failures without weakening gates.
-- [ ] Review the complete diff, commit/push narrow changes and leave a clean tree.
+- [x] Review the complete diff, commit/push narrow changes and leave a clean tree.
 
 Exit gate: executable onboarding and new repository checks pass; the existing
 135-test C++ suite and supported sanitizer/static gates remain intact. Static
@@ -544,8 +544,13 @@ documentation checks are not an unfamiliar engineer's usability evaluation.
 Local maintenance verification: fresh dev/Release 135/135 each, format/full 42-TU
 tidy, 16 checker tests, repository navigation and first-run CLI/artifact checks
 pass. Builds used the changed worktree (`git_dirty=true`); they are not new
-performance evidence. Complete fallback/hosted CI and public rendering checks
-remain open. See [maintenance record](docs/repository_maintenance.md).
+performance evidence. Forced Eigen/JSON fallback builds and smoke/recovery passed.
+Final implementation `75e3ab9` passed all five hosted jobs, with four complete
+135-test JUnit artifacts, 16 checker tests, static checks and the README Release
+workflow. GitHub rendering/profile were inspected. The first artifact-path defect
+was retained and fixed with a failing-then-passing regression. See
+[maintenance record](docs/repository_maintenance.md). No algorithm, gate or tag
+changed; unfamiliar-engineer usability and private KITTI reruns are not run.
 
 ## 5. `v0.2 Perception` (5-7 days)
 
