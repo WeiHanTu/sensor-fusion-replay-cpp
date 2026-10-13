@@ -380,10 +380,10 @@ R2 commit; complete static/sanitizer gates remain R7 work.
 
 ### R3. Auditable bounded search
 
-- [ ] Validate/configure integer coarse/fine ticks, resource budgets and loss.
-- [ ] Evaluate the full coarse grid then its fixed local fine rectangle, deduping
+- [x] Validate/configure integer coarse/fine ticks, resource budgets and loss.
+- [x] Evaluate the full coarse grid then its fixed local fine rectangle, deduping
   shared ticks; preserve every attempted row with status/loss/counts.
-- [ ] Apply deterministic loss/parameter tie ordering. Return search completion,
+- [x] Apply deterministic loss/parameter tie ordering. Return search completion,
   per-axis bound hit, local-edge hit and no-valid-candidate statuses distinctly.
 - [ ] Test zero, +/- yaw, +/- translation and joint recovery, exact ties, invalid
   grids/budgets, all-invalid visibility, global/local edge handling, and a
@@ -394,17 +394,23 @@ is never labeled continuous convergence or universal half-step accuracy.
 
 ### R4. Frozen-result evaluation and observability
 
-- [ ] Freeze result/candidate table/consumed training IDs before evaluation.
-- [ ] Load oracle and held-out data after selection and check disjoint roles and
+- [x] Freeze result/candidate table/consumed training IDs before evaluation.
+- [x] Load oracle and held-out data after selection and check disjoint roles and
   identities. Mutating evaluation data cannot change search output.
-- [ ] Produce per-frame/pooled nominal, recovered and oracle radial-error median,
+- [x] Produce per-frame/pooled nominal, recovered and oracle radial-error median,
   p95/RMSE with visibility/common/mask counts, observed and clean-target tables.
-- [ ] Implement training-only scaled Jacobian/SVD diagnostics with explicit
+- [x] Implement training-only scaled Jacobian/SVD diagnostics with explicit
   finite-difference method and numerical thresholds; test exact rank one and
   narrow coverage. No confidence interval or additional estimated DoF.
 
 Exit gate: independent held-out metrics agree with hand-computable fixtures and
 empty/invalid coverage remains visible; rank-one geometry cannot claim acceptance.
+
+Core R3/R4 checkpoint: 21 geometry recovery tests pass, including independent
+analytic signed targets, reduced exhaustive reference, repeated-axis rank one,
+unweighted percentile/RMSE checks, null/invalid metrics and Huber-vs-L2 outliers.
+The broader fixture campaign, refinement-edge case and full verification remain
+open; no published recovery result is claimed at this checkpoint.
 
 ### R5. Reports, visualization, and CLI
 
